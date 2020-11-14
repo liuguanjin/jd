@@ -78,5 +78,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-	
+	.indexcontent{
+		display:flex;
+		flex-direction:row;
+		justify-content:center;
+	}
 </style>

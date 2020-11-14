@@ -50,7 +50,7 @@
 	    	align="center"
 	    	>
 		    	<template slot-scope="scope">
-		    		<img :src="'http://adminapi.jd.com'+scope.row.image_url" alt="正在加载">
+		    		<img :src="'http://adminapi.lgj.com'+scope.row.image_url" alt="正在加载">
 		      	</template>
 	    	</el-table-column> 
 	    	<el-table-column
@@ -166,7 +166,7 @@
 			    >
 			    	<el-upload
                     class="upload-demo"
-                    action="http://adminapi.jd.com/logo"
+                    action="http://adminapi.lgj.com/logo"
                     :before-upload="beforeAvatarUpload"
                     :on-remove="handleRemove"
                     :before-remove="beforeRemove"
@@ -288,10 +288,10 @@
 			    <el-form-item 
 			    label="分类图片" 
 			    >
-			    	<img :src="'http://adminapi.jd.com'+updateCategoryData.image_url" alt="正在加载">
+			    	<img :src="'http://adminapi.lgj.com'+updateCategoryData.image_url" alt="正在加载">
 			    	<el-upload
                     class="upload-demo"
-                    action="http://adminapi.jd.com/logo"
+                    action="http://adminapi.lgj.com/logo"
                     :before-upload="beforeAvatarUpload"
                     :on-remove="handleRemove"
                     :before-remove="beforeRemove"
@@ -437,11 +437,11 @@
 				})
 			},
 			uploadSuccess(response,file,fileList){
-	      		this.$message({message:`${file.name}上传成功`,type:'warning'});
+	      		this.$message({message:`${file.name}上传成功`,type:'success'});
 	      		this.addCategoryData.image_url = response.data;
 			},
 			updateUploadSuccess(response,file,fileList){
-	      		this.$message({message:`${file.name}上传成功`,type:'warning'});
+	      		this.$message({message:`${file.name}上传成功`,type:'success'});
 	      		this.updateCategoryData.image_url = response.data;
 			},
 			beforeRemove(file, fileList) {

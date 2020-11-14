@@ -8,7 +8,7 @@ var myaxios = {};
 myaxios.install = function(vue){
 	//设置axios请求的公共URL
 	var axios_obj = Axios.create({
-		baseURL:'http://adminapi.jd.com/',
+		baseURL:'http://adminapi.lgj.com/',
 	});
 
 	//使用axios拦截器，在请求前进行判断

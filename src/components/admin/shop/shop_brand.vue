@@ -20,7 +20,7 @@
 		<el-row>
 			<el-col :span="24">
 				<div class="addBrand">
-					<el-button type="primary" @click="showAddBrand">添加分类</el-button>
+					<el-button type="primary" @click="showAddBrand">添加品牌</el-button>
 				</div>
 			</el-col>
 		</el-row>
@@ -49,7 +49,7 @@
 	    	align="center"
 	    	>
 		    	<template slot-scope="scope">
-		    		<img :src="'http://adminapi.jd.com'+scope.row.logo" alt="正在加载">
+		    		<img :src="'http://adminapi.lgj.com'+scope.row.logo" alt="正在加载">
 		      	</template>
 	    	</el-table-column> 
 	    	<el-table-column
@@ -81,8 +81,8 @@
 	    	align="center"
 	    	>
 	    		<template slot-scope="scope">
-	    			<i class="el-icon-edit" size="mini" @click="editCategory(scope.row.id)"></i>
-	    			<i class="el-icon-delete" size="mini" @click="deleteCategory(scope.row.id)"></i>
+	    			<i class="el-icon-edit" size="mini" @click="editBrand(scope.row.id)"></i>
+	    			<i class="el-icon-delete" size="mini" @click="deleteBrand(scope.row.id)"></i>
 	    		</template>
 		    </el-table-column>
 	  	</el-table>
@@ -94,7 +94,7 @@
 	    @current-change="currentChange"
 	    >
 	  	</el-pagination>
-	  	<!-- 添加管理员会话 -->
+	  	<!-- 添加品牌会话 -->
 	  	<el-dialog 
 	  	title="添加品牌" 
 	  	:visible.sync="isShowAddBrand"
@@ -147,21 +147,36 @@
 			    <el-form-item 
 			    label="所属分类" 
 			    >
-			      	<el-select
-			      	v-model="value"
-			      	clearable
-			      	placeholder="请选择分类"
-			      	@change="addCategoryChange"
-			      	>
-				      	<el-option
-				      	v-for="item in cateList"
-				      	:key="item.id"
-				      	:label="item.cate_name"
-				      	:value="item.id"
-				      	>
-				      	</el-option>
-		      		</el-select>
+			      	<el-cascader
+		      		v-model="pid_path_name"
+				    :options="cateList"
+				    :props="prop"
+		    		clearable
+		    		@change="addBrandChange"
+		    		>
+		    		</el-cascader>
 			    </el-form-item>
+			    <el-form-item 
+			    label="品牌图片" 
+			    >
+			    	<el-upload
+                    class="upload-demo"
+                    action="http://adminapi.lgj.com/logo"
+                    :before-upload="beforeAvatarUpload"
+                    :on-remove="handleRemove"
+                    :before-remove="beforeRemove"
+                    :file-list="fileList"
+                    :on-success = 'addUploadSuccess'
+                    :limit="1"
+                    :on-error="uploadError"
+                    :headers="myHeader"
+                    name="logo"
+                    :data="myData"
+                    >
+                        <el-button slot="trigger" size="small" type="primary">上传logo</el-button>
+                        <div slot="tip" class="el-upload__tip">jpg/jpeg/png/gif文件，且不超过10MB</div>
+                    </el-upload>
+                </el-form-item>
 		  	</el-form>
 		  	<div 
 		  	slot="footer" 
@@ -178,9 +193,9 @@
 				</el-button>
 			</div>
 		</el-dialog>
-		<!-- 修改管理员会话 -->
+		<!-- 修改品牌会话 -->
 	  	<el-dialog 
-	  	title="修改管理员" 
+	  	title="修改品牌" 
 	  	:visible.sync="isShowEditBrand"
 	  	destroy-on-close
 	  	>
@@ -231,29 +246,37 @@
 			    <el-form-item 
 			    label="所属分类" 
 			    >
-			    	<!--
-			      	<el-select
-			      	v-model="value"
-			      	clearable
-			      	placeholder="请选择分类"
-			      	@change="editCategoryChange"
-			      	>
-				      	<el-option
-				      	v-for="item in cateList"
-				      	:key="item.id"
-				      	:label="item.cate_name"
-				      	:value="item.id"
-				      	>
-				      	</el-option>
-		      		</el-select>
-		      		-->
 		      		<el-cascader
+		      		v-model="update_pid_path_name"
 				    :options="cateList"
-				    :props="prop"
+				    :props="updateProp"
 		    		clearable
+		    		@change="updateBrandChange"
 		    		>
 		    		</el-cascader>
 			    </el-form-item>
+			    <el-form-item 
+			    label="品牌图片" 
+			    >
+			    	<img :src="'http://adminapi.lgj.com'+updateBrandData.logo" alt="正在加载">
+			    	<el-upload
+                    class="upload-demo"
+                    action="http://adminapi.lgj.com/logo"
+                    :before-upload="beforeAvatarUpload"
+                    :on-remove="handleRemove"
+                    :before-remove="beforeRemove"
+                    :file-list="fileList"
+                    :on-success = 'updateUploadSuccess'
+                    :limit="1"
+                    :on-error="uploadError"
+                    :headers="myHeader"
+                    name="logo"
+                    :data="myData"
+                    >
+                        <el-button slot="trigger" size="small" type="primary">重新上传logo</el-button>
+                        <div slot="tip" class="el-upload__tip">jpg/jpeg/png/gif文件，且不超过10MB</div>
+                    </el-upload>
+                </el-form-item>
 		  	</el-form>
 		  	<div 
 		  	slot="footer" 
@@ -274,6 +297,7 @@
 </template>
 
 <script>
+	var token = localStorage.getItem('token');
 	export default {
 		data(){
 			return {
@@ -285,22 +309,26 @@
 				isShowAddBrand:false,
 				addBrandData:{
 					name:"",
-					logo:"",
-					sort:50,
 					cate_id:"",
+					desc:"",
 					is_hot:1,
-					desc:""
+					sort:50,
+					logo:"",
+					url:""
 				},
 				updateBrandData:{
 					name:"",
-					logo:"",
-					sort:50,
 					cate_id:"",
+					desc:"",
 					is_hot:1,
-					desc:""
+					sort:50,
+					logo:"",
+					url:""
 				},
 				value:'',
 				cateList:[],
+				pid_path_name:'',
+				update_pid_path_name:'',
 				isShowEditBrand:false,
 				prop:{ 
 					lazy:true,
@@ -308,22 +336,55 @@
 					label:'cate_name',
 					lazyLoad:(node,resolve)=>{
 						//console.log(node);
-						const { level,data} = node;
-						setTimeout(()=>{
+						const { level} = node;
+						if (level == 1 || level == 2) {
+							const { data } = node;
 							this.$http({
 								url:'categorys?type=list&pid='+data.id
 							}).then(result=>{
 								const res = result.data.data.map(item=>({
-									value:item.cate_name,
-									label:item.id,
-									leaf:level >= 2
+									cate_name:item.cate_name,
+									label:item.level,
+									id:item.id,
+									leaf:level >= 2,
 								}))
-								console.log(res);
+								//console.log(res);
 								resolve(res);
 							})
-						},1000)
+						}
 					}
-				}
+				},
+				updateProp:{ 
+					lazy:true,
+					value:'id',
+					label:'cate_name',
+					lazyLoad:(node,resolve)=>{
+						//console.log(node);
+						const { level} = node;
+						if (level == 1 || level == 2) {
+							const { data } = node;
+							this.$http({
+								url:'categorys?type=list&pid='+data.id
+							}).then(result=>{
+								const res = result.data.data.map(item=>({
+									cate_name:item.cate_name,
+									label:item.level,
+									id:item.id,
+									leaf:level >= 2,
+								}))
+								//console.log(res);
+								resolve(res);
+							})
+						}
+					}
+				},
+				myHeader:{
+					Authorization:token
+				},
+				myData:{
+					type:'brand'
+				},
+				fileList:[],
 			}
 		},
 		methods:{
@@ -343,11 +404,44 @@
 			showAddBrand(){
 				this.isShowAddBrand = true;
 			},
-			editCategory(id){
+			editBrand(id){
 				this.isShowEditBrand = true;
+				this.$http({
+					url:'brands/' + id
+				}).then(result=>{
+					const {code,data} = result.data;
+					if (code == 200) {
+						this.updateBrandData = data;
+						this.$http({
+							url:'categorys/'+this.updateBrandData.cate_id
+						}).then(result2=>{
+							if (result2.data.code == 200) {
+								if (result2.data.data.pid == 0) {
+									this.update_pid_path_name = result2.data.data.cate_name;
+								}else{
+									this.update_pid_path_name = result2.data.data.pid_path_name;
+								}
+							}else{
+								this.$message({message:result2.data.msg,type:'warning'});
+							}
+						})
+					}else{
+						this.$message({message:result.data.msg,type:'warning'});
+					}
+				})
 			},
-			deleteCategory(id){
-
+			deleteBrand(id){
+				this.$http({
+					url:'brands/'+id,
+					method:'delete'
+				}).then(result=>{
+					const {code,data,msg} = result.data;
+					if (code == 200) {
+						this.$message({message:'删除成功',type:'success'});
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
 			},
 			currentChange(c){
 				this.currentPage = c;
@@ -365,26 +459,78 @@
 				})
 			},
 			addBrand(){
-
-			},
-			addCategoryChange(){
-
-			},
-			editCategoryChange(){
-
+				this.$http({
+					url:'brands',
+					method:'post',
+					data:this.addBrandData
+				}).then(result=>{
+					const {code,data,msg} = result.data;
+					if (code == 200) {
+						this.$message({message:'新增品牌成功',type:'success'});
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
 			},
 			updateBrand(){
-
+				this.$http({
+					url:'brands/'+this.updateBrandData.id,
+					method:'put',
+					data:this.updateBrandData
+				}).then(result=>{
+					const {code,data,msg} = result.data;
+					if (code == 200) {
+						this.$message({message:'修改品牌成功',type:'success'});
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
 			},
+			beforeAvatarUpload(file) {
+		        var isRightImage = false;
+		        var isLt10M = file.size / 1024 / 1024 < 10;
+		        if(file.type === 'image/jpeg'
+		        	|| file.type === 'image/jpg'
+		        	|| file.type === 'image/png'
+		        	|| file.type === 'image/gif'){
+
+		        	isRightImage = true;
+		       	}
+		        if (!isRightImage) {
+		          this.$message.error('上传头像图片只能是 jpg/jpeg/png/gif 格式!');
+		        }
+		        if (!isLt10M) {
+		          this.$message.error('上传头像图片大小不能超过 10MB!');
+		        }
+		        return isRightImage && isLt10M;
+	      	},
+	      	handleRemove(file, fileList) {
+        		this.$message({message:`移除 ${ file.name } 成功`,type:'success'});
+      		},
+      		beforeRemove(file, fileList) {
+        		return this.$confirm(`确定移除 ${ file.name }？`);
+      		},
+      		updateUploadSuccess(response,file,fileList){
+	      		this.$message({message:`${file.name}上传成功`,type:'success'});
+	      		this.updateBrandData.logo = response.data;
+			},
+			addUploadSuccess(response,file,fileList){
+	      		this.$message({message:`${file.name}上传成功`,type:'success'});
+	      		this.addBrandData.logo = response.data;
+			},
+			uploadError(){
+	      		this.$message({message:'上传失败，请检查上传地址',type:'warning'})
+	      	},
+	      	updateBrandChange(e){
+	      		this.updateBrandData.cate_id = e[2];
+	      	},
+	      	addBrandChange(e){
+	      		this.addBrandData.cate_id = e[2];
+	      	}
 		},
 		mounted(){
 			this.getBrandList();
 			this.getCateList();
-		},
-		created(){
-			this.prop.lazyload = function(node,resolve){
-				console.log(node,resolve);
-			}
 		}
 	}
 </script>
@@ -403,5 +549,17 @@
 		display:flex;
 		flex-direction:row;
 		justify-content:center;
+	}
+	.el-form-item{
+		img{
+			width:50px;
+			height:50px;
+		}
+	}
+	.cell{
+		img{
+			width:50px;
+			height:50px;
+		}
 	}
 </style>
