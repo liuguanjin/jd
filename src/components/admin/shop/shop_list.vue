@@ -235,7 +235,7 @@
                     :data="myData"
                     >
                         <el-button slot="trigger" size="small" type="primary">上传logo</el-button>
-                        <div slot="tip" class="el-upload__tip">jpg/jpeg/png/gif文件，且不超过10MB</div>
+                        <div slot="tip" class="el-upload__tip">jpg/jpeg/png/gif/webp文件，且不超过10MB</div>
                     </el-upload>
                 </el-form-item>
                 <el-form-item 
@@ -265,6 +265,34 @@
                     </el-upload>
                 </el-form-item>
 		  	</el-form>
+		  	<p class="tips">(请添加模型后再进行添加属性及规格商品)</p>
+		  	<!-- 对属性的添加 -->
+		  	<el-button @click="addAttrInAdd" type="primary">添加属性</el-button>
+		  	<el-table
+		  	:data="attr"
+		  	>
+			  	<el-table-column
+			  	v-for="(item,index) in attrList"
+			  	:key="index"
+			    :label="item.attr_name"
+			    align="center"
+			    >
+			    	<template slot-scope="scope">
+			    		<el-select
+			    		v-model="attrvalue[index]"
+			    		clearable
+			    		@change="attrvalueChange($event,index,item.id,item.attr_name)"
+			    		>
+			    			<el-option
+			    			v-for="(item2,index2) in item.attr_values.split(',')"
+			    			:key="index2"
+			    			:value="item2"
+			    			>
+			    			</el-option>
+			    		</el-select>
+			    	</template>
+				</el-table-column>
+		  	</el-table>
 		  	<!-- 对规格的添加 -->
 		  	<el-button @click="addSpecInAdd" type="primary">添加规格商品</el-button>
 		  	<el-table
@@ -374,8 +402,12 @@
 					item:[
 						{price:"",cost_price:"",store_count:"",value_ids:"",value_names:""}
 					],
-					goods_images:[]
+					goods_images:[],
+					attr:[
+						
+					]
 				},
+				attr:[],
 				fileList:[],
 				imagesList:[],
 				myHeader:{
@@ -388,10 +420,12 @@
 				add_brand_name:'',
 				add_type_name:'',
 				spec_value:[],
+				attrvalue:[],
 				cateList:[],
 				brandList:[],
 				typeList:[],
 				specList:[],
+				attrList:[],
 				specvalueList:[],
 				cateProp:{ 
 					lazy:true,
@@ -488,6 +522,19 @@
 					}
 				})
 			},
+			//获取属性列表 用于选择商品所属属性 type_id 所属模型id
+			getAttrList(id){
+				this.$http({
+					url:'attrs?type_id='+id
+				}).then(result=>{
+					const {code,msg,data} = result.data;
+					if (code == 200) {
+						this.attrList = data;
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
+			},
 			//是否展示添加商品会话
 			showAddGoods(){
 				this.isShowAddGoods = true;
@@ -509,7 +556,12 @@
 			},
 			//是否展示修改商品会话 id 商品id
 			editGoods(id){
-
+				this.isShowEditGoods = true;
+				this.$http({
+					url:'goods?id=' + id
+				}).then(result=>{
+					
+				})
 			},
 			//删除商品逻辑 发送请求 id 商品id
 			deleteGoods(id){
@@ -527,12 +579,13 @@
 		        if(file.type === 'image/jpeg'
 		        	|| file.type === 'image/jpg'
 		        	|| file.type === 'image/png'
-		        	|| file.type === 'image/gif'){
+		        	|| file.type === 'image/gif'
+		        	|| file.type === 'image/webp'){
 
 		        	isRightImage = true;
 		       	}
 		        if (!isRightImage) {
-		          this.$message.error('上传头像图片只能是 jpg/jpeg/png/gif 格式!');
+		          this.$message.error('上传头像图片只能是 jpg/jpeg/png/gif/webp 格式!');
 		        }
 		        if (!isLt10M) {
 		          this.$message.error('上传头像图片大小不能超过 10MB!');
@@ -581,7 +634,7 @@
 					if (code == 200) {
 						this.addGoodsData.goods_images = data.success;
 					}else{
-						this.$message({message:msg,type:'warning'});
+						this.$message({message:data.error.name+'上传失败,失败原因:'+data.error.msg,type:'warning'});
 					}
 				})
 			},
@@ -599,11 +652,20 @@
 	      	//添加商品时改变选中模型的逻辑 将选中的模型id添加至数据中 并重新请求该模型下的规格
 	      	addTypeChange(e){
 	      		this.addGoodsData.type_id = e;
+	      		this.addGoodsData.item = [];
+	      		this.addGoodsData.attr = [];
 	      		this.getSpecList(e);
+	      		this.getAttrList(e);
 	      	},
 	      	//点击添加规格商品按钮后的逻辑 push方法使数据中的item添加一项空的值
 	      	addSpecInAdd(){
 	      		this.addGoodsData.item.push({price:"",cost_price:"",store_count:"",value_ids:"",value_names:""});
+	      	},
+	      	//点击添加规格商品按钮后的逻辑 push方法使数据中的item添加一项空的值
+	      	addAttrInAdd(){
+	      		if (this.attr.length == 0) {
+	      			this.attr.push({id:"",attr_name:"",attr_value:""});
+	      		}
 	      	},
 	      	//点击规格商品中的删除图标后的逻辑 splice删除item中的该项
 	      	deleteSpecInAdd(index){
@@ -631,49 +693,83 @@
 	      	},
 	      	//规格值下拉列表发生改变时的逻辑
 	      	specvalueChange(e,index,index1,name){
-	      		this.spec_goods = this.specvalueList.find(item=>item.id ==e);
-	      		var value = this.spec_goods.spec_value;
-  				var value_ids = this.addGoodsData.item[index].value_ids;
-  				var value_names = this.addGoodsData.item[index].value_names;
-	      		if (index1 == 0) {
-	      			if (value_ids.length == 0) {
-	      				this.addGoodsData.item[index].value_ids = e + '_';
-	      			}else{
-		      			value_ids = value_ids.slice(value_ids.indexOf('_'),value_ids.length);
-		      			e += value_ids;
-		      			this.addGoodsData.item[index].value_ids = e;
-	      			}
-	      			if (value_names.length == 0) {
-	      				this.addGoodsData.item[index].value_names = name + ':' + value + ';';
-	      			}else{
-	      				value_names = value_names.slice(value_names.indexOf(';'),value_names.length);
-
-	      				value = name + ':' + value + value_names;
-	      				this.addGoodsData.item[index].value_names = value;
-	      			}
-	      		}else{
-	      			if (value_ids.length == 0) {
-	      				this.addGoodsData.item[index].value_ids = '_' + e;
-	      			}else{
-		      			if(value_ids.length > value_ids.indexOf('_')){
-		      				this.addGoodsData.item[index].value_ids = value_ids.slice(0,value_ids.indexOf('_')+1);
-		      				this.addGoodsData.item[index].value_ids += e;
-		      			}else{
-		      				this.addGoodsData.item[index].value_ids += e;
-						}
-	      			}
-	      			if (value_names.length == 0) {
-	      				this.addGoodsData.item[index].value_names = ';' + name + ':' + value;
-	      			}else{
-	      				if (value_names.length > value_names.indexOf(';')) {
-	      					value_names = value_names.slice(0,value_names.indexOf(';')+1);
-	      					value_names = value_names + name + ':' + value;
-	      					this.addGoodsData.item[index].value_names = value_names;
-	      				}
-	      			}
+	      		//console.log(e);
+	      		if (e !== "") {
+		      		this.spec_goods = this.specvalueList.find(item=>item.id ==e);
+		      		var value = this.spec_goods.spec_value;
+	  				var value_ids = this.addGoodsData.item[index].value_ids;
+	  				var value_names = this.addGoodsData.item[index].value_names;
+		      		if (index1 == 0) {
+		      			if (index1 == (this.specList.length-1)) {
+	  						this.addGoodsData.item[index].value_ids = e;
+	  						this.addGoodsData.item[index].value_names = name + ':' + value;
+	  					}else{
+			      			if (value_ids.length == 0) {
+			      				this.addGoodsData.item[index].value_ids = e + '_';
+			      			}else{
+				      			value_ids = value_ids.slice(value_ids.indexOf('_'),value_ids.length);
+				      			e += value_ids;
+				      			this.addGoodsData.item[index].value_ids = e;
+			      			}
+			      			if (value_names.length == 0) {
+			      				this.addGoodsData.item[index].value_names = name + ':' + value + ';';
+			      			}else{
+			      				value_names = value_names.slice(value_names.indexOf(';'),value_names.length);
+			      				value = name + ':' + value + value_names;
+			      				this.addGoodsData.item[index].value_names = value;
+			      			}
+	  					}
+		      		}else{
+		      			if (index1 == (this.specList.length-1)) {
+	  						this.addGoodsData.item[index].value_ids += e;
+	  						this.addGoodsData.item[index].value_names = value_names + name + ':' + value;
+	  					}else{
+			      			if (value_ids.length == 0) {
+			      				this.addGoodsData.item[index].value_ids = '_' + e;
+			      			}else{
+			      				//修改value_ids
+				      			if(value_ids.length > (value_ids.indexOf('_')+1)){
+				      				var idIndex = value_ids.indexOf('_');
+				      				for(var i = 0;i < index1;i ++ ){
+				      					idIndex = value_ids.indexOf('_',idIndex + 1);
+				      				}
+				      				this.addGoodsData.item[index].value_ids = value_ids.slice(0,idIndex+1);
+				      				this.addGoodsData.item[index].value_ids += e;
+				      			}else{
+				      				//往value_ids中新增
+				      				this.addGoodsData.item[index].value_ids = value_ids + e +'_';
+								}
+			      			}
+			      			if (value_names.length == 0) {
+			      				this.addGoodsData.item[index].value_names = ';' + name + ':' + value;
+			      			}else{
+			      				//修改value_name
+			      				if (value_names.length > (value_names.indexOf(';')+1)) {
+			      					var nameIndex = value_names.indexOf(';');
+			      					for(var i = 0;i < index1;i ++ ){
+			      						nameIndex = value_names.indexOf(';',nameIndex + 1);
+			      					}
+			      					value_names = value_names.slice(0,nameIndex+1);
+			      					value_names = value_names + name + ':' + value;
+			      					this.addGoodsData.item[index].value_names = value_names;
+			      				}else{
+			      					//往value_name中新增
+				      				this.addGoodsData.item[index].value_names = value_names + name + ':' + value + ';';
+								}
+			      			}
+	  					}
+		      		}
+		      		// console.log(this.addGoodsData);
 	      		}
-	      		//console.log(this.addGoodsData);
-	      	}
+	      	},
+	      	//属性值下拉列表发生改变时的逻辑
+	      	attrvalueChange(e,index,id,name){
+	      		this.addGoodsData.attr.push({"id":"","attr_name":"","attr_value":""});
+	      		this.addGoodsData.attr[index].id=id;
+	      		this.addGoodsData.attr[index].attr_name=name;
+	      		this.addGoodsData.attr[index].attr_value=e;
+	      		//console.log(this.addGoodsData.attr);
+	      	},
 		},
 		mounted(){
 			this.getGoodsList();
@@ -698,5 +794,8 @@
 		.el-button{
 			margin-top:10px;
 		}
+	}
+	.tips{
+		color:red;
 	}
 </style>
