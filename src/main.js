@@ -14,8 +14,12 @@ import router from "./components/routers/index.js";
 import store from "./components/store/index.js";
 //引入myaxios插件
 import myaxios from "@/assets/js/myaxios.js";
+//引入前台homeaxios插件
+import homeaxios from "@/assets/js/homeaxios.js";
 //注册myaxios插件
 Vue.use(myaxios);
+//注册homeaxios插件
+Vue.use(homeaxios);
 // 使用use方法引入muse-ui
 Vue.use(MuseUI);
 // 使用use方法引入NavMenu组件

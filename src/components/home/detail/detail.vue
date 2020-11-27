@@ -129,14 +129,15 @@ import {mapActions,mapGetters,mapState} from "vuex";
 export default {
  data(){
  	return{
- 		iconSrc:"",
- 		shopTitle:"",
- 		shopPrice:"",
- 		addDes:"",
+ 		id:"",
+ 		goodsDetail:{
+ 			goods_name:"",
+ 			goods_price:"",
+ 			
+ 		}
  		buyNum:1,
  		isShowAddnum:false,
  		open:false,
- 		shopName:"",
  		titleShow:true,
  		selOrCom:true,
  		smlSelOrCom:true,
@@ -158,11 +159,7 @@ export default {
  },
  created(){
  	// 获取route传递的参数
- 	this.iconSrc = this.$route.query.src;
- 	this.shopTitle = this.$route.query.title + this.$route.query.des;
- 	this.shopPrice = this.$route.query.price;
- 	this.addDes = this.$route.query.des;
- 	this.shopName = this.$route.query.shopName;
+ 	this.id = this.$route.query.id;
  	var date = new Date();
  	let y = date.getFullYear();
 	let m = date.getMonth()+1;
@@ -187,6 +184,18 @@ export default {
 	back(){
 		// 返回实现
 		this.$router.go(-1);
+	},
+	getGoodsDetail(){
+		this.$homehttp({
+			url:'goodsdetail/' + this.id
+		}).then(result=>{
+			const {code,msg,data} = result.data;
+			if (code == 200) {
+				this.goodsDetail = data;
+			}else{
+				this.$message({message:msg,type:warning})
+			}
+		})
 	},
 	showAddnum(){
 		// 商品加入购物车的显示

@@ -1,10 +1,11 @@
 <template>
   <div class="home-content">
   	<!-- 首页内容 -->
-	<div class="content-item" v-for="(item,index) in homeContent" @click="enterDetail(item.imgSrc,item.title,item.price,item.addDes,item.shopName)">
-		<img :src="item.imgSrc">
-		<p class="title">{{item.title}}{{item.addDes}}</p>
-		<p class="price">${{item.price}}</p>
+	<div class="content-item" v-for="(item,index) in homeContent" @click="enterDetail(item.id)">
+		<img :src="'http://adminapi.lgj.com'+item.goods_logo">
+		<p class="title">{{item.goods_name}}</p>
+		<p class="price">${{item.goods_price}}</p>
+		<p class="number">剩余:{{item.goods_number}}</p>
 	</div>
   </div>
 </template>
@@ -21,18 +22,24 @@ export default {
  	},
  	created(){
  		// 生命周期方法
- 		this.getContent();
+ 		this.getGoods();
  	},
  	methods:{
- 		getContent(){
- 			// 通过axios获取数据
- 			axios.get("https://person-use.oss-cn-shenzhen.aliyuncs.com/json/home-content-text.json").then(response=>{
- 				this.homeContent = response.data;
+ 		getGoods(){
+ 			this.$homehttp({
+ 				url:'goods'
+ 			}).then(result=>{
+ 				const {code,msg,data} = result.data;
+ 				if (code == 200) {
+ 					this.homeContent = data;
+ 				}else{
+ 					this.$message({message:msg,type:'warning'});
+ 				}
  			})
  		},
- 		enterDetail(src,title,price,des,shopName){
+ 		enterDetail(id){
  			// 进入商品详情界面
- 			this.$router.push({name:"detail",query:{src:src,title:title,price:price,des:des,shopName:shopName}});
+ 			this.$router.push({name:"detail",query:{id:id}});
  		}
  	}
 }
@@ -64,6 +71,13 @@ export default {
 				margin:5px;
 			}
 			.price{
+				font-size:@bigTextSize;
+				line-height:@bigTextSize;
+				align-self:flex-start;
+				color:@mallColor;
+				margin:5px;
+			}
+			.number{
 				font-size:@bigTextSize;
 				line-height:@bigTextSize;
 				align-self:flex-start;
