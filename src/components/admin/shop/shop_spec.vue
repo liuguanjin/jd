@@ -24,7 +24,7 @@
 				</div>
 			</el-col>
 		</el-row>
-		<!-- 全部属性列表表格 -->
+		<!-- 全部规格列表表格 -->
 		<el-table
 	    :data="specList"
 	    border
@@ -73,7 +73,7 @@
 	  	>
 	  		<el-form :model="addSpecData">
 			    <el-form-item 
-			    label="属性名称" 
+			    label="规格名称" 
 			    >
 			      	<el-input 
 			      	v-model="addSpecData.spec_name" 
@@ -82,7 +82,7 @@
 			      	</el-input>
 			    </el-form-item> 
 			    <el-form-item 
-			    label="属性排序" 
+			    label="规格排序" 
 			    >
 			      	<el-input 
 			      	v-model="addSpecData.sort" 
@@ -126,13 +126,13 @@
 	    </el-dialog>
 	    <!-- 修改规格会话 -->
 	  	<el-dialog 
-	  	title="修改属性" 
+	  	title="修改规格" 
 	  	:visible.sync="isShowUpdateSpec"
 	  	destroy-on-close
 	  	>
 	  		<el-form :model="updateSpecData">
 			    <el-form-item 
-			    label="属性名称" 
+			    label="规格名称" 
 			    >
 			      	<el-input 
 			      	v-model="updateSpecData.spec_name" 
@@ -141,7 +141,7 @@
 			      	</el-input>
 			    </el-form-item> 
 			    <el-form-item 
-			    label="属性排序" 
+			    label="规格排序" 
 			    >
 			      	<el-input 
 			      	v-model="updateSpecData.sort" 

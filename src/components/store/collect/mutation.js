@@ -1,6 +1,6 @@
 export default{
-	addCollectGoods(state,obj){
-		state.collectArr.push(obj);
+	addCollectGoods(state,id){
+		state.collectArr.push(id);
 		state.collectNum += 1;
 	},
 	changeCollectArr(state,obj){

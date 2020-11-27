@@ -1,11 +1,11 @@
 <template>
   <div class="carousel">
   	<!-- 首页轮播图 -->
-  	<mu-carousel>
-	  <mu-carousel-item v-for="(item,index) in carousels">
-	    <img :src="item.imgSrc">
-	  </mu-carousel-item>
-	</mu-carousel>
+	<el-carousel :interval="4000" type="card" height="200px">
+	    <el-carousel-item v-for="(item,index) in carousels" :key="index">
+	      	<img :src="item.imgSrc">
+	    </el-carousel-item>
+  	</el-carousel>
   </div>
 </template>
 
@@ -35,9 +35,6 @@ export default {
 	@import url("../less/common.less");
 	.carousel{
 		width:100%;
-		.mu-carousel{
-			height:200px;
-		}
 		img{
 			width:100%;
 			height:100%;

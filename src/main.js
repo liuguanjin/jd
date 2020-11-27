@@ -3,7 +3,7 @@ import App from './App.vue';
 // 引入muse-ui
 import MuseUI from 'muse-ui';
 //引入elementUI部分组件
-import {Menu,Select,Option,Submenu,Upload,MenuItem,Dialog,Message,MessageBox,Pagination,Form,FormItem,Input,Cascader,Radio,Table,TableColumn,Container,Button,BreadcrumbItem,Breadcrumb,Header,Aside,Main,Footer,Row,Col,Icon,Dropdown,DropdownMenu,DropdownItem,} from 'element-ui';
+import {Menu,Select,Option,Carousel,CarouselItem,Submenu,Upload,MenuItem,Dialog,Message,MessageBox,Pagination,Form,FormItem,Input,Cascader,Radio,Table,TableColumn,Container,Button,BreadcrumbItem,Breadcrumb,Header,Aside,Main,Footer,Row,Col,Icon,Dropdown,DropdownMenu,DropdownItem,} from 'element-ui';
 //引入muse-ui.css
 import 'muse-ui/dist/muse-ui.css';
 //引入element-ui样式
@@ -24,6 +24,8 @@ Vue.use(homeaxios);
 Vue.use(MuseUI);
 // 使用use方法引入NavMenu组件
 Vue.use(Menu);
+Vue.use(Carousel);
+Vue.use(CarouselItem);
 Vue.use(Pagination);
 Vue.use(Select);
 Vue.use(Upload);

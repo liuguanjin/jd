@@ -99,6 +99,8 @@ import Bankmanager from '@/components/admin/shop/bank_manager.vue';
 import Crowdfundingmanager from '@/components/admin/shop/crowdfunding_manager.vue';
 //后台商城众筹管理界面
 import Paymanager from '@/components/admin/shop/pay_manager.vue';
+//后台商城店铺管理界面
+import StoreList from '@/components/admin/shop/store_list.vue';
 //后台管理界面
 import Operator from '@/components/admin/operator.vue';
 //配置routes
@@ -162,6 +164,7 @@ var routes = [
 					{path:'/bankmanager',component:Bankmanager,meta:{title:"后台商城银行管理界面",keepAlive:false}},
 					{path:'/crowdfundingmanager',component:Crowdfundingmanager,meta:{title:"后台商城支付管理界面",keepAlive:false}},
 					{path:'/paymanager',component:Paymanager,meta:{title:"后台商城众筹管理界面",keepAlive:false}},
+					{path:'/storelist',component:StoreList,meta:{title:"后台商城店铺管理界面",keepAlive:false}},
 				]
 			},
 			{path:'/operator',component:Operator,meta:{title:"后台运营",keepAlive:false}}

@@ -6,36 +6,36 @@
 	  		<!-- 头部 -->
 		  	<my-head>
 		  		<h1>商品详情</h1>
-		  		<mu-icon class="back" value="keyboard_backspace" @click="back"></mu-icon>
+		  		<i class="el-icon-back back" @click="back"></i>
 		  	</my-head>
 		  	<!-- 详情中的商品图片 -->
 		  	<ul>
-		  		<li>
-		  			<img :src="iconSrc" alt="">
+		  		<li v-for="(item,index) in goodsDetail.goods_images">
+		  			<img :src="'http://adminapi.lgj.com'+item.pics_sma" alt="">
 		  		</li>
 		  	</ul>
 		  	<!-- 商品价格 -->
 		  	<div class="price">
-		  		<p class="price-a">¥{{shopPrice}}</p>
+		  		<p class="price-a">¥{{goodsDetail.goods_price}}</p>
 		  		<div class="price-b">
 		  			<div>
-						<mu-icon class="money" value="arrow_downward"></mu-icon>
+		  				<i class="el-icon-bottom money"></i>
 				  		<p>降价提醒</p>
 		  			</div>
-		  			<div @click="addToCollect(iconSrc,shopTitle,addDes,shopPrice,shopName)">
-						<mu-icon class="money" value="collections"></mu-icon>
+		  			<div @click="addToCollect(id)">
+		  				<i class="el-icon-collection-tag money"></i>
 		  				<p>收藏</p>
 		  			</div>
 		  		</div>
 		  	</div>
 		  	<!-- 商品标题 -->
 		  	<div class="title">
-		  		<p>{{shopTitle}}</p>
+		  		<p>{{goodsDetail.goods_name}}</p>
 		  	</div>
 		  	<!-- 商品数量选择 -->
 		  	<div class="choose" @click="showAddnum">
 		  		<p class="text">已选</p>
-		  		<p class="choose-text">{{addDes}},{{buyNum}}个</p>
+		  		<p class="choose-text">{{goodsDetail.spec_goods[0].value_names}},{{buyNum}}个</p>
 		  	</div>
 		  	<!-- 住址 -->
 		  	<div class="address">
@@ -57,22 +57,22 @@
 		  	<div class="detail-foot">
 		  		<div class="foot-text">
 		  			<div>
-		  				<mu-icon value="chat"></mu-icon>
+		  				<i class="el-icon-chat-dot-square"></i>
 						<p>联系客服</p>
 		  			</div>
 		  			<div>
-		  				<mu-icon value="all_inbox"></mu-icon>
+		  				<i class="el-icon-s-shop"></i>
 						<p>进店</p>
 		  			</div>
 		  			<div class="cart-show" @click="goToCart">
-		  				<mu-icon value="shopping_cart"></mu-icon>
+		  				<i class="el-icon-shopping-cart-2"></i>
 		  				<p>购物车</p>
 		  				<i :class="cartNum==0?'none':'cartnumshow'">{{cartNum}}</i>
 		  			</div>
 		  		</div>
 		  		<div class="foot-button">
-		  			<mu-button color="warning"  @click="showAddnum">加入购物车</mu-button>
-		  			<mu-button color="error">立即购买</mu-button>
+		  			<el-button type="warning"  @click="showAddnum">加入购物车</el-button>
+		  			<el-button type="danger">立即购买</el-button>
 		  		</div>
 		  	</div>
 	  	</div>
@@ -80,44 +80,44 @@
 		<div class="addnum-box"  @click.self="hideAddnum"   v-show="isShowAddnum">
 		  	<div class="addnum">
 			  	<div class="addnum-head">
-			  			<img :src="iconSrc" alt="">
+			  			<img :src="'http://adminapi.lgj.com'+goodsDetail.goods_images[0].pics_sma" alt="">
 			  			<div class="addnum-des">
-			  				<p class="price">¥{{shopPrice}}</p>
+			  				<p class="price">¥{{goodsDetail.goods_price}}</p>
 			  				<div>
 			  					<p class="text">已选</p>
-			  					<p class="des">{{addDes}},{{buyNum}}个</p>
+			  					<p class="des">{{goodsDetail.spec_goods[0].value_names}},{{buyNum}}个</p>
 			  				</div>
 			  			</div>
 			  	</div>
 			  	<div class="addnum-count">
 			  		<p class="num-text">数量</p>
 			  		<div class="modify">
-			  			<mu-icon value="remove" @click="goodsDel"></mu-icon>
+		  				<i class="el-icon-minus" @click="goodsDel"></i>
 			  			<p>{{buyNum}}</p>
-			  			<mu-icon value="add" @click="goodsAdd"></mu-icon>
+		  				<i class="el-icon-plus" @click="goodsAdd"></i>
 			  		</div>
 			  	</div>
 		  		<div class="addnum-foot">
-		  			<mu-button color="warning" @click="addToCart(iconSrc,shopTitle,addDes,buyNum,shopPrice,shopName)">加入购物车</mu-button>
-		  			<mu-button color="error">立即购买</mu-button>
+		  			<el-button type="warning" @click="addToCart(id)">加入购物车</el-button>
+		  			<el-button type="danger">立即购买</el-button>
 		  		</div>
 			</div>
 		</div>
 		<!-- 加入购物车成功 -->
 		<div class="addToCartSuccess" v-show="isShowSuccess">
-			<mu-icon value="done_outline"></mu-icon>
+			<i class="el-icon-check"></i>
 			<p>添加至购物车成功</p>
 		</div>
 		<div class="addToColSuccess" v-show="isShowCollectSuccess">
-			<mu-icon value="done_outline"></mu-icon>
+			<i class="el-icon-check"></i>
 			<p>添加至收藏夹成功</p>
 		</div>
 		<div class="addToColFailed" v-show="isShowCollectFailed">
-			<mu-icon value="clear"></mu-icon>
+			<i class="el-icon-close"></i>
 			<p>此商品已在收藏夹</p>
 		</div>
 		<div class="loginOrNot" v-show="noLogin">
-			<mu-icon value="clear"></mu-icon>
+			<i class="el-icon-close"></i>
 			<p>请先登录</p>
 		</div>
 	</div>
@@ -131,10 +131,8 @@ export default {
  	return{
  		id:"",
  		goodsDetail:{
- 			goods_name:"",
- 			goods_price:"",
- 			
- 		}
+
+ 		},
  		buyNum:1,
  		isShowAddnum:false,
  		open:false,
@@ -168,6 +166,9 @@ export default {
 	d = d < 10 ? "0" + d : d;
 	date = y + "-" + m + "-" + d;
  	this.addToFootprint({date:date,detail:[{src:this.iconSrc,title:this.shopTitle,des:this.addDes,price:this.shopPrice,shopName:this.shopName}]})
+ },
+ mounted(){
+ 	this.getGoodsDetail();
  },
  components:{
  	"my-head":myHead
@@ -221,7 +222,7 @@ export default {
 		// 去购物车模块
 		this.$router.push("/cart");
 	},
-	addToCollect(iconSrc,shopTitle,addDes,shopPrice,shopName){
+	addToCollect(id){
 		var collectArr = this.collectArr;
 		var that = this;
 		if (this.uname == "") {
@@ -232,16 +233,15 @@ export default {
 		}else{
 			var isInCollect = false;
 			for(var i = 0;i < collectArr.length;i ++ ){
-				if (collectArr[i].title == shopTitle) {
+				if (collectArr[i] == id) {
 					isInCollect = true;
 				}
 			}
 			if (!isInCollect) {
 				this.isShowCollectSuccess = true;
-				this.addCollectGoods({src:iconSrc,title:shopTitle,des:addDes,price:shopPrice,shopName:shopName})
+				this.addCollectGoods(id)
 			}else{
 				this.isShowCollectFailed = true;
-
 			}
 			setTimeout(function(){
 				that.isShowCollectSuccess = false;
@@ -249,7 +249,7 @@ export default {
 			},2000)
 		}
 	},
-	addToCart(iconSrc,shopTitle,addDes,buyNum,shopPrice,shopName){
+	addToCart(id){
 		// 添加到购物车的判断
 		var isTo = true;
 		var isSame = true;
@@ -316,7 +316,7 @@ export default {
 			padding:0;
 			color:white;
 		}
-		.mu-icon{
+		.el-icon-check{
 			color:white;
 			padding:10px;
 			border-radius:50%;
@@ -341,7 +341,7 @@ export default {
 			padding:0;
 			color:white;
 		}
-		.mu-icon{
+		.el-icon-check{
 			color:white;
 			padding:10px;
 			border-radius:50%;
@@ -366,7 +366,7 @@ export default {
 			padding:0;
 			color:red;
 		}
-		.mu-icon{
+		.el-icon-check{
 			color:red;
 			padding:10px;
 			border-radius:50%;
@@ -391,7 +391,7 @@ export default {
 			padding:0;
 			color:red;
 		}
-		.mu-icon{
+		.el-icon-check{
 			color:red;
 			padding:10px;
 			border-radius:50%;
@@ -468,7 +468,7 @@ export default {
 				.modify{
 					.flexRowCenter();
 					margin-right:5px;
-					.mu-icon{
+					.el-icon-minus{
 						background-color:#f7f7f7;
 						margin-right:5px;
 						flex:1;
@@ -476,6 +476,14 @@ export default {
 						line-height:30px;
 						text-align:center;
 					}
+				 	.el-icon-plus{
+				 		background-color:#f7f7f7;
+						margin-right:5px;
+						flex:1;
+						height:30px;
+						line-height:30px;
+						text-align:center;
+				 	}
 					p{
 						width:50px;
 						text-align:center;
@@ -489,10 +497,10 @@ export default {
 			}
 			.addnum-foot{
 				width:100%;
-				align-self:flex-start;
 				.flexRowCenter();
-				.mu-button{
+				.el-button{
 					width:50%;
+					margin-left:0;
 				}
 			}
 		}
@@ -518,7 +526,7 @@ export default {
 						padding:0;
 						margin:0;
 						width:100%;
-						height:100%;
+						height:450px;
 					}
 				}
 			}
@@ -536,7 +544,14 @@ export default {
 				.price-b{
 					margin:0;
 					color:gray;
-					.mu-icon{
+					.el-icon-bottom{
+						margin:0;
+						width:15px;
+						height:15px;
+						font-size:15px;
+						line-height:15px;
+					}
+					.el-icon-collection-tag{
 						margin:0;
 						width:15px;
 						height:15px;
@@ -589,15 +604,22 @@ export default {
 					height:100%;
 					.flexRowCenter();
 					div{
+						height:100%;
 						color:gray;
 						width:33.3%;
 						.flexColumnCenter();
-						.mu-icon{
-							height:50%;
+						justify-content:center;
+						.el-icon-chat-dot-square{
+							margin-bottom:5px;
+						}
+						.el-icon-s-shop{
+							margin-bottom:5px;
+						}
+						.el-icon-shopping-cart-2{
+							margin-bottom:5px;
 						}
 						p{
 							margin:0;
-							height:50%;
 							font-size:10px;
 							line-height:50%;
 						}
@@ -620,8 +642,8 @@ export default {
 						}
 						.cartnumshow{
 							position:absolute;
-							top:-5px;
-							right:10px;
+							top:8px;
+							right:30px;
 							width:15px;
 							height:15px;
 							border-radius:50%;
@@ -637,7 +659,7 @@ export default {
 					width:52%;
 					height:100%;
 					.flexRowCenter();
-					.mu-button{
+					.el-button{
 						margin:0;
 						padding:0;
 						height:50px;
@@ -645,11 +667,6 @@ export default {
 						font-size:12px;
 						height:100%;
 						line-height:56px;
-					}
-					.mu-raised-button{
-						.mu-button-wrapper{
-							padding:0;
-						}
 					}
 				}
 			}
