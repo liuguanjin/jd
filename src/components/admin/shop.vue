@@ -57,7 +57,7 @@
 			      	</el-submenu>
 			      	<el-submenu index="6">
 			      		<template slot="title">
-				          	<i class="el-icon-user-solid"></i>
+				          	<i class="el-icon-s-shop"></i>
 				          	<span slot="title">店铺管理</span>
 				        </template>
 				          	<el-menu-item index="/storelist">店铺列表</el-menu-item>

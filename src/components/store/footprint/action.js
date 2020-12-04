@@ -5,4 +5,7 @@ export default{
 	replaceFootprintArr({commit},params){
 		commit("replacefootprintarr",params);
 	},
+	replaceFootprinttNum({commit},params){
+		commit("replaceFootprinttNum",params);
+	},
 }

@@ -8,12 +8,12 @@
       <mu-date-input v-model="value3" :max-date="value1" label="选择日期" label-float full-width no-display></mu-date-input>
     </mu-col>
     <div class="footprint-content">
-    	<div class="content-detail" v-for="(item,index) in footArr">
+    	<div class="content-detail" v-for="(item,index) in footDetail">
     		<p class="date">{{item.date}}</p>
     		<div class="detail">
-	    		<div class="goods" v-for="(item1,index1) in item.detail" @click="toDetail(item1.src,item1.title,item1.price,item1.des,item1.shopName)">
-	    			<img :src="item1.src" alt="">
-	    			<p class="price">¥{{item1.price}}</p>
+	    		<div class="goods" v-for="(item1,index1) in item.detail" @click="toDetail(item1.id)">
+	    			<img :src="'http://adminapi.lgj.com'+item1.goods_logo" alt="">
+	    			<p class="price">¥{{item1.goods_price}}</p>
 	    		</div>
     		</div>
     	</div>
@@ -27,7 +27,8 @@ export default {
 	data () {
 	    return {
 	      value3: undefined,
-	      value1: new Date()
+	      value1: new Date(),
+	      footDetail:[]
 	    }
 	},
 	computed:{
@@ -48,12 +49,24 @@ export default {
 			d = d < 10 ? "0" + d : d;
 			this.value3 = y + "-" + m + "-" + d; 
 		},
-		toDetail(src,title,price,des,shopName){
-			this.$router.push({name:"detail",query:{src:src,title:title,price:price,des:des,shopName:shopName}});
+		toDetail(id){
+			this.$router.push({name:"detail",query:{id:id}});
 		}
 	},
 	created(){
 		this.getDate();
+		this.$homehttp({
+			url:'footprint',
+			method:'post',
+			data:this.footArr
+		}).then(result=>{
+			const {code,msg,data} = result.data;
+			if (code == 200) {
+				this.footDetail = data;
+			}else{
+				this.$message({message:msg,type:'warning'});
+			}
+		})
 	}
 }
 </script>
@@ -76,12 +89,17 @@ export default {
 			.flexRowCenter();
 			flex-wrap:wrap;
 			.content-detail{
+				width:100%;
 				.date{
 					margin-left:5px;
 				}
 				.detail{
 					.flexRowCenter();
 					flex-wrap:wrap;
+					div.goods:hover{
+						cursor:pointer;
+						color:pink;
+					}
 					.goods{
 						margin:0 5px;
 						width:30%;

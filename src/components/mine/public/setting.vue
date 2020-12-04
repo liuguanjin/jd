@@ -57,7 +57,7 @@
 <script>
 export default {
 	mounted(){
-		if (!localStorage.getItem('homeToken')) {
+		if (!localStorage.getItem('userinfo')) {
 			this.$store.state.cart.uanme = "";
 			this.$router.push({path:'/mine'});
 		}
@@ -81,12 +81,13 @@ export default {
 				url:"homeLogout"
 			}).then(result=>{
 				if (result.data.code == 200) {
-					localStorage.clear();
-			 		this.$store.state.cart.uname = "";
+					localStorage.removeItem('userinfo');
 			 		this.$store.state.cart.cartArr = [];
 			 		this.$store.state.cart.total = 0;
 			 		this.$store.state.cart.totalNum = 0;
 	 				this.$router.push("/mine");
+				}else{
+					this.$message({message:result.data.msg,type:'warning'});
 				}
 			})
 	 	}

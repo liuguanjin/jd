@@ -1,11 +1,17 @@
 <template>
   <div class="home-content">
   	<!-- 首页内容 -->
-	<div class="content-item" v-for="(item,index) in homeContent" @click="enterDetail(item.id)">
-		<img :src="'http://adminapi.lgj.com'+item.goods_logo">
-		<p class="title">{{item.goods_name}}</p>
-		<p class="price">${{item.goods_price}}</p>
-		<p class="number">剩余:{{item.goods_number}}</p>
+	<div class="content-item" v-for="(item,index) in homeContent">
+		<img :src="'http://adminapi.lgj.com'+item.goods_logo"  @click="enterDetail(item.id,$event)">
+		<p class="title"  @click="enterDetail(item.id,$event)">{{item.goods_name}}</p>
+		<div class="goods-bottom">
+			<div class="price-number"  @click="enterDetail(item.id,$event)">
+				<p class="price">${{item.goods_price}}</p>
+				<p class="number">剩余:{{item.goods_number}}</p>
+			</div>
+			<p class="empty" v-if="false">空元素</p>
+			<p class="shop_name" @click="enterShopDetail(item.shop.id)">{{item.shop.shop_name}}</p>
+		</div>
 	</div>
   </div>
 </template>
@@ -37,9 +43,12 @@ export default {
  				}
  			})
  		},
- 		enterDetail(id){
+ 		enterDetail(id,e){
  			// 进入商品详情界面
  			this.$router.push({name:"detail",query:{id:id}});
+ 		},
+ 		enterShopDetail(id){
+ 			this.$router.push({name:"shopDetail",query:{id:id}});
  		}
  	}
 }
@@ -63,6 +72,10 @@ export default {
 				width:100%;
 				margin:0;
 			}
+			p.title:hover{
+				cursor:pointer;
+				color:pink;
+			}
 			.title{
 				font-size:@textSize;
 				line-height:20px;
@@ -70,19 +83,38 @@ export default {
 				overflow:hidden;
 				margin:5px;
 			}
-			.price{
-				font-size:@bigTextSize;
-				line-height:@bigTextSize;
-				align-self:flex-start;
-				color:@mallColor;
-				margin:5px;
-			}
-			.number{
-				font-size:@bigTextSize;
-				line-height:@bigTextSize;
-				align-self:flex-start;
-				color:@mallColor;
-				margin:5px;
+			.goods-bottom{
+				width:100%;
+				.flexRowCenter();
+				justify-content:space-between;
+				.price-number{
+					.price{
+						font-size:@bigTextSize;
+						line-height:@bigTextSize;
+						align-self:flex-start;
+						color:@mallColor;
+						margin:5px;
+					}
+					.number{
+						font-size:@bigTextSize;
+						line-height:@bigTextSize;
+						align-self:flex-start;
+						color:@mallColor;
+						margin:5px;
+					}
+				}
+				.shop_name{
+					margin:0;
+					padding:0;
+					align-self:flex-end;
+					margin-bottom:5px;
+					margin-right:10px;
+				}
+				p.shop_name:hover{
+					cursor:pointer;
+					text-decoration:underline;
+					color:pink;
+				}
 			}
 		}
 	}

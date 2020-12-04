@@ -12,14 +12,14 @@ import Cart from "@/components/cart/cart.vue";
 import Mine from "@/components/mine/mine.vue";
 //前台商品详情界面
 import Detail from "@/components/home/detail/detail.vue";
+//前台店铺详情界面
+import ShopDetail from "@/components/shop/shop_detail.vue";
 //前台注册界面
 import Regist from "@/components/mine/public/regist.vue";
 //前台注册成功界面
 import Registsuccess from "@/components/mine/public/registSuccess.vue";
 //前台登录成功界面
 import LoginSuccess from "@/components/mine/public/loginSuccess.vue";
-//前台分类详情界面
-//前台分类详情界面
 //前台分类详情界面
 import classifyDetail from "@/components/classify/classify-detail.vue";
 //前台登录成功进入设置界面
@@ -107,12 +107,13 @@ import Operator from '@/components/admin/operator.vue';
 var routes = [
 	{path:"/home",component:Home,meta:{title:"商城首页",keepAlive:true}},
 	{path:"/classify",component:Classify,meta:{title:"商城分类",keepAlive:true}},
-	{path:"/cart",component:Cart,meta:{title:"购物车",keepAlive:true}},
+	{path:"/cart",component:Cart,meta:{title:"购物车",keepAlive:false}},
 	{path:"/mine",component:Mine,meta:{title:"个人中心",keepAlive:false}},
 	{path:"/detail",component:Detail,name:"detail",meta:{title:"商品详情",keepAlive:false}},
+	{path:"/shopdetail",component:ShopDetail,name:"shopDetail",meta:{title:"店铺详情",keepAlive:false}},
 	{path:"/regist",component:Regist,meta:{title:"注册",keepAlive:false}},
 	{path:"/regses",component:Registsuccess,meta:{title:"注册成功",keepAlive:false}},
-	{path:"/logsuc",component:LoginSuccess,meta:{title:"个人中心",keepAlive:false}},
+	{path:"/logsuc",component:LoginSuccess,meta:{title:"个人中心",keepAlive:true}},
 	{path:"/supermarket",component:Supermarket,meta:{title:"京东超市",keepAlive:true}},
 	{path:"/digit",component:Digit,meta:{title:"数码电器",keepAlive:true}},
 	{path:"/clothes",component:Clothes,meta:{title:"京东服饰",keepAlive:true}},
@@ -184,8 +185,8 @@ router.beforeEach((to,from,next)=>{
 	document.title = to.meta.title;
 	next();
 	if (to.path == "/mine") {
-		var homeToken = localStorage.getItem('homeToken');
-		if (homeToken != null) {
+		var userinfo = localStorage.getItem('userinfo');
+		if (userinfo != null) {
 			next("/logsuc");
 		}else{
 			next();

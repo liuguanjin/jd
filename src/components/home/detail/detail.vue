@@ -1,6 +1,6 @@
 <template>
   	<!-- 商品详情页面 -->
-  	<div class="detail">
+  	<div class="detail" v-if="isShowDetail">
   		<!-- 详情显示主要组成 -->
 	  	<div class="main">
 	  		<!-- 头部 -->
@@ -9,11 +9,11 @@
 		  		<i class="el-icon-back back" @click="back"></i>
 		  	</my-head>
 		  	<!-- 详情中的商品图片 -->
-		  	<ul>
-		  		<li v-for="(item,index) in goodsDetail.goods_images">
-		  			<img :src="'http://adminapi.lgj.com'+item.pics_sma" alt="">
-		  		</li>
-		  	</ul>
+		  	<el-carousel :interval="4000" height="400px" >
+			    <el-carousel-item v-for="(item,index) in goodsDetail.goods_images" :key="index">
+			      	<img :src="'http://adminapi.lgj.com'+item.pics_sma" alt="正在加载">
+			    </el-carousel-item>
+		  	</el-carousel>
 		  	<!-- 商品价格 -->
 		  	<div class="price">
 		  		<p class="price-a">¥{{goodsDetail.goods_price}}</p>
@@ -35,13 +35,28 @@
 		  	<!-- 商品数量选择 -->
 		  	<div class="choose" @click="showAddnum">
 		  		<p class="text">已选</p>
-		  		<p class="choose-text">{{goodsDetail.spec_goods[0].value_names}},{{buyNum}}个</p>
+		  		<p class="choose-text">{{value_names}},{{buyNum}}个</p>
 		  	</div>
 		  	<!-- 住址 -->
-		  	<div class="address">
+		  	<div class="address" @click="isShowMap = true">
 		  		<p class="address-text">送至</p>
-		  		<p class="address-detail">北京朝阳区三环到四环之间</p>
+		  		<p class="address-detail">{{address}}</p>
 		  	</div>
+		  	<!-- 百度地图部分 -->
+	  		<div class="map" v-if="isShowMap" @click.self="isShowMap = false">
+	  			<el-input v-model="addressKeyword" placeholder="请输入地址来直接查找相关位置"></el-input>
+	  			<baidu-map
+	  			class="bmView"
+	  			:scroll-wheel-zoom="true"
+	  			:center="location"
+	  			:zoom="zoom"
+	  			@click="getLocationPoint"
+	  			ak="6MLto9zSkSW8O54V3IgXTnZkOlIB83qh"
+	  			>
+	  				<bm-view style="position:absolute;left:25%;bottom:20%;width:50%;height:400px;flex:1"></bm-view>
+	  				<bm-local-search :keyword="addressKeyword" :auto-viewport="true" style="display:none"></bm-local-search>
+				</baidu-map>
+	  		</div>
 		  	<!-- 运费 -->
 		  	<div class="transition">
 		  		<p class="transition-text">运费</p>
@@ -52,6 +67,10 @@
 		  		<p class="description-text">商家发货&售后</p>
 		  		<p class="description-text">7天无理由退货</p>
 		  		<p class="description-text">货到付款</p>
+		  	</div>
+		  	<div class="shop-message" @click="enterShopDetail(goodsDetail.shop.id)">
+		  		<img :src="'http://adminapi.lgj.com'+goodsDetail.shop.shop_logo" alt="">
+		  		<p class="shop_name">{{goodsDetail.shop.shop_name}}</p>
 		  	</div>
 		  	<!-- 商品详情的tabbar -->
 		  	<div class="detail-foot">
@@ -82,12 +101,26 @@
 			  	<div class="addnum-head">
 			  			<img :src="'http://adminapi.lgj.com'+goodsDetail.goods_images[0].pics_sma" alt="">
 			  			<div class="addnum-des">
-			  				<p class="price">¥{{goodsDetail.goods_price}}</p>
+			  				<p class="price">¥{{spec_goods_price}}</p>
 			  				<div>
 			  					<p class="text">已选</p>
-			  					<p class="des">{{goodsDetail.spec_goods[0].value_names}},{{buyNum}}个</p>
+			  					<p class="des">{{value_names}},{{buyNum}}个</p>
 			  				</div>
 			  			</div>
+			  	</div>
+			  	<div class="addnum-spec_goods">
+			  		<div class="spec" v-for="(item,index) in goodsDetail.type.specs" :key="index">
+			  			<span class="spec_name">{{item.spec_name}}:</span>
+			  			<div class="spec_values">
+			  				<span 
+			  				v-for="(item1,index1) in item.spec_values" 
+			  				@click="changeSpecgoods(item1.id,index,index1)"
+			  				:class="spec_value_select[index][index1]?'selected':''"
+			  				>
+			  				{{item1.spec_value}}
+			  				</span>
+			  			</div>
+			  		</div>
 			  	</div>
 			  	<div class="addnum-count">
 			  		<p class="num-text">数量</p>
@@ -98,7 +131,7 @@
 			  		</div>
 			  	</div>
 		  		<div class="addnum-foot">
-		  			<el-button type="warning" @click="addToCart(id)">加入购物车</el-button>
+		  			<el-button type="warning" @click="addToCart(id,buyNum)">加入购物车</el-button>
 		  			<el-button type="danger">立即购买</el-button>
 		  		</div>
 			</div>
@@ -126,10 +159,14 @@
 <script>
 import myHead from "../../common/head.vue";
 import {mapActions,mapGetters,mapState} from "vuex";
+import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
+import BmView from 'vue-baidu-map/components/map/MapView';
+import BmLocalSearch from 'vue-baidu-map/components/search/LocalSearch';
 export default {
  data(){
  	return{
  		id:"",
+ 		isShowDetail:false,
  		goodsDetail:{
 
  		},
@@ -142,7 +179,20 @@ export default {
  		isShowSuccess:false,
  		isShowCollectSuccess:false,
  		isShowCollectFailed:false,
- 		noLogin:false
+ 		noLogin:false,
+ 		value_names:"",
+ 		value_ids:"",
+ 		isShowMap:false,
+ 		addressKeyword:"",
+ 		location:{
+ 			lng:116.404,
+ 			lat:39.915
+ 		},
+ 		zoom:12.8,
+ 		address:"北京朝阳区三环到四环之间",
+ 		spec_value_select:[],
+ 		spec_goods_price:0,
+ 		spec_goods_id:""
  	}
  },
  computed:{
@@ -152,7 +202,6 @@ export default {
  	...mapState({
  		arr:state => state.cart.cartArr,
  		collectArr:state => state.collect.collectArr,
- 		uname:state =>state.cart.uname
  	})
  },
  created(){
@@ -165,23 +214,58 @@ export default {
 	let d = date.getDate();
 	d = d < 10 ? "0" + d : d;
 	date = y + "-" + m + "-" + d;
- 	this.addToFootprint({date:date,detail:[{src:this.iconSrc,title:this.shopTitle,des:this.addDes,price:this.shopPrice,shopName:this.shopName}]})
+ 	this.addToFootprint({date:date,detail:[{id:this.id}]})
  },
  mounted(){
  	this.getGoodsDetail();
  },
  components:{
- 	"my-head":myHead
+ 	"my-head":myHead,
+ 	BaiduMap,
+ 	BmView,
+ 	BmLocalSearch
  },
  methods:{
  	...mapActions({
- 		increment:"inCrement",
- 		increGoods:"inCreGoods",
- 		carculate:"calculateAllMoney",
  		shopNumTotal:"totalShopNum",
  		addCollectGoods:"increCollectGoos",
- 		addToFootprint:"addToFootprint"
+ 		addToFootprint:"addToFootprint",
+ 		calculate:"calculateAllMoney",
+ 		replaceCartDetail:"replaceCartDetail",
  	}),
+ 	changeSpecgoods(id,index,index1){
+ 		var value_ids_arr = [];
+ 		value_ids_arr = this.value_ids.split('_');
+ 		value_ids_arr[index] = id;
+ 		this.value_ids = value_ids_arr.join('_');
+ 		for(var i = 0;i < this.goodsDetail.spec_goods.length;i ++ ){
+ 			if (this.goodsDetail.spec_goods[i].value_ids == this.value_ids) {
+ 				for(var j = 0;j < this.spec_value_select[index].length;j ++ ){
+		 			this.spec_value_select[index][j] = false;
+		 		}
+		 		this.spec_value_select[index][index1] = true;
+ 				this.value_names = this.goodsDetail.spec_goods[i].value_names;
+ 				this.spec_goods_price = this.goodsDetail.spec_goods[i].price;
+ 				this.spec_goods_id = this.goodsDetail.spec_goods[i].id;
+ 				break;
+ 			}
+ 		}
+ 	},
+ 	getLocationPoint(e){
+ 		this.lng = e.point.lng;
+ 		this.lat = e.point.lat;
+ 		let geoCoder = new BMap.Geocoder();
+ 		geoCoder.getPoint(this.addressKeyword,point=>{
+ 			this.selectedLng = point.lng;
+ 			this.selectedLat = point.lat;
+ 		});
+ 		geoCoder.getLocation(e.point,res=>{
+ 			this.address = res.address;
+ 			setTimeout(()=>{
+	 			this.isShowMap = false;
+ 			},1000)
+ 		})
+ 	},
 	back(){
 		// 返回实现
 		this.$router.go(-1);
@@ -193,6 +277,15 @@ export default {
 			const {code,msg,data} = result.data;
 			if (code == 200) {
 				this.goodsDetail = data;
+				this.value_names = data.spec_goods[0].value_names;
+				this.value_ids = data.spec_goods[0].value_ids;
+				this.spec_goods_id = data.spec_goods[0].id;
+				for(var i = 0;i < data.type.specs.length;i ++){
+					this.spec_value_select[i] = new Array();
+					this.spec_value_select[i][0] = true;
+				}
+				this.spec_goods_price = data.goods_price;
+ 				this.isShowDetail=true;
 			}else{
 				this.$message({message:msg,type:warning})
 			}
@@ -222,13 +315,16 @@ export default {
 		// 去购物车模块
 		this.$router.push("/cart");
 	},
+	enterShopDetail(id){
+		this.$router.push({name:"shopDetail",query:{id:id}});
+	},
 	addToCollect(id){
 		var collectArr = this.collectArr;
-		var that = this;
-		if (this.uname == "") {
+		var userinfo = JSON.parse(localStorage.getItem('userinfo'));
+		if (userinfo == '' || userinfo == undefined) {
 			this.noLogin = true;
-			setTimeout(function(){
-				that.noLogin = false;
+			setTimeout(()=>{
+				this.noLogin = false;
 			},2000)
 		}else{
 			var isInCollect = false;
@@ -239,55 +335,51 @@ export default {
 			}
 			if (!isInCollect) {
 				this.isShowCollectSuccess = true;
-				this.addCollectGoods(id)
+				this.addCollectGoods(id);
 			}else{
 				this.isShowCollectFailed = true;
 			}
-			setTimeout(function(){
-				that.isShowCollectSuccess = false;
-				that.isShowCollectFailed = false;
+			setTimeout(()=>{
+				this.isShowCollectSuccess = false;
+				this.isShowCollectFailed = false;
 			},2000)
 		}
 	},
-	addToCart(id){
-		// 添加到购物车的判断
-		var isTo = true;
-		var isSame = true;
-		var arr = this.arr;
-		var selOrCom = this.selOrCom;
-		var smlSelOrCom = this.smlSelOrCom;
-		/*
-			如果不同商家则商家名称也加入
-			如果同一商家不同商品则添加商品即可
-			如果同一商家同一商品则增加数量即可
-		*/
-		for (var i = 0; i < arr.length ; i++) {
-			if (arr[i].shopName == shopName) {
-				var arr2 = arr[i].detail;
-				isTo = false;
-				isSame = false;
-				for(var i =0;i<arr2.length;i++){
-					if(arr2[i].title == shopTitle){
-						arr2[i].num += buyNum;
-						isTo = false;
-						isSame = true;
-					}
-				}
+	addToCart(id,number){
+		var goodsNotInArr = true;
+		var userinfo = JSON.parse(localStorage.getItem('userinfo'));
+		var user_id = userinfo.user_id;
+		for(var i = 0;i < this.arr.length;i ++ ){
+			if (this.arr[i].spec_goods_id == this.spec_goods_id && this.arr[i].goods_id == id) {
+				this.arr[i].number += number;
+				goodsNotInArr = false;
+				break;
 			}
 		}
-		if (isTo) {
-			this.increment({shopName:shopName,selOrCom:selOrCom,"detail":[{title:shopTitle,des:addDes,num:buyNum,price:shopPrice,src:iconSrc,smlSelOrCom:smlSelOrCom}]})
+		if (goodsNotInArr) {
+			this.arr.push({user_id:user_id,goods_id:id,spec_goods_id:this.spec_goods_id,shop_is_selected:1,goods_is_selected:1,number:number});
 		}
-		if(! isSame){
-			this.increGoods({shopName:shopName,selOrCom:selOrCom,"detail":[{title:shopTitle,des:addDes,num:buyNum,price:shopPrice,src:iconSrc,smlSelOrCom:smlSelOrCom}]})
-		}
-		this.carculate(true);
-		this.shopNumTotal();
+		this.$homehttp({
+ 			url:'cart',
+ 			method:'post',
+ 			data:this.arr
+ 		}).then(result=>{
+ 			const {code,msg,data} = result.data;
+ 			if (code == 200) {
+ 				for(var i = 0;i < data.length;i ++ ){
+ 					if (typeof(data[i].spec_goods.price) == 'string') {
+		 				data[i].spec_goods.price = parseFloat(data[i].spec_goods.price);
+ 					}
+ 				}
+ 				this.replaceCartDetail(data);
+ 			}else{
+ 				this.$message({message:msg,type:'warning'});
+ 			}
+ 		})
+		this.calculate(true);
 		this.isShowSuccess = true;
-		this.isShowAddnum = false;
-		var that = this;
-		setTimeout(function(){
-			that.isShowSuccess = false;
+		setTimeout(()=>{
+			this.isShowSuccess = false;
 		},2000)
 	}
  }
@@ -399,6 +491,30 @@ export default {
 			font-size:16px;
 		}
 	}
+	.map{
+		margin:0 auto;
+		max-width:800px;
+		width:100%;
+		height:100%;
+		position:fixed;
+		bottom:0;
+		left:0;
+		right:0;
+		background-color:rgba(0,0,0,0.7);
+		z-index:100;
+		transition:all 1s;
+		.bmView{
+			background-color:#fff;
+		}
+		.el-input{
+			width:50%;
+			background-color:#fff;
+			position:absolute;
+			left:25%;
+			bottom:25%;
+			z-index:10;
+		}
+	}
 	.addnum-box{
 		margin:0 auto;
 		max-width:800px;
@@ -415,7 +531,6 @@ export default {
 			position:absolute;
 			bottom:0;
 			width:100%;
-			height:300px;
 			.flexColumnCenter();
 			justify-content:space-between;
 			background-color:#fff;
@@ -455,7 +570,50 @@ export default {
 					}
 				}
 			}
+			.addnum-spec_goods{
+				align-self:flex-start;
+				display:flex;
+				flex-direction:column;
+				.spec{
+					.spec_name{
+						font-size: 13px;
+					    color: #262626;
+					    margin: 0 18px;
+					    font-weight: 700;
+					    height: 40px;
+					    line-height: 40px
+					}
+					.spec_values{
+						display:flex;
+						flex-direction:row;
+						flex-wrap:wrap;
+						padding: 0 6px;
+					    overflow: hidden;
+					    span{
+					    	padding: 0 18px;
+						    min-width: 20px;
+						    max-width: 270px;
+						    overflow: hidden;
+						    height: 30px;
+						    line-height: 30px;
+						    float: left;
+						    text-align: center;
+						    margin-left: 12px;
+						    margin-bottom: 10px;
+						    font-size: 11px;
+						    color: #262626;
+						    background: #f2f2f2;
+						    border-radius: 15px;
+					    }
+					    .selected{
+						    background:black;
+						    color:white;
+					    }
+					}
+				}
+			}
 			.addnum-count{
+				margin-top:10px;
 				width:100%;
 				.flexRowCenter();
 				justify-content:space-between;
@@ -509,25 +667,14 @@ export default {
 		margin:0 auto;
 		max-width:800px;
 		height:100%;
+		margin-bottom:60px;
 		.main{
 			width:100%;
 			height:100%;
-			ul{
-				margin:0;
-				width:100%;
-				padding:0;
-				height:100%;
-				li{
-					margin:0;
-					padding:0;
+			/deep/ .el-carousel__container{
+				img{
 					width:100%;
-					height:100%;
-					img{
-						padding:0;
-						margin:0;
-						width:100%;
-						height:450px;
-					}
+					height:400px;
 				}
 			}
 			.price{
@@ -573,12 +720,16 @@ export default {
 				}
 			}
 			.title{
+				border-top:1px solid #eee;
+				margin-bottom:5px;
 				p{
 					font-size:16px;
 					font-weight:600;
 				}
 			}
 			.choose{
+				border-top:1px solid #eee;
+				margin-bottom:5px;
 				.flexRowCenter();
 				.text{
 					margin:0 8px;
@@ -643,7 +794,7 @@ export default {
 						.cartnumshow{
 							position:absolute;
 							top:8px;
-							right:30px;
+							right:15px;
 							width:15px;
 							height:15px;
 							border-radius:50%;
@@ -671,6 +822,8 @@ export default {
 				}
 			}
 			.address{
+				border-top:1px solid #eee;
+				margin-bottom:5px;
 				.flexRowCenter();
 				.address-text{
 					color:gray;
@@ -678,6 +831,8 @@ export default {
 				}
 			}
 			.transition{
+				border-top:1px solid #eee;
+				margin-bottom:5px;
 				.flexRowCenter();
 				.transition-text{
 					color:gray;
@@ -685,6 +840,8 @@ export default {
 				}
 			}
 			.description{
+				border-top:1px solid #eee;
+				margin-bottom:5px;
 				.flexRowCenter();
 				p{
 					margin-left:8px;
@@ -698,6 +855,16 @@ export default {
 					background-size:12px auto;
 					vertical-align: middle;
 					margin-top:-2px;
+				}
+			}
+			.shop-message{
+				border-top:1px solid #eee;
+				margin-bottom:5px;
+				.flexRowCenter();
+				img{
+					width:50px;
+					height:50px;
+					margin-right:10px;
 				}
 			}
 		}

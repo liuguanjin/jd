@@ -3,34 +3,33 @@
   	<div class="cart-shop">
   		<!-- 商品列表 -->
   		<div class="shop">
-		  	<div class="shop-detail" v-for="(item,index) in shopArr">
+		  	<div class="shop-detail" v-for="(item,index) in cartDetail">
 		  		<!-- 商家名称 -->
 		  		<div class="shop-title">
 		  			<!-- 商家选中图标 -->
-		  			<i :class="item.selOrCom?'icon-select':'icon-common'" @click="changeSelect(index)"></i>
+		  			<i :class="item.shop_is_selected?'icon-select':'icon-common'" @click="changeSelect(index)"></i>
 		  			<!-- 商家logo -->
 		  			<mu-icon value="all_inbox"></mu-icon>
 		  			<!-- 商店名 -->
-		  			<p>{{item.shopName}}</p>
+		  			<p @click="enterShopDetail(item.goods.shop.id)">{{item.goods.shop.shop_name}}</p>
 		  		</div>
-		  		<!-- 商品详情 -->
-		  		<div class="shop-box" v-for="(item,index1) in item.detail">
+		  		<div class="shop-box">
 		  			<!-- 商品选中图标 -->
-		  			<i :class="item.smlSelOrCom?'icon-select':'icon-common'" @click="changeSmlSelect(index,index1)"></i>
+		  			<i :class="item.goods.goods_is_selected?'icon-select':'icon-common'" @click="changeGoodsSelect(index)"></i>
 		  			<!-- 商品图片 -->
-			  		<img :src="item.src" alt="">
-			  		<div class="shop-des">
+			  		<img :src="'http://adminapi.lgj.com'+item.goods.goods_logo" alt="" @click="enterDetail(item.goods.id)">
+			  		<div class="shop-des" @click="enterDetail(item.goods.id)">
 			  			<!-- 商品标题 -->
-			  			<p class="title">{{item.title}}</p>
+			  			<p class="title">{{item.goods.goods_name}}</p>
 			  			<!-- 商品类型选择 -->
-			  			<p class="des">{{item.des}}</p>
+			  			<p class="des">{{item.spec_goods.value_names}}</p>
 			  			<!-- 商品数量选择 -->
 			  			<div class="shop-num">
-			  				<p class="price">¥{{item.price}}</p>
+			  				<p class="price">¥{{item.spec_goods.price}}</p>
 			  				<div class="addOrDel">
-					  			<mu-icon value="remove" @click="delNum(index,index1)"></mu-icon>
-					  			<p>{{item.num}}</p>
-					  			<mu-icon value="add" @click="addNum(index,index1)"></mu-icon>
+					  			<mu-icon value="remove" @click="delNum(index)"></mu-icon>
+					  			<p>{{item.number}}</p>
+					  			<mu-icon value="add" @click="addNum(index)"></mu-icon>
 			  				</div>
 			  			</div>
 			  		</div>
@@ -58,6 +57,15 @@
 	  			<p class="move" @click="moveShop">删除</p>
 	  		</div>
 	  	</div>
+	  	<div class="addcommon addFailed" v-show="noLogin">
+			<i class="el-icon-close"></i>
+			<p>请先登录</p>
+		</div>
+		<div class="addcommon addSuccess" v-show="isShowCollectSuccess">
+			<i class="el-icon-check"></i>
+			<p>添加至收藏夹成功</p>
+		</div>
+		
   	</div>
 </template>
 
@@ -67,45 +75,68 @@ import eventBus from "../../eventbus/eventbus.js";
 export default {
 	data(){
 		return{
-			isSel:false,
-			isCal:true
+			isSel:true,
+			isCal:true,
+			noLogin:false,
+			isShowCollectSuccess:false,
 		}
 	},
  	computed:{
  		...mapState({
- 			shopArr:state => state.cart.cartArr,
- 			total:state => state.cart.total
+ 			cartArr:state => state.cart.cartArr,
+ 			collectArr:state => state.collect.collectArr,
+ 			cartDetail:state => state.cart.cartDetail,
+ 			total:state => state.cart.total,
+		 	footprintArr:state => state.footprint.foorprintArr
  		})
  	},
  	created(){
- 		this.calculation();
+ 		this.$homehttp({
+ 			url:'cart',
+ 			method:'post',
+ 			data:this.cartArr
+ 		}).then(result=>{
+ 			const {code,msg,data} = result.data;
+ 			if (code == 200) {
+ 				for(var i = 0;i < data.length;i ++ ){
+ 					if (typeof(data[i].spec_goods.price) == 'string') {
+		 				data[i].spec_goods.price = parseFloat(data[i].spec_goods.price);
+ 					}
+ 				}
+ 				this.replaceCartDetail(data);
+ 			}else{
+ 				this.$message({message:msg,type:'warning'});
+ 			}
+ 		})
  		eventBus.$on("calOrDel",()=>{
  			this.isCal = ! this.isCal;
  		});
  	},
  	methods:{
  		...mapActions({
- 			selOCom:"changeSelect",
- 			smlSelOCom:"changeSmlSel",
+ 			shopSelect:"changeShopSelect",
+ 			goodsSelect:"goodsSelect",
  			calculate:"calculateAllMoney",
- 			changeCount:"changeCount",
- 			smlChangeCount:"smlChangeCount",
+ 			shopChangeCount:"shopChangeCount",
+ 			goodsChangeCount:"goodsChangeCount",
  			cartDelNum:"deleteNum",
  			cartAddNum:"addNum",
  			delShop:"popShop",
- 			shopNumTotal:"totalShopNum"
+ 			shopNumTotal:"totalShopNum",
+ 			replaceCartDetail:"replaceCartDetail",
+ 			addCollectGoods:"increCollectGoos",
  		}),
  		changeSelect(index){
- 			this.selOCom(index);
- 			var allChoose = this.changeCount(index);
- 			if (allChoose) {
+ 			this.shopSelect(index);
+ 			var allChoose = this.shopChangeCount(index);
+ 			if (!allChoose) {
  				this.isSel = false;
  			}
  		},
- 		changeSmlSelect(index,index1){
- 			this.smlSelOCom([index,index1]);
- 			var allChoose = this.smlChangeCount([index,index1]);
- 			if (allChoose) {
+ 		changeGoodsSelect(index){
+ 			this.goodsSelect(index);
+ 			var allChoose = this.goodsChangeCount(index);
+ 			if (!allChoose) {
  				this.isSel = false;
  			}
  		},
@@ -113,19 +144,60 @@ export default {
  			this.isSel = ! this.isSel;
  			this.calculate(this.isSel);
  		},
- 		delNum(index,index1){
- 			this.cartDelNum([index,index1]);
+ 		delNum(index){
+ 			this.cartDelNum(index);
  		},
- 		addNum(index,index1){
- 			this.cartAddNum([index,index1]);
+ 		addNum(index){
+ 			this.cartAddNum(index);
  		},
  		addToCol(){
-
+ 			function unique(arr){
+				return Array.from(new Set(arr));
+			}
+ 			var collectArr = this.collectArr;
+ 			var cartDetail = this.cartDetail;
+			var userinfo = JSON.parse(localStorage.getItem('userinfo'));
+			if (userinfo == '' || userinfo == undefined) {
+				this.noLogin = true;
+				setTimeout(()=>{
+					this.noLogin = false;
+				},2000)
+			}else{
+				var goodsNotInCollect = true;
+				var goods_ids = [];
+				for(var j = 0;j < cartDetail.length;j ++ ){
+					if (cartDetail[j].goods.goods_is_selected) {
+						for(var i = 0;i < collectArr.length;i ++ ){
+							if (cartDetail[j].goods.id == collectArr[i]) {
+								goodsNotInCollect = false;
+							}
+						}
+						if (goodsNotInCollect) {
+							goods_ids.push(cartDetail[j].goods.id);
+						}
+					}
+				}
+				goods_ids = unique(goods_ids);
+				for(var i = 0;i < goods_ids.length;i ++ ){
+					this.addCollectGoods(goods_ids[i]);
+				}
+				this.isShowCollectSuccess = true;
+				setTimeout(()=>{
+					this.isShowCollectSuccess = false;
+				},2000)
+			}
  		},
  		moveShop(){
  			this.delShop();
  			this.shopNumTotal();
- 		}
+ 		},
+ 		enterShopDetail(id){
+ 			this.$router.push({name:"shopDetail",query:{id:id}});
+ 		},
+ 		enterDetail(id){
+ 			// 进入商品详情界面
+ 			this.$router.push({name:"detail",query:{id:id}});
+ 		},
  	}
 }
 </script>
@@ -136,6 +208,46 @@ export default {
 		height:1024px;
 		background-color:#eee;
 		margin-bottom:60px;
+		.addcommon{
+			width:120px;
+			height:100px;
+			background-color:rgba(0,0,0,0.7);
+			border:1px solid rgba(255,255,255,0.7);
+			position:absolute;
+			top:50%;
+			left:50%;
+			margin-left:-50px;
+			margin-top:-50px;
+			.flexColumnCenter();
+			justify-content:center;
+			p{
+				margin:0 auto;
+				padding:0;
+			}
+			.el-icon-check{
+				padding:10px;
+				border-radius:50%;
+				font-size:16px;
+			}
+		}
+		.addFailed{
+			p{
+				color:red;
+			}
+			.el-icon-check{
+				border:1px solid red;
+				color:red;
+			}
+		}
+		.addSuccess{
+			p{
+				color:white;
+			}
+			.el-icon-check{
+				border:1px solid white;
+				color:white;
+			}
+		}
 		.icon-common{
 			margin-left:5px;
 		    background-image: url(//wq.360buyimg.com/wxsq_trade/cart_vue/main/images/sprite.img_default_437_c4816605.png);
@@ -233,6 +345,14 @@ export default {
 						font-size:18px;
 						font-weight:600;
 					}
+					p:hover{
+						cursor:pointer;
+						color:pink;
+					}
+				}
+				div.shop-des:hover{
+					cursor:pointer;
+					color:pink;
 				}
 				.shop-box{
 					.flexRowCenter();

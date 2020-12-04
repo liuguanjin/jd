@@ -1,134 +1,97 @@
 export default{
 	//将商品信息添加到state.cartArr中
 	add(state,obj){
-		state.cartArr.push(obj)
-	},
-	//修改商店的选中状态
-	changeSel(state,obj){
-		state.cartArr[obj].selOrCom = ! state.cartArr[obj].selOrCom;
-		var arr = state.cartArr[obj].detail;
-		for(var i=0;i<arr.length;i++){
-			arr[i].smlSelOrCom =  state.cartArr[obj].selOrCom; 
-		}
-	},
-	//修改商品的选中状态
-	changeSmlSel(state,obj){
-		state.cartArr[obj[0]].detail[obj[1]].smlSelOrCom = ! state.cartArr[obj[0]].detail[obj[1]].smlSelOrCom;
-	},
-	//同一商家商品的增加
-	addGoods(state,obj){
-		var cartArr = state.cartArr;
-		for(var i = 0;i < cartArr.length;i ++){
-			if (obj.shopName == cartArr[i].shopName) {
-				cartArr[i].detail.push(obj.detail[0]);
-			}
-		}
-		state.cartArr = cartArr;
-	},
-	//总价的计算
-	calculate(state,obj){
-		var total = 0;
-		var cartArr = state.cartArr;
-		if (obj) {
-			for(var i = 0;i < cartArr.length;i ++){
-				cartArr[i].selOrCom = obj;
-				var arr = cartArr[i].detail;
-				for(var u = 0;u < arr.length;u ++){
-					total += arr[u].num * arr[u].price;
-					arr[u].smlSelOrCom = obj;
-				}
-			}
-		}else{
-			for(var i = 0;i < cartArr.length;i ++){
-				cartArr[i].selOrCom = obj;
-				var arr = cartArr[i].detail;
-				for(var u = 0;u < arr.length;u ++){
-					arr[u].smlSelOrCom = obj;
-				}
-			}
-			total = 0.00;
-		}
-		state.total = total;
-	},
-	//选中商品对总价的计算
-	smlGaiCount(state,obj){
-		var total = state.total;
-		var allChoose = true;
-		if ( ! state.cartArr[obj[0]].detail[obj[1]].smlSelOrCom) {
-			state.cartArr[obj[0]].selOrCom = false;
-			allChoose = false;
-			total -= state.cartArr[obj[0]].detail[obj[1]].num*state.cartArr[obj[0]].detail[obj[1]].price;
-		}else{
-			total += state.cartArr[obj[0]].detail[obj[1]].num*state.cartArr[obj[0]].detail[obj[1]].price;
-		}
-		var nameChoose = false;
-		var arr = state.cartArr[obj[0]].detail;
-		for(var i = 0;i < arr.length;i ++){
-			if(! arr[i].smlSelOrCom){
-				nameChoose = true;
-			}
-		}
-		if (! nameChoose) {
-			state.cartArr[obj[0]].selOrCom = true;
-		}
-		state.total = total;
-		return allChoose;
-	},
-	//选中商家对总价的计算
-	gaiCount(state,obj){
-		var allChoose = true;
-		var cartArr = state.cartArr;
-		var total = state.total;
-		if ( ! cartArr[obj].selOrCom) {
-			allChoose = false;
-			var arr = cartArr[obj].detail;
-			for(var i = 0; i < arr.length;i ++){
-				total -= arr[i].num * arr[i].price;
-			}
-		}else{
-			var arr = cartArr[obj].detail;
-			for(var i = 0; i < arr.length;i ++){
-				total += arr[i].num * arr[i].price;
-			}
-		}
-		for(var i = 0;i < cartArr.length;i ++){
-			if (cartArr[i].selOrCom) {
-				allChoose = false;
-			}else{
-				allChoose = true;
-			}
-		}
-		state.total = total;
-		return allChoose;
-	},
-	//商品+1的计算
-	delNum(state,obj){
-		var num = state.cartArr[obj[0]].detail[obj[1]].num;
-		if(num > 1){
-			num -= 1;
-			state.total -= state.cartArr[obj[0]].detail[obj[1]].price;
-		}else{
-			num = 1;
-		}
-		state.cartArr[obj[0]].detail[obj[1]].num = num;
-	},
-	//商品-1的计算
-	addNum(state,obj){
-		var num = state.cartArr[obj[0]].detail[obj[1]].num;
-		num += 1;
-		state.total += state.cartArr[obj[0]].detail[obj[1]].price;
-		state.cartArr[obj[0]].detail[obj[1]].num = num;
+		state.cartArr.push(obj);
 	},
 	//商品的数量
 	shopNumTotal(state){
 		var cartArr = state.cartArr;
 		var num = 0;
-		for(var i = 0;i < cartArr.length;i ++ ){
-			for(var j = 0;j < cartArr[i].detail.length;j ++ ){
-				num += 1;
+		num = cartArr.length;
+		state.totalNum = num;
+	},
+	//修改商店的选中状态
+	changeShopSelect(state,obj){
+		state.cartDetail[obj].shop_is_selected = ! state.cartDetail[obj].shop_is_selected;
+		state.cartArr[obj].shop_is_selected = state.cartDetail[obj].shop_is_selected;
+		state.cartDetail[obj].goods_is_selected = state.cartDetail[obj].shop_is_selected;
+		state.cartDetail[obj].goods.goods_is_selected = state.cartDetail[obj].shop_is_selected;
+	},
+	//选中商家对总价的计算
+	shopChangeCount(state,obj){
+		var allChoose = true;
+		var cartDetail = state.cartDetail;
+		var total = state.total;
+		if ( ! cartDetail[obj].shop_is_selected) {
+			allChoose = false;
+			total -= cartDetail[obj].number * cartDetail[obj].spec_goods.price;
+		}else{
+			total += cartDetail[obj].number * cartDetail[obj].spec_goods.price;
+		}
+		for(var i = 0;i < cartDetail.length;i ++){
+			if (!cartDetail[i].shop_is_selected) {
+				allChoose = false;
 			}
 		}
-		state.totalNum = num;
+		state.total = total;
+		return allChoose;
+	},
+	//修改商品的选中状态
+	goodsSelect(state,obj){
+		state.cartDetail[obj].goods.goods_is_selected = ! state.cartDetail[obj].goods.goods_is_selected;
+		state.cartArr[obj].goods_is_selected = state.cartDetail[obj].goods.goods_is_selected;
+		state.cartArr[obj].shop_is_selected = state.cartDetail[obj].goods.goods_is_selected;
+		state.cartDetail[obj].shop_is_selected =  state.cartDetail[obj].goods.goods_is_selected;
+	},
+	//选中商品对总价的计算
+	goodsChangeCount(state,obj){
+		var total = state.total;
+		var allChoose = true;
+		var cartDetail = state.cartDetail;
+		if ( ! cartDetail[obj].goods.goods_is_selected) {
+			state.cartDetail[obj].shop_is_selected = false;
+			allChoose = false;
+			total -= cartDetail[obj].number * cartDetail[obj].spec_goods.price;
+		}else{
+			total += cartDetail[obj].number * cartDetail[obj].spec_goods.price;
+		}
+		state.total = total;
+		return allChoose;
+	},
+	//总价的计算
+	calculate(state,obj){
+		var total = 0;
+		var cartDetail = state.cartDetail;
+		if (obj) {
+			for(var i = 0;i < cartDetail.length;i ++){
+				state.cartDetail[i].shop_is_selected = obj;
+				total += cartDetail[i].number * cartDetail[i].spec_goods.price;
+				state.cartDetail[i].goods.goods_is_selected = obj;
+			}
+		}else{
+			for(var i = 0;i < cartDetail.length;i ++){
+				state.cartDetail[i].shop_is_selected = obj;
+				state.cartDetail[i].goods.goods_is_selected = obj;
+			}
+			total = 0.00;
+		}
+		state.total = total;
+	},
+	//商品+1的计算
+	delNum(state,obj){
+		var num = state.cartDetail[obj].number;
+		if(num > 1){
+			num -= 1;
+			state.total -= state.cartDetail[obj].spec_goods.price;
+		}else{
+			num = 1;
+		}
+		state.cartDetail[obj].number = num;
+	},
+	//商品-1的计算
+	addNum(state,obj){
+		state.total += state.cartDetail[obj].spec_goods.price;
+		state.cartDetail[obj].number += 1;
 	},
 	//删除商品的操作
 	moveShop(state){
@@ -155,5 +118,8 @@ export default{
 	//如果localStorage中存在购物车信息，则替换state中的cartArr
 	changeCartArr(state,obj){
 		state.cartArr = obj;
+	},
+	replaceCartDetail(state,obj){
+		state.cartDetail = obj;
 	}
 }

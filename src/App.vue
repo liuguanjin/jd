@@ -22,28 +22,102 @@ export default {
     "tabbar":tabbar
   },
   created(){
-    // console.log(typeof(localStorage.getItem("uname")));
-    var emptyCartArr = [];
-    // 判断localstorage里是否有用户信息
-    var that = this ;
-    window.addEventListener("beforeunload",()=>{
-      localStorage.setItem("cartArr",JSON.stringify(that.cartArr));
-    })
+    this.getData();
+    window.addEventListener('beforeunload',e=>this.beforeLoad(e));
   },
   methods:{
     ...mapActions({
       replaceCartArr:"replaceCartArr",
       replaceCollectArr:"replaceCollectArr",
       replaceCollectNum:"replaceCollectNum",
-      replaceFootprintArr:"replaceFootprintArr"
-    })
+      replaceFootprintArr:"replaceFootprintArr",
+      replaceFootprinttNum:"replaceFootprinttNum",
+    }),
+    beforeLoad(e){
+      var userinfo = localStorage.getItem('userinfo');
+      if (userinfo != '' && userinfo != undefined) {
+        userinfo = JSON.parse(userinfo)
+        var user_id = userinfo.user_id;
+        this.$homehttp({
+          url:'cart/'+user_id,
+          method:'put',
+          data:this.cartArr
+        }).then(result=>{
+
+        })
+        this.$homehttp({
+          url:'collect/'+user_id,
+          method:'put',
+          data:this.collectArr
+        }).then(result=>{
+
+        }) 
+        this.$homehttp({
+          url:'footprint/'+user_id,
+          method:'put',
+          data:this.footprintArr
+        }).then(result=>{
+
+        })
+      }else{
+        localStorage.setItem("cartArr",JSON.stringify(that.cartArr));
+      }
+    },
+    getData(){
+      var userinfo = localStorage.getItem('userinfo');
+      if (userinfo != '' && userinfo != undefined) {
+        userinfo = JSON.parse(userinfo)
+        var user_id = userinfo.user_id;
+        this.$homehttp({
+          url:'cart/'+user_id
+        }).then(result=>{
+          const {code,msg,data} = result.data;
+          if (code == 200) {
+            this.replaceCartArr(data);
+          }else{
+            this.$message({message:'服务器异常',type:'warning'});
+          }
+        })
+        this.$homehttp({
+          url:'collect/'+user_id
+        }).then(result=>{
+          const {code,msg,data} = result.data;
+          if (code == 200) {
+            this.replaceCollectArr(data);
+            this.replaceCollectNum(data.length);
+          }else{
+            this.$message({message:'服务器异常',type:'warning'});
+          }
+        })
+        this.$homehttp({
+          url:'footprint/'+user_id
+        }).then(result=>{
+          const {code,msg,data} = result.data;
+          if (code == 200) {
+            this.replaceFootprintArr(data);
+            var num = 0;
+            for(var i = 0;i < data.length;i ++ ){
+              for(var j = 0;j < data[i].detail.length; j ++){
+              }
+              num = (i+1)*j;
+            }
+            this.replaceFootprinttNum(num);
+          }else{
+            this.$message({message:'服务器异常',type:'warning'});
+          }
+        })
+      }else{
+        if (localStorage.getItem('cartArr') != '' && localStorage.getItem('cartArr') != undefined) {
+          this.replaceCartArr(localStorage.getItem('cartArr'));
+        }
+      }
+    },
   },
   computed:{
     ...mapState({
-      uname:state => state.cart.uname,
       cartArr:state => state.cart.cartArr,
       collectArr:state => state.collect.collectArr,
-      footprintArr:state => state.footprint.footprintArr
+      footprintArr:state => state.footprint.foorprintArr
     })
   }
 }

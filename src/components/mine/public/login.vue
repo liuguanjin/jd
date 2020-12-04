@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import {mapState,mapActions} from "vuex";
 export default {
  	data(){
  		return {
@@ -50,6 +51,11 @@ export default {
  			veriPrompt:""
  		}
  	},
+ 	computed:{
+ 		...mapState({
+ 			arr : state => state.cart.cartArr
+ 		})
+ 	},
  	created(){
  		// 生命周期方法
  		this.generateVerify();
@@ -58,6 +64,9 @@ export default {
 		this.loginForm.code="";
  	},
  	methods:{
+ 		...mapActions({
+ 			replaceCartArr:"replaceCartArr"
+ 		}),
  		login(){
  			//登录的判断
  			var username = this.loginForm.username;
@@ -83,16 +92,26 @@ export default {
  					method:"post",
  					data:this.loginForm
  				}).then(result=>{
- 					var callbackcode = result.data.code;
-	 				var msg = result.data.msg;
-	 				var userinfo = result.data.data;
-	 				if (callbackcode == 200) {
-	 					userinfo = JSON.stringify(userinfo);
-	 					that.$router.push("/logsuc");
+ 					const {code,msg,data} = result.data;
+	 				if (code == 200) {
+	 					var userinfo = {};
+	 					userinfo = JSON.stringify(data);
 	 					localStorage.setItem("userinfo",userinfo);
+	 					this.$homehttp({
+	 						url:'cart/'+data.user_id
+	 					}).then(result=>{
+	 						const {code,msg,data} = result.data;
+	 						if (code == 200) {
+	 							this.replaceCartArr(data);
+	 						}else{
+	 							this.replaceCartArr([]);
+	 						}
+	 					})
+	 					this.$message({message:'登录成功',type:'success'});
+	 					this.$router.push("/logsuc");
 	 				}else{
-	 					that.uanmePrompt = msg;
-	 					that.show = true;
+	 					this.uanmePrompt = msg;
+	 					this.show = true;
 	 				}
  				})
 	 			this.generateVerify();
@@ -111,13 +130,14 @@ export default {
  				yzm += str.charAt(index);
  			}
  			this.verify = yzm;*/
- 			var that = this;
  			this.$http({
 				url:'captcha'
 			}).then(result=>{
-				var {data,code} = result.data;
+				var {data,code,msg} = result.data;
 				if (code == 200) {
-					that.verify = data;
+					this.verify = data;
+				}else{
+					this.$message({message:msg,type:'warning'});
 				}
 			})
  		},

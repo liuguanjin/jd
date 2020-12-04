@@ -100,6 +100,12 @@
 	    	align="center"
 	    	>
 		    </el-table-column>
+		    <el-table-column
+	    	prop="shop_name"
+	    	label="所属店铺"
+	    	align="center"
+	    	>
+		    </el-table-column>
 	    	<el-table-column
 	    	label="操作"
 	    	align="center"
@@ -215,6 +221,24 @@
 			      		:key="item.id"
 			      		:value="item.id"
 			      		:label="item.type_name"
+			    		>
+			    		</el-option>
+		      		</el-select>
+			    </el-form-item>
+			    <el-form-item 
+			    label="所属店铺" 
+			    >
+			    	<el-select
+		      		v-model="add_shop_name" 
+		      		placeholder="请选择店铺"
+		    		clearable
+		    		@change="addShopChange"
+		      		>
+			      		<el-option
+			      		v-for="item in shopList"
+			      		:key="item.id"
+			      		:value="item.id"
+			      		:label="item.shop_name"
 			    		>
 			    		</el-option>
 		      		</el-select>
@@ -480,6 +504,24 @@
 		      		</el-select>
 			    </el-form-item>
 			    <el-form-item 
+			    label="所属店铺" 
+			    >
+			    	<el-select
+		      		v-model="update_shop_name" 
+		      		placeholder="请选择店铺"
+		    		clearable
+		    		@change="updateShopChange"
+		      		>
+			      		<el-option
+			      		v-for="item in shopList"
+			      		:key="item.id"
+			      		:value="item.id"
+			      		:label="item.shop_name"
+			    		>
+			    		</el-option>
+		      		</el-select>
+			    </el-form-item>
+			    <el-form-item 
 			    label="商品logo" 
 			    >
 			    	<img :src="'http://adminapi.lgj.com/'+updateGoodsData.goods_logo" alt="">
@@ -704,7 +746,9 @@
 					type:'goods'
 				},
 				add_cate_name:'',
-				update_cate_name:'',
+				update_cate_name:[],
+				add_shop_name:'',
+				update_shop_name:'',
 				add_brand_name:'',
 				update_brand_name:'',
 				add_type_name:'',
@@ -716,6 +760,7 @@
 				typeList:[],
 				specList:[],
 				attrList:[],
+				shopList:[],
 				specvalueList:[],
 				cateProp:{ 
 					lazy:true,
@@ -782,6 +827,19 @@
 					const {code,data,msg} = result.data;
 					if (code == 200) {
 						this.brandList = data;
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
+			},
+			//获取店铺列表 用于选择商品所属店铺
+			getShopList(keyword=""){
+				this.$http({
+					url:'store?keyword='+keyword
+				}).then(result=>{
+					const {code,data,msg} = result.data;
+					if (code == 200) {
+						this.shopList = data;
 					}else{
 						this.$message({message:msg,type:'warning'});
 					}
@@ -854,6 +912,18 @@
 					const {code,msg,data} = result.data;
 					if (code == 200) {
 						this.updateGoodsData = data;
+						this.updateGoodsData.item = data.spec_goods;
+						this.updateGoodsData.attr = JSON.parse(data.goods_attr);
+						this.update_type_name = data.type.type_name;
+						this.update_shop_name = data.shop_name;
+						this.update_brand_name = data.brand.name;
+						var id_arr = data.category.pid_path.split('_');
+						id_arr.push(data.category.id.toString());
+						id_arr = id_arr.splice(1,id_arr.length-1);
+						this.update_cate_name = id_arr;
+			      		this.getSpecList(data.type_id);
+			      		this.getAttrList(data.type_id);
+						console.log(this.update_cate_name);
 					}else{
 						this.$message({message:msg,type:'warning'});
 					}
@@ -992,17 +1062,13 @@
 			addCateChange(e){
 	      		this.addGoodsData.cate_id = e[2];
 	      	},
-	      	//修改商品时改变选中分类的逻辑 将选中的分类id添加至数据中
-			updateCateChange(e){
-	      		this.updateGoodsData.cate_id = e[2];
-	      	},
 	      	//添加商品时改变选中品牌的逻辑 将选中的品牌id添加至数据中
 	      	addBrandChange(e){
 	      		this.addGoodsData.brand_id = e;
 	      	},
-	      	//修改商品时改变选中品牌的逻辑 将选中的品牌id添加至数据中
-	      	updateBrandChange(e){
-	      		this.updateGoodsData.brand_id = e;
+	      	//添加商品时改变选中店铺的逻辑 将选中的店铺id添加至数据中
+	      	addShopChange(e){
+	      		this.addGoodsData.shop_id = e;
 	      	},
 	      	//添加商品时改变选中模型的逻辑 将选中的模型id添加至数据中 并重新请求该模型下的规格
 	      	addTypeChange(e){
@@ -1011,6 +1077,18 @@
 	      		this.addGoodsData.attr = [];
 	      		this.getSpecList(e);
 	      		this.getAttrList(e);
+	      	},
+	      	//修改商品时改变选中分类的逻辑 将选中的分类id添加至数据中
+			updateCateChange(e){
+	      		this.updateGoodsData.cate_id = e[2];
+	      	},
+	      	//修改商品时改变选中品牌的逻辑 将选中的品牌id添加至数据中
+	      	updateBrandChange(e){
+	      		this.updateGoodsData.brand_id = e;
+	      	},	
+	      	//修改商品时改变选中店铺的逻辑 将选中的店铺id添加至数据中
+	      	updateShopChange(e){
+	      		this.updateGoodsData.shop_id = e;
 	      	},
 	      	//修改商品时改变选中模型的逻辑 将选中的模型id添加至数据中 并重新请求该模型下的规格
 	      	updateTypeChange(e){
@@ -1225,6 +1303,7 @@
 			this.getCateList();
 			this.getBrandList();
 			this.getTypeList();
+			this.getShopList();
 		}
 	}
 </script>

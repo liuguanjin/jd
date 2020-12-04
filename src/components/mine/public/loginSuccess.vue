@@ -103,9 +103,7 @@ import axios from "axios";
 import qs from "qs";
 export default {
   mounted(){
-    if (!localStorage.getItem('homeToken')) {
-      this.$router.push({path:"/mine"});
-    }
+    
   },
   data(){
     return{
@@ -122,31 +120,11 @@ export default {
     })
   },
   created(){
-    var that = this;
-    let instance = axios.create({
-      headers:{'content-type':'application/x-www-form-urlencoded'}
-    });
-    instance.post("http://www.liuguanjin.top:3301/cart",qs.stringify({uname:that.uname})).then(result=>{
-      for(var i = 0;i < result.data.length;i ++ ){
-        result.data[i].detail[0] = JSON.parse(result.data[i].detail[0]);
-      }
-      for(var i = 0;i < result.data.length;i ++ ){
-        var shopName = result.data[i].shopName;
-        for(var j = i+1;j < result.data.length;j ++ ){
-          if (shopName == result.data[j].shopName) {
-            result.data[i].detail.push(result.data[j].detail[0]);
-            result.data.splice(j,1);
-          }
-        }
-      }
-      that.replaceCartArr(result.data);
-    })
     this.carculate(true);
     this.shopNumTotal();
   },
   methods:{
     ...mapActions({
-      replaceCartArr:"replaceCartArr",
       carculate:"calculateAllMoney",
       shopNumTotal:"totalShopNum"
     }),

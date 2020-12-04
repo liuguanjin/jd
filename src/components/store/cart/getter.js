@@ -4,10 +4,7 @@ export default{
 		var cartArr =state.cartArr;
 		var allNum = 0;
 		for (var i=0;i<cartArr.length;i++) {
-			var arr = cartArr[i].detail;
-			for(var y = 0;y<arr.length;y++){
-				allNum += arr[y].num;
-			}
+			allNum += cartArr[i].number;
 		}
 		return allNum;
 	}

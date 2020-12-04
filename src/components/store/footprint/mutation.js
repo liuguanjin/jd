@@ -8,7 +8,7 @@ export default{
 				var inDetailArr = false;
 				var detailArr = arr[i].detail;
 				for(var j = 0;j < detailArr.length;j ++ ){
-					if (detailArr[j].src == obj.detail[0].src) {
+					if (detailArr[j].id == obj.detail[0].id) {
 						inDetailArr = true;
 					}
 				}
@@ -27,5 +27,8 @@ export default{
 	},
 	replacefootprintarr(state,obj){
 		state.foorprintArr = obj;
-	}
+	},
+	replaceFootprinttNum(state,obj){
+		state.footprintNum = obj;
+	},
 }

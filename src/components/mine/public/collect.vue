@@ -5,11 +5,11 @@
   		<p>收藏夹</p>
   	</div>
   	<div class="collect-content">
-  		<div class="collect-good" v-for="(item,index) in collectArr" @click="toDetail(item.src,item.title,item.price,item.des,item.shopName)">
-  			<img :src="item.src" alt="">
+  		<div class="collect-good" v-for="(item,index) in collectDetail" @click="toDetail(item.id)">
+  			<img :src="'http://adminapi.lgj.com'+item.goods_logo" alt="">
   			<div>
-  				<p class="title">{{item.title}}</p>
-  				<p class="price">¥{{item.price}}</p>
+  				<p class="title">{{item.goods_name}}</p>
+  				<p class="price">¥{{item.goods_price}}</p>
   			</div>
   		</div>
   	</div>
@@ -19,20 +19,38 @@
 <script>
 import {mapState} from "vuex";
 export default {
+	data(){
+		return {
+			collectDetail:[]
+		}
+	},
 	methods:{
 		back(){
 			this.$router.go(-1);
 		},
-		toDetail(src,title,price,des,shopName){
-			this.$router.push({name:"detail",query:{src:src,title:title,price:price,des:des,shopName:shopName}});
+		toDetail(id){
+			this.$router.push({name:"detail",query:{id:id}});
 		}
 	},
 	computed:{
 		...mapState({
 	 		collectArr:state => state.collect.collectArr
 		})
-	}
- 
+	},
+ 	created(){
+ 		this.$homehttp({
+ 			url:'collect',
+ 			method:'post',
+ 			data:this.collectArr
+ 		}).then(result=>{
+ 			const {code,msg,data} = result.data;
+ 			if (code == 200) {
+ 				this.collectDetail = data;
+ 			}else{
+ 				this.$message({message:msg,type:'warning'});
+ 			}
+ 		})
+ 	}
 }
 </script>
 
@@ -51,6 +69,10 @@ export default {
 			}
 		}
 		.collect-content{
+			div.collect-good:hover{
+				cursor:pointer;
+				color:pink;
+			}
 			.collect-good{
 				background-color:white;
 				margin:10px auto;
@@ -58,7 +80,8 @@ export default {
 				border-radius:10px;
 				.flexRowCenter();
 				img{
-					width:45%;
+					width:200px;
+					height:200px;
 					align-self:flex-start;
 				}
 				div{
