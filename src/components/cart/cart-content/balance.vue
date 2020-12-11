@@ -31,7 +31,6 @@
 		 					}
 		 				}
 		 				this.goods = data;
-		 				console.log(this.goods);
 		 			}else{
 		 				this.$message({message:msg,type:'warning'});
 		 			}
