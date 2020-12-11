@@ -2,7 +2,7 @@
   <div class="classify-detail">
   	<my-head>
   		<h1>分类详情</h1>
-  		<mu-icon class="back" value="keyboard_backspace" @click="back"></mu-icon>
+  		<i class="el-icon-back back" @click="back"></i>
   	</my-head>
   	<div v-for="(item,index) in arr" class="shop-classify" @click="toDetail(item.imgSrc,item.title,item.price,item.addDes,item.shopName)">
   		<img :src="item.imgSrc" alt="">

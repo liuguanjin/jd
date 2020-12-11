@@ -21,10 +21,24 @@
   		</div>
   		<div class="header_right">
   			<div class="collect">
-  				
+  				<div class="collect-button">
+			 		<el-button type="danger" icon="el-icon-star-on" round>收藏</el-button>
+  				</div>
+	  			<div class="collect-allnumer">
+	  				xxx名用户已收藏
+	  			</div>
   			</div>
   			<div class="more">
-  				
+  				<el-dropdown trigger="click">
+					<i class="el-icon-more"></i>
+			      	<el-dropdown-menu slot="dropdown">
+			        	<el-dropdown-item icon="el-icon-s-home">首页</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-search">分类搜索</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-shopping-cart-2">购物车</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-user">个人中心</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-s-data">足迹</el-dropdown-item>
+			      	</el-dropdown-menu>
+			    </el-dropdown>
   			</div>
   		</div>
   	</div>

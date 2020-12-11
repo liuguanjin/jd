@@ -1,16 +1,16 @@
 <template>
   <div class="supermarket">
   	<div class="header">
-  		<mu-icon class="back" value="keyboard_backspace" color="#9e9e9e" @click="back"></mu-icon>
+  		<i class="el-icon-back back" @click="back" color="#9e9e9e"></i>
   		<div class="title">京东超市</div>
   		<div class="more">···</div>
   	</div>
   	<div class="carousel">
-	  	<mu-carousel>
-		  <mu-carousel-item v-for="(item,index) in carousels">
-		    <img :src="item.imgSrc">
-		  </mu-carousel-item>
-		</mu-carousel>
+  		<el-carousel :interval="4000" type="card" height="200px">
+		    <el-carousel-item v-for="(item,index) in carousels" :key="index">
+		      	<img :src="item.imgSrc">
+		    </el-carousel-item>
+	  	</el-carousel>
   	</div>
   	<div class="classify">
   		<div v-for="(item,index) in classifys" class="classify-item">
@@ -153,7 +153,7 @@ export default {
 			background-color:#fff;
 			.flexRowCenter();
 			justify-content:space-between;
-			.mu-icon{
+			.back{
 				margin-left:10px;
 				height:44px;
 				line-height:44px;
@@ -176,9 +176,6 @@ export default {
 		}
 		.carousel{
 			width:100%;
-			.mu-carousel{
-				height:200px;
-			}
 			img{
 				width:100%;
 				height:100%;

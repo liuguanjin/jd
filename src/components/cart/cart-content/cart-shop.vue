@@ -9,7 +9,7 @@
 		  			<!-- 商家选中图标 -->
 		  			<i :class="item.shop_is_selected?'icon-select':'icon-common'" @click="changeSelect(index)"></i>
 		  			<!-- 商家logo -->
-		  			<mu-icon value="all_inbox"></mu-icon>
+		  			<i class="el-icon-s-shop"></i>
 		  			<!-- 商店名 -->
 		  			<p @click="enterShopDetail(item.goods.shop.id)">{{item.goods.shop.shop_name}}</p>
 		  		</div>
@@ -18,18 +18,18 @@
 		  			<i :class="item.goods.goods_is_selected?'icon-select':'icon-common'" @click="changeGoodsSelect(index)"></i>
 		  			<!-- 商品图片 -->
 			  		<img :src="'http://adminapi.lgj.com'+item.goods.goods_logo" alt="" @click="enterDetail(item.goods.id)">
-			  		<div class="shop-des" @click="enterDetail(item.goods.id)">
+			  		<div class="shop-des">
 			  			<!-- 商品标题 -->
-			  			<p class="title">{{item.goods.goods_name}}</p>
+			  			<p class="title" @click="enterDetail(item.goods.id)">{{item.goods.goods_name}}</p>
 			  			<!-- 商品类型选择 -->
 			  			<p class="des">{{item.spec_goods.value_names}}</p>
 			  			<!-- 商品数量选择 -->
 			  			<div class="shop-num">
 			  				<p class="price">¥{{item.spec_goods.price}}</p>
 			  				<div class="addOrDel">
-					  			<mu-icon value="remove" @click="delNum(index)"></mu-icon>
+			  					<i class="el-icon-minus" @click="delNum(index)"></i>
 					  			<p>{{item.number}}</p>
-					  			<mu-icon value="add" @click="addNum(index)"></mu-icon>
+					  			<i class="el-icon-plus" @click="addNum(index)"></i>
 			  				</div>
 			  			</div>
 			  		</div>
@@ -44,7 +44,7 @@
 	  		</div>
 	  		<div class="settlement">
 	  			<p>总计 : ¥{{total}}</p>
-	  			<mu-button color="error"  @click="">去结算</mu-button>
+	  			<el-button type="danger" round @click="balance">去结算</el-button>
 	  		</div>
 	  	</div>
 	  	<div class="cart-foor" v-if="!isCal">
@@ -108,6 +108,7 @@ export default {
  				this.$message({message:msg,type:'warning'});
  			}
  		})
+ 		this.calculate();
  		eventBus.$on("calOrDel",()=>{
  			this.isCal = ! this.isCal;
  		});
@@ -125,6 +126,7 @@ export default {
  			shopNumTotal:"totalShopNum",
  			replaceCartDetail:"replaceCartDetail",
  			addCollectGoods:"increCollectGoos",
+ 			allSelect:"allSelect"
  		}),
  		changeSelect(index){
  			this.shopSelect(index);
@@ -142,13 +144,18 @@ export default {
  		},
  		calculation(){
  			this.isSel = ! this.isSel;
- 			this.calculate(this.isSel);
+ 			this.allSelect(this.isSel);
+ 			this.calculate();
  		},
  		delNum(index){
  			this.cartDelNum(index);
  		},
  		addNum(index){
  			this.cartAddNum(index);
+ 		},
+ 		balance(){
+ 			var goods_ids = this.cartArr.filter(item => item.goods_is_selected===1);
+ 			this.$router.push({name:'balance',query:{goods_ids:goods_ids}});
  		},
  		addToCol(){
  			function unique(arr){
@@ -293,10 +300,8 @@ export default {
 					font-size:20px;
 					font-weight:250;
 				}
-				.mu-button{
-					margin-right:5px;
-					padding:0;
-					border-radius:30px;
+				.el-button{
+					margin-right:10px;
 				}
 			}
 			.colOrMov{
@@ -337,7 +342,9 @@ export default {
 				z-index:2;
 				.shop-title{
 					.flexRowCenter();
-					.mu-icon{
+					.el-icon-s-shop{
+						width:15px;
+						height:15px;
 						margin:0 3px;
 						color:gray;
 					}
@@ -347,13 +354,10 @@ export default {
 					}
 					p:hover{
 						cursor:pointer;
-						color:pink;
+						color:#FF4400;
 					}
 				}
-				div.shop-des:hover{
-					cursor:pointer;
-					color:pink;
-				}
+				
 				.shop-box{
 					.flexRowCenter();
 					.icon-common{
@@ -378,6 +382,10 @@ export default {
 							line-height:20px;
 							overflow:hidden;
 							margin:0;
+						}
+						p.title:hover{
+							cursor:pointer;
+							color:#FF4400;
 						}
 						.des{
 							width:100%;

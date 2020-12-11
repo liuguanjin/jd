@@ -2,64 +2,63 @@
   <div id="regist-main">
   	<!-- 注册界面头部 -->
   	<div class="regist-title">
-  		<mu-icon class="back" value="keyboard_backspace" @click="back"></mu-icon>
-    </div>
+  		<i class="el-icon-back back" @click="back"></i>
+  		<p>注册</p>
+  	</div>
     <!-- 注册界面logo -->
   	<div class="logo">
   		<img src="https://person-use.oss-cn-shenzhen.aliyuncs.com/images/cart-login/1.jpg" alt="">	
   	</div>
   	<!-- 账号注册框 -->
-  	<div class="uname-box">
-  		<p>账号:</p>
-  		<input type="text" v-model="uname" class="uname" placeholder="请设置用户名" @blur="leaveUname">
-  		<p :class="show?'prompt-show':'prompt-none'">{{uanmePrompt}}</p>
-  	</div>
-  	<!-- 密码注册框 -->
-  	<div class="pwd-box">
-  		<p>密码:</p>
-  		<input type="password" v-model="upwd" class="upwd" placeholder="请设置登录密码" @blur="leaveUpwd">
-  		<p :class="pwdshow?'pwdprompt-show':'pwdprompt-none'">{{upwdPrompt}}</p>
-  	</div>
-  	<!-- 确认密码框 -->
-  	<div class="pwd-box">
-  		<p>确认密码:</p>
-  		<input type="password" v-model="reUpwd" class="upwd" placeholder="请确认密码" @blur="leaveReUpwd">
-  		<p :class="rePwdshow?'pwdprompt-show':'pwdprompt-none'">{{reUpwdPrompt}}</p>
-  	</div>
-  	<!-- 验证码框 -->
-  	<div class="verification">
-  		<p>验证码:</p>
-  		<input type="text" class="veri-input" v-model="veriCode" placeholder="请输入验证码">
-  		<span class="ver-code" @click="generateVerify">{{verify}}</span>
-  		<p :class="veriShow?'verify-show':'verify-none'">{{veriPrompt}}</p>
-  	</div>
+  	<el-form ref="form" :model="registerForm" label-width="80px">
+	  	<el-form-item label="用户名">
+	    	<el-input placeholder="请输入您的账号" @blur="leaveUname" v-model="registerForm.username">
+	    	</el-input>
+	    	<p :class="show?'prompt-show':'prompt-none'">{{uanmePrompt}}</p>
+	  	</el-form-item>
+	  	<el-form-item label="密码">
+		    <el-input placeholder="请输入您的密码" @blur="leaveUpwd" show-password v-model="registerForm.password">
+		    </el-input>
+	  	</el-form-item>
+	  	<el-form-item label="确认密码">
+		    <el-input placeholder="请确认您的密码" @blur="leaveReUpwd" show-password v-model="reUpwd">
+		    </el-input>
+	  	</el-form-item>
+	  	<el-form-item label="验证码">
+		    <el-input placeholder="请输入验证码" v-model="registerForm.code">
+		    </el-input>
+		    <span class="ver-code" @click="generateVerify"><img :src="verify.src" alt="正在加载"></span>
+	  	</el-form-item>
+	  	</el-form-item>
+	</el-form>
   	<!-- 注册按钮 -->
-  	<div class="btn">
-  		<button class="regist" @click="regist">注册</button>
-  	</div>
+  	<div class="button">
+	    <el-button type="warning" @click="regist">注册</el-button>
+	</div>
+  	
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import qs from "qs";
+import myHead from "../../common/head.vue";
 export default {
+	components:{
+ 		"my-head":myHead,
+ 	},
  	data(){
  		return {
- 			uname:"",
- 			upwd:"",
  			uanmePrompt:"",
  			show:false,
- 			upwdPrompt:"",
- 			pwdshow:false,
  			verify:"",
- 			veriCode:"",
- 			veriShow:false,
- 			veriPrompt:"",
  			reUpwd:"",
- 			rePwdshow:false,
- 			reUpwdPrompt:"",
- 			isAllowRegist:false
+ 			isAllowRegist:false,
+ 			registerForm:{
+ 				username:"",
+ 				password:"",
+ 				code:"",
+ 			},
  		}
  	},
  	created(){
@@ -69,7 +68,7 @@ export default {
  	methods:{
  		leaveUname(){
  			//用户名注册限制
- 			var uname = this.uname;
+ 			var uname = this.registerForm.username;
  			if (uname == "") {
  				this.uanmePrompt = "用户名不允许为空";
  				this.show = true;
@@ -110,95 +109,89 @@ export default {
  				this.show = true;
  				this.isAllowRegist = false;
  				return;
- 			}else{
- 				this.uanmePrompt = "√";
- 				this.show = true;
- 				this.isAllowRegist = true;
- 				return;
  			}
  		},
  		leaveUpwd(){
  			//密码注册限制
- 			var upwd = this.upwd;
+ 			var upwd = this.registerForm.password;
  			if (upwd == "") {
- 				this.upwdPrompt = "密码不允许为空";
- 				this.pwdshow = true;
+ 				this.uanmePrompt = "密码不允许为空";
+ 				this.show = true;
  				this.isAllowRegist = false;
  				return;
  			}
  			var Reg = /^[a-zA-Z]\w{5,17}$/;
  			var result = Reg.test(upwd);
  			if (!result) {
- 				this.upwdPrompt = "密码仅支持以字母开头，长度在6-18之间，只能包含字母、数字、下划线";
- 				this.pwdshow = true;
+ 				this.uanmePrompt = "密码仅支持以字母开头，长度在6-18之间，只能包含字母、数字、下划线";
+ 				this.show = true;
  				this.isAllowRegist = false;
- 				return;
- 			}else{
- 				this.upwdPrompt = "√";
- 				this.pwdshow = true;
- 				this.isAllowRegist = true;
  				return;
  			}
  		},
  		leaveReUpwd(){
  			//验证两次密码是否相同
  			if (this.reUpwd == "") {
- 				this.rePwdshow = true;
- 				this.reUpwdPrompt = "密码不允许为空";
+ 				this.show = true;
+ 				this.uanmePrompt = "确认密码不允许为空";
  				this.isAllowRegist = false;
- 			}else if (this.reUpwd != this.upwd){
- 				this.rePwdshow = true;
- 				this.reUpwdPrompt = "两次密码不一致";
+ 			}else if (this.reUpwd != this.registerForm.password){
+ 				this.show = true;
+ 				this.uanmePrompt = "两次密码不一致";
  				this.isAllowRegist = false;
- 			}else{
- 				this.reUpwdPrompt = "√";
- 				this.rePwdshow = true;
- 				this.isAllowRegist = true;
  			}
  		},
  		regist(){
- 			//账号密码符合限制后，验证码正确允许注册
+ 			//账号密码符合限制后，验证码不为空允许注册
  			this.leaveUname();
  			this.leaveUpwd();
  			this.leaveReUpwd();
- 			var code = this.veriCode.toUpperCase();
- 			var verify = this.verify.toUpperCase();
- 			if(code != verify){
- 				this.veriShow = true;
- 				this.veriPrompt = "验证码错误";
+ 			if(this.registerForm.code==''){
+ 				this.show = true;
+ 				this.uanmePrompt = "验证码不能为空";
  				this.isAllowRegist = false;
  				this.generateVerify();
- 			}else{
- 				this.veriShow = true;
- 				this.veriPrompt = "√";
- 				this.isAllowRegist = true;
  			}
  			if (this.isAllowRegist) {
- 				let instance = axios.create({
-	 				headers:{'content-type':'application/x-www-form-urlencoded'}
-	 			});
-	 			var that = this;
-	 			instance.post("http://www.liuguanjin.top:3301/regist",qs.stringify({uname:that.uname,upwd:that.upwd})).then(result=>{
-	 				var msg = result.data.msg;
-	 				var isOk = result.data.isOk;
-	 				if (!isOk) {
-		 				that.uanmePrompt = msg;
-		 				that.show = true;
-	 				}else{
-	 					that.$router.push({path:"/regses"});
-	 				}
-	 			})
+ 				this.registerForm.uniqid = this.verify.uniqid;
+ 				this.$http({
+ 					url:'homeRegister',
+ 					method:'post',
+ 					data:this.registerForm
+ 				}).then(result=>{
+ 					const {code,msg,data} = result.data;
+ 					if (code == 200) {
+ 						this.$message({message:'注册成功,请用此账号登录',type:'success'});
+ 						setTimeout(()=>{
+	 						this.$router.push('/mine');
+ 						},2000)
+ 					}else{
+ 						this.$message({message:msg,type:'warning'});
+ 						this.uanmePrompt = msg;
+ 						this.generateVerify();
+ 					}
+ 				})
  			}
  		},
  		generateVerify(){
- 			//随机验证码的获取方法
- 			var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
- 			var yzm = "";
- 			for(var i = 0;i < 4;i ++ ){
- 				var index = parseInt(Math.random()*str.length);
- 				yzm += str.charAt(index);
- 			}
- 			this.verify = yzm;
+ 			// //随机验证码的获取方法
+ 			// var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+ 			// var yzm = "";
+ 			// for(var i = 0;i < 4;i ++ ){
+ 			// 	var index = parseInt(Math.random()*str.length);
+ 			// 	yzm += str.charAt(index);
+ 			// }
+ 			// this.verify = yzm;
+ 			this.$http({
+				url:'captcha'
+			}).then(result=>{
+				var {data,code,msg} = result.data;
+				if (code == 200) {
+					this.verify = data;
+				}else{
+					this.$message({message:msg,type:'warning'});
+				}
+			})
  		},
  		back(){
  			//返回的实现
@@ -211,7 +204,31 @@ export default {
 <style lang="less" scoped>
 	@import url("../../less/common.less");
 	#regist-main{
+		display:flex;
+		flex-direction:column;
+		justify-content:center;
+		align-items:center;
 		width:100%;
+		.regist-title{
+			width:100%;
+			position: relative;
+			background-color:#eee;
+			height:44px;
+			line-height:44px;
+			.back{
+				position:absolute;
+				margin-left:10px;
+				left:10px;
+				height:44px;
+				line-height:44px;
+				font-size:20px;
+			}
+			p{
+				text-align:center;
+			 	font-weight:bold;
+			 	margin:0;
+			}
+		}
 		.logo{
 			width:100%;
 			.flexRowCenter();
@@ -222,99 +239,38 @@ export default {
 				border-radius:50%;
 			}
 		}
-		.uname-box{
-			margin:50px auto;
-			height:100px;
-			p{
-				width:60px;
-				margin:0 5px; 
-				text-align:center;
-			}
-			width:100%;
-			.flexRowCenter();
-			.prompt-show{
-				color:@mallColor;
-				display:block;
-				width:100px;
-			}
-			.prompt-none{
-				display:none;
-				width:100px;
-			}
-			input{
-				width:150px;
-			}
-		}
-		.pwd-box{
-			margin:50px 0;
-			width:100%;
-			height:100px;
-			.flexRowCenter();
-			p{
-				width:60px;
-				margin:0 5px; 
-				text-align:center;
-			}
-			.pwdprompt-show{
-				color:@mallColor;
-				display:block;
-				width:100px;
-			}	
-			.pwdprompt-none{
-				display:none;
-				width:100px;
-			}
-			input{
-				width:150px;
+		.el-form{
+			margin:30px 0;
+			width:65%;
+			/deep/ .el-form-item{
+				.flexRowCenter();
+				.el-input{
+					width:280px;
+					margin:20px 0;
+				}
+				span{
+					margin-left:20px;
+					height:40px;
+					img{
+						height:40px;
+					}
+				}
+				/deep/ .el-form-item__content{
+					margin-left:0 !important;
+					.flexRowCenter();
+					p{
+						paddding:0;
+						margin:0;
+						margin-left:20px;
+						color:red;
+					}
+				}
 			}
 		}
-		.verification{
-			margin:50px 0;
-			.flexRowCenter();
-			p{
-				width:60px;
-				margin:0;
-				margin-right:10px;
-				text-align:center;
-			}
-			.veri-input{
-				width:100px;
-				margin-right:10px;
-			}
-			.ver-code{
-				display:inline-block;
-				width:60px;
-				height:30px;
-				background-color:#ccc;
-				text-align:center;
-				line-height:30px;
-			}
-			.verify-show{
-				color:@mallColor;
-				display:block;
-				width:100px;
-			}
-			.verify-none{
-				display:none;
-				width:100px;
-			}
-		}
-		.btn{
-			.flexRowCenter();
-			justify-content:space-around;
-			.login{
-				width:49%;
-				height:40px;
-				border:0;
-				border-radius:.6rem;
-				background-color:#FF8600
-			}
-			.regist{
-				width:49%;
-				height:40px;
-				border:0;
-				border-radius:.6rem;
-				background-color:#FF8600
+		.button{
+			width:65%;
+			.el-button{
+				width:100%;
 			}
 		}
 	}

@@ -1,11 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
-// 引入muse-ui
-import MuseUI from 'muse-ui';
 //引入elementUI部分组件
-import {Menu,Select,Option,Carousel,CarouselItem,Submenu,Upload,MenuItem,Dialog,Message,MessageBox,Pagination,Form,FormItem,Input,Cascader,Radio,Table,TableColumn,Container,Button,BreadcrumbItem,Breadcrumb,Header,Aside,Main,Footer,Row,Col,Icon,Dropdown,DropdownMenu,DropdownItem,} from 'element-ui';
-//引入muse-ui.css
-import 'muse-ui/dist/muse-ui.css';
+import {Menu,DatePicker,Switch,Select,Option,Carousel,CarouselItem,Submenu,Upload,MenuItem,Dialog,Message,MessageBox,Pagination,Form,FormItem,Input,Cascader,Radio,Table,TableColumn,Container,Button,BreadcrumbItem,Breadcrumb,Header,Aside,Main,Footer,Row,Col,Icon,Dropdown,DropdownMenu,DropdownItem,} from 'element-ui';
 //引入element-ui样式
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入router路由
@@ -16,14 +12,16 @@ import store from "./components/store/index.js";
 import myaxios from "@/assets/js/myaxios.js";
 //引入前台homeaxios插件
 import homeaxios from "@/assets/js/homeaxios.js";
+import '../style/iconfont.css';
 //注册myaxios插件
 Vue.use(myaxios);
 //注册homeaxios插件
 Vue.use(homeaxios);
-// 使用use方法引入muse-ui
-Vue.use(MuseUI);
-// 使用use方法引入NavMenu组件
+// 使用use方法引入muse-ui nav组件
+// 使用use方法引入element组件
 Vue.use(Menu);
+Vue.use(DatePicker);
+Vue.use(Switch);
 Vue.use(Carousel);
 Vue.use(CarouselItem);
 Vue.use(Pagination);

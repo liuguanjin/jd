@@ -39,15 +39,14 @@ export default{
 	popShop({commit}){
 		commit("moveShop");
 	},
-	//分类详情数据，需要改，不然刷新会丢失
-	classifyDetailData({commit},params){
-		commit("addData",params);
-	},
 	//如果localStorage中存在购物车信息，则替换state中的cartArr
 	replaceCartArr({commit},params){
 		commit("changeCartArr",params);
 	},
 	replaceCartDetail({commit},params){
 		commit("replaceCartDetail",params);
+	},
+	allSelect({commit},params){
+		commit("allSelect",params);
 	}
 }

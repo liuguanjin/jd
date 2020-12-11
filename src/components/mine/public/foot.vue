@@ -1,12 +1,14 @@
 <template>
   <div class="footprint">
   	<div class="head">
-		<mu-icon class="back" value="keyboard_backspace" @click="back"></mu-icon>
+  		<i class="el-icon-back back" @click="back"></i>
 		<p>足迹</p>
 	</div>
-  	<mu-col span="12" lg="4" sm="6">
-      <mu-date-input v-model="value3" :max-date="value1" label="选择日期" label-float full-width no-display></mu-date-input>
-    </mu-col>
+	<el-date-picker
+  	v-model="value3"
+  	type="date"
+  	placeholder="选择日期">
+	</el-date-picker>
     <div class="footprint-content">
     	<div class="content-detail" v-for="(item,index) in footDetail">
     		<p class="date">{{item.date}}</p>

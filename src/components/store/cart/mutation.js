@@ -59,23 +59,22 @@ export default{
 		return allChoose;
 	},
 	//总价的计算
-	calculate(state,obj){
+	calculate(state){
 		var total = 0;
 		var cartDetail = state.cartDetail;
-		if (obj) {
-			for(var i = 0;i < cartDetail.length;i ++){
-				state.cartDetail[i].shop_is_selected = obj;
+		for(var i = 0;i < cartDetail.length;i ++ ){
+			if (cartDetail[i].shop_is_selected) {
 				total += cartDetail[i].number * cartDetail[i].spec_goods.price;
-				state.cartDetail[i].goods.goods_is_selected = obj;
 			}
-		}else{
-			for(var i = 0;i < cartDetail.length;i ++){
-				state.cartDetail[i].shop_is_selected = obj;
-				state.cartDetail[i].goods.goods_is_selected = obj;
-			}
-			total = 0.00;
 		}
 		state.total = total;
+	},
+	allSelect(state,obj){
+		var cartDetail = state.cartDetail;
+		for(var i = 0;i < cartDetail.length;i ++){
+			state.cartDetail[i].shop_is_selected = obj;
+			state.cartDetail[i].goods.goods_is_selected = obj;
+		}
 	},
 	//商品+1的计算
 	delNum(state,obj){
@@ -110,10 +109,6 @@ export default{
 		}
 		state.cartArr = cartArr;
 		state.total = 0;
-	},
-	//分类详情数据
-	addData(state,obj){
-		state.classifyData = obj;
 	},
 	//如果localStorage中存在购物车信息，则替换state中的cartArr
 	changeCartArr(state,obj){

@@ -7,8 +7,8 @@
     				<p>{{nickname}}</p>
           </div>
 	  			<div class="iconbox">
-	  				<mu-icon value="perm_identity"></mu-icon>
-            <mu-icon value="settings" @click="toSetting"></mu-icon>
+            <i class="el-icon-user"></i>
+            <i class="el-icon-s-tools" @click="toSetting(id)"></i>
 	  			</div>
   			</div>
   			<div  class="head-bottom">
@@ -37,23 +37,23 @@
   			</div>
   			<div class="order-detail">
   				<div class="nopay">
-  					<mu-icon value=":iconfont icon-daifukuan"></mu-icon>
+            <i class="el-icon-jddaifukuan icon"></i>
   					<p>待付款</p>
   				</div>
   				<div class="nosend">
-  					<mu-icon value=":iconfont icon-daifahuo"></mu-icon>
+            <i class="el-icon-jddaifahuo icon"></i>
   					<p>待发货</p>
   				</div>
   				<div class="noaccept">
-  					<mu-icon value=":iconfont icon-daishouhuo"></mu-icon>
+            <i class="el-icon-jddaishouhuo icon"></i>
   					<p>待收货</p>
   				</div>
   				<div class="noevaluate">
-  					<mu-icon value=":iconfont icon-weibiaoti527"></mu-icon>
+            <i class="el-icon-jdweibiaoti527 icon"></i>
   					<p>评价</p>
   				</div>
   				<div class="refund">
-  					<mu-icon value=":iconfont icon-shouhou"></mu-icon>
+            <i class="el-icon-jdshouhou icon"></i>
   					<p>退款/售后</p>
   				</div>
   			</div>
@@ -65,32 +65,32 @@
   			</div>
   			<div class="tool-detail">
   				<div class="cash">
-					   <mu-icon value=":iconfont icon-fanli"></mu-icon>
-					   <p>每日返现</p>
+            <i class="el-icon-jdfanli icon"></i>
+				    <p>每日返现</p>
 				  </div>
 				  <div class="ticket">
-					   <mu-icon value=":iconfont icon-qian1"></mu-icon>
-					   <p>领劵中心</p>
+            <i class="el-icon-jdqian1 icon"></i>
+				    <p>领劵中心</p>
 				  </div>
 				  <div class="change">
-					   <mu-icon value=":iconfont icon--exchange"></mu-icon>
-					   <p>闲置换钱</p>
+            <i class="el-icon-jd-exchange icon"></i>
+				    <p>闲置换钱</p>
 				  </div>
 				  <div class="service">
-					   <mu-icon value=":iconfont icon-kefu"></mu-icon>
-					   <p>客服小蜜</p>
+            <i class="el-icon-jdkefu icon"></i>
+				    <p>客服小蜜</p>
 				  </div>
 				  <div class="huabei">
-					   <mu-icon value=":iconfont icon-huabei"></mu-icon>
-					   <p>花呗</p>
+            <i class="el-icon-jdhuabei icon"></i>
+				    <p>花呗</p>
 				  </div>
 				  <div class="cainiao">
-					   <mu-icon value=":iconfont icon-logo"></mu-icon>
-					   <p>菜鸟驿站</p>
+            <i class="el-icon-jdlogo icon"></i>
+				    <p>菜鸟驿站</p>
 				  </div>
 				  <div class="more">
-					   <mu-icon value=":iconfont icon-gengduo"></mu-icon>
-					   <p>更多</p>
+            <i class="el-icon-jdgengduo icon"></i>
+				    <p>更多</p>
 				  </div>
   			</div>
   		</div>
@@ -103,14 +103,15 @@ import axios from "axios";
 import qs from "qs";
 export default {
   mounted(){
-    
+
   },
   data(){
     return{
         avatar:"https://person-use.oss-cn-shenzhen.aliyuncs.com/images/mine-head/1.jpg",
         nickname:"请先设置昵称",
         followNum:0,
-        couponNum:0
+        couponNum:0,
+        id:0
     }
   },
   computed:{
@@ -120,6 +121,13 @@ export default {
     })
   },
   created(){
+    this.id = this.$route.query.id;
+    var userinfo = localStorage.getItem('userinfo');
+    if (userinfo == '' || userinfo === undefined || userinfo === null) {
+      this.$router.push('/mine');
+    }else{
+      this.id = JSON.parse(userinfo).user_id;
+    }
     this.carculate(true);
     this.shopNumTotal();
   },
@@ -129,7 +137,7 @@ export default {
       shopNumTotal:"totalShopNum"
     }),
     toSetting(){
-      this.$router.push("/setting");
+      this.$router.push({name:'setting',query:{id:this.id}});
     },
     toCollect(){
       this.$router.push("/collect");
@@ -175,6 +183,8 @@ export default {
               }
               .iconbox{
                    margin-top:-20px;
+                   margin-right:20px;
+                   font-size:20px;
               }
           }
           .head-bottom{
@@ -212,7 +222,7 @@ export default {
               div{
                   width:25%;
                   .flexColumnCenter();
-                  .mu-icon{
+                  .icon{
                       font-size:30px;
                       color:#FF5C00;
                       font-weight:800;
@@ -240,7 +250,7 @@ export default {
                   margin:20px 0;
                   width:25%;
                   .flexColumnCenter();
-                  .mu-icon{
+                  .icon{
                     font-size:30px;
                     font-weight:800;
                   }
@@ -249,37 +259,37 @@ export default {
                   }
               }
               .cash{
-                  .mu-icon{
+                  .icon{
                     color:#FC2B26;
                   }
               }
               .ticket{
-                 .mu-icon{
+                 .icon{
                       color:#FFA009;
                   }
               }
               .change{
-                  .mu-icon{
+                  .icon{
                       color:#F61C24;
                   }
               }
               .service{
-                  .mu-icon{
+                  .icon{
                       color:#FEB623;
                   }
               }
               .huabei{
-                  .mu-icon{
+                  .icon{
                       color:#38ABFA;
                   }
               }
               .cainiao{
-                  .mu-icon{
+                  .icon{
                       color:#039EFC;
                   }
               }
               .more{
-                  .mu-icon{
+                  .icon{
                       color:gray;
                   }
               }

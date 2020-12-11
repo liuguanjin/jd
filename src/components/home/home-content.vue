@@ -74,7 +74,7 @@ export default {
 			}
 			p.title:hover{
 				cursor:pointer;
-				color:pink;
+				color:#FF4400;
 			}
 			.title{
 				font-size:@textSize;
@@ -113,7 +113,7 @@ export default {
 				p.shop_name:hover{
 					cursor:pointer;
 					text-decoration:underline;
-					color:pink;
+					color:#FF4400;
 				}
 			}
 		}

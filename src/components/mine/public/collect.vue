@@ -1,7 +1,7 @@
 <template>
   <div class="collect">
   	<div class="header">
-  		<mu-icon class="back" value="keyboard_backspace" @click="back"></mu-icon>
+  		<i class="el-icon-back back" @click="back"></i>
   		<p>收藏夹</p>
   	</div>
   	<div class="collect-content">
@@ -66,6 +66,9 @@ export default {
 			p{
 				margin:0 auto;
 				font-size:15px;
+			}
+			.back{
+				margin-left:10px;
 			}
 		}
 		.collect-content{

@@ -2,7 +2,7 @@
   <div class="mine">
     <!-- 个人中心头部 -->
   	<div class="mine-title">
-  		<mu-icon class="back" value="keyboard_backspace" @click="back"></mu-icon>
+      <i class="el-icon-back back" @click="back"></i>
       <p>您需要登录才能继续访问</p>
     </div>
     <!-- 个人中心内容 -->
@@ -30,14 +30,26 @@ export default {
 
 <style lang="less" scoped>
   @import url("../less/common.less");
-  .mine-title{
-    margin:0;
-    background-color:#eee;
-    .flexRowCenter();
-    p{
-      margin-left:10px;
-      font-weight:bold;
-      font-size:15px;
+  .mine{
+    margin-bottom:60px;
+    .mine-title{
+      position: relative;
+      background-color:#eee;
+      height:44px;
+      line-height:44px;
+      p{
+        text-align:center;
+        font-weight:bold;
+        margin:0;
+      }
+      .back{
+        position:absolute;
+        margin-left:10px;
+        left:10px;
+        height:44px;
+        line-height:44px;
+        font-size:20px;
+      }
     }
   }
 </style>

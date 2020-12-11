@@ -86,7 +86,7 @@
 		  			<div class="cart-show" @click="goToCart">
 		  				<i class="el-icon-shopping-cart-2"></i>
 		  				<p>购物车</p>
-		  				<i :class="cartNum==0?'none':'cartnumshow'">{{cartNum}}</i>
+		  				<i :class="cartNum===0?'none':'cartnumshow'">{{cartNum}}</i>
 		  			</div>
 		  		</div>
 		  		<div class="foot-button">
@@ -348,7 +348,7 @@ export default {
 	addToCart(id,number){
 		var goodsNotInArr = true;
 		var userinfo = JSON.parse(localStorage.getItem('userinfo'));
-		var user_id = userinfo.user_id;
+		var user_id = userinfo ? userinfo.user_id : 0;
 		for(var i = 0;i < this.arr.length;i ++ ){
 			if (this.arr[i].spec_goods_id == this.spec_goods_id && this.arr[i].goods_id == id) {
 				this.arr[i].number += number;
@@ -357,6 +357,9 @@ export default {
 			}
 		}
 		if (goodsNotInArr) {
+			if (typeof(this.arr) == 'string' ) {
+				this.arr = [];
+			}
 			this.arr.push({user_id:user_id,goods_id:id,spec_goods_id:this.spec_goods_id,shop_is_selected:1,goods_is_selected:1,number:number});
 		}
 		this.$homehttp({
@@ -376,7 +379,7 @@ export default {
  				this.$message({message:msg,type:'warning'});
  			}
  		})
-		this.calculate(true);
+		this.calculate();
 		this.isShowSuccess = true;
 		setTimeout(()=>{
 			this.isShowSuccess = false;
@@ -397,10 +400,11 @@ export default {
 		background-color:rgba(0,0,0,0.7);
 		border:1px solid rgba(255,255,255,0.7);
 		position:absolute;
-		top:50%;
+		top:70%;
 		left:50%;
 		margin-left:-50px;
 		margin-top:-50px;
+		z-index: 101;
 		.flexColumnCenter();
 		justify-content:center;
 		p{
@@ -422,7 +426,7 @@ export default {
 		background-color:rgba(0,0,0,0.7);
 		border:1px solid rgba(255,255,255,0.7);
 		position:absolute;
-		top:50%;
+		top:70%;
 		left:50%;
 		margin-left:-50px;
 		margin-top:-50px;
@@ -447,7 +451,7 @@ export default {
 		background-color:rgba(0,0,0,0.7);
 		border:1px solid rgba(255,255,255,0.7);
 		position:absolute;
-		top:50%;
+		top:70%;
 		left:50%;
 		margin-left:-50px;
 		margin-top:-50px;
@@ -472,7 +476,7 @@ export default {
 		background-color:rgba(0,0,0,0.7);
 		border:1px solid rgba(255,255,255,0.7);
 		position:absolute;
-		top:50%;
+		top:70%;
 		left:50%;
 		margin-left:-50px;
 		margin-top:-50px;

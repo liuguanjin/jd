@@ -2,7 +2,7 @@
 	<!-- 后台登录界面 -->
 	<div id="admin-login">
 		<div class="tips">
-			<mu-icon class="back" value="keyboard_backspace" @click="toHomeLogin"></mu-icon>
+			<i class="el-icon-back back" @click="toHomeLogin"></i>
 	        <p>您需要登录才能继续访问</p>
 		</div>
 		<!-- 登录界面logo -->
@@ -24,10 +24,12 @@
 			    </el-input>
 			    <span class="ver-code" @click="generateVerify"><img :src="verify.src" alt="正在加载"></span>
 		  	</el-form-item>
-		    	<el-button type="primary" @click="login">登录</el-button>
-			    <el-button @click="regist">注册</el-button>
 		  	</el-form-item>
 		</el-form>
+		<div class="button">
+			<el-button type="primary" @click="login">登录</el-button>
+		    <el-button type="success" @click="regist">注册</el-button>
+		</div>
 	</div>
 </template>
 
@@ -137,16 +139,29 @@ export default {
 <style lang="less" scoped>
 	@import url("../less/common.less");
 	#admin-login{
-
+		display:flex;
+		flex-direction:column;
+		justify-content:center;
+		align-items:center;
 		width:100%;
 		.tips{
-			margin:0;
-		    background-color:#eee;
-		    .flexRowCenter();
+			width:100%;
+			position: relative;
+			background-color:#eee;
+			height:44px;
+			line-height:44px;
 		    p{
-		        margin-left:10px;
-			    font-weight:bold;
-			    font-size:15px;
+		        text-align:center;
+			 	font-weight:bold;
+			 	margin:0;
+		    }
+		    .back{
+		    	position:absolute;
+				margin-left:10px;
+				left:10px;
+				height:44px;
+				line-height:44px;
+				font-size:20px;
 		    }
 		}
 		.logo{
@@ -160,10 +175,13 @@ export default {
 			}
 		}
 		.el-form{
+			margin:30px 0;
+			width:65%;
 			/deep/ .el-form-item{
 				.flexRowCenter();
 				.el-input{
-					width:200px;
+					width:280px;
+					margin:20px 0;
 				}
 				span{
 					margin-left:20px;
@@ -182,6 +200,12 @@ export default {
 						color:red;
 					}
 				}
+			}
+		}
+		.button{
+			width:65%;
+			.el-button{
+				width:48%;
 			}
 		}
 	}

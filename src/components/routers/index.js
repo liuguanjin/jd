@@ -8,6 +8,8 @@ import Home from "@/components/home/home.vue";
 import Classify from "@/components/classify/classify.vue";
 //前台购物车界面
 import Cart from "@/components/cart/cart.vue";
+//前台结算界面
+import Balance from '@/components/cart/cart-content/balance.vue';
 //前台我的界面
 import Mine from "@/components/mine/mine.vue";
 //前台商品详情界面
@@ -103,17 +105,24 @@ import Paymanager from '@/components/admin/shop/pay_manager.vue';
 import StoreList from '@/components/admin/shop/store_list.vue';
 //后台管理界面
 import Operator from '@/components/admin/operator.vue';
+//个人中心收货地址界面
+import Address from '@/components/mine/public/address.vue';
+//个人中心添加收货地址界面
+import AddAddress from '@/components/mine/public/addAddress.vue';
+//个人中心编辑收货地址界面
+import EditAddress from '@/components/mine/public/editAddress.vue';
 //配置routes
 var routes = [
 	{path:"/home",component:Home,meta:{title:"商城首页",keepAlive:true}},
 	{path:"/classify",component:Classify,meta:{title:"商城分类",keepAlive:true}},
 	{path:"/cart",component:Cart,meta:{title:"购物车",keepAlive:false}},
+	{path:"/balance",component:Balance,name:'balance',meta:{title:"结算",keepAlive:false}},
 	{path:"/mine",component:Mine,meta:{title:"个人中心",keepAlive:false}},
 	{path:"/detail",component:Detail,name:"detail",meta:{title:"商品详情",keepAlive:false}},
 	{path:"/shopdetail",component:ShopDetail,name:"shopDetail",meta:{title:"店铺详情",keepAlive:false}},
 	{path:"/regist",component:Regist,meta:{title:"注册",keepAlive:false}},
 	{path:"/regses",component:Registsuccess,meta:{title:"注册成功",keepAlive:false}},
-	{path:"/logsuc",component:LoginSuccess,meta:{title:"个人中心",keepAlive:true}},
+	{path:"/logsuc",component:LoginSuccess,name:"logsuc",meta:{title:"个人中心",keepAlive:false}},
 	{path:"/supermarket",component:Supermarket,meta:{title:"京东超市",keepAlive:true}},
 	{path:"/digit",component:Digit,meta:{title:"数码电器",keepAlive:true}},
 	{path:"/clothes",component:Clothes,meta:{title:"京东服饰",keepAlive:true}},
@@ -124,7 +133,10 @@ var routes = [
 	{path:"/lingquan",component:Lingquan,meta:{title:"领券",keepAlive:true}},
 	{path:"/zhuangqian",component:Zhuangqian,meta:{title:"赚钱",keepAlive:true}},
 	{path:"/vip",component:Vip,meta:{title:"PLUS会员",keepAlive:true}},
-	{path:"/setting",component:Setting,meta:{title:"设置",keepAlive:false}},
+	{path:"/setting",component:Setting,name:"setting",meta:{title:"设置",keepAlive:false}},
+	{path:"/address",component:Address,name:"address",meta:{title:"我的收货地址",keepAlive:false}},
+	{path:"/addaddress",component:AddAddress,name:"addAddress",meta:{title:"添加收货地址",keepAlive:false}},
+	{path:"/editaddress",component:EditAddress,name:"editAddress",meta:{title:"编辑收货地址",keepAlive:false}},
 	{path:"/collect",component:Collect,meta:{title:"收藏夹",keepAlive:false}},
 	{path:"/adminLogin",component:AdminLogin,meta:{title:"登录后台",keepAlive:false}},
 	{path:"/admin",component:Admin,meta:{title:"后台管理",keepAlive:false},
@@ -172,7 +184,7 @@ var routes = [
 		]
 	},
 	{path:"/foot",component:Foot,meta:{title:"足迹",keepAlive:false}},
-	{path:"/classify-detail",component:classifyDetail,meta:{title:"分类详情",keepAlive:false}},
+	{path:"/classify-detail",name:'classify-detail',component:classifyDetail,meta:{title:"分类详情",keepAlive:false}},
 	{path:"/",redirect:"/home"}
 ];
 // router对象实例化

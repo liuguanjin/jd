@@ -1,7 +1,7 @@
 <template>
   	<div class="setting">
   		<div class="head">
-			<mu-icon class="back" value="keyboard_backspace" @click="back"></mu-icon>
+  			<i class="el-icon-back back" @click="back"></i>
       		<p>设置</p>
   		</div>
   		<div class="avatar">
@@ -11,7 +11,7 @@
   			</div>
 			<p class="enter">></p>
   		</div>
-  		<div class="address">
+  		<div class="address" @click="toAddress">
   			<p>我的收货地址</p>
 			<p class="enter">></p>
   		</div>
@@ -66,8 +66,12 @@ export default {
 	 	return{
 	 		avatar:"https://person-use.oss-cn-shenzhen.aliyuncs.com/images/mine-head/1.jpg",
 	 		nickname:"请先设置昵称",
-	 		show:false
+	 		show:false,
+	 		id:0,
 	 	}
+ 	},
+ 	created(){
+ 		this.id = this.$route.query.id;
  	},
  	methods:{
 	 	back(){
@@ -90,6 +94,9 @@ export default {
 					this.$message({message:result.data.msg,type:'warning'});
 				}
 			})
+	 	},
+	 	toAddress(){
+	 		this.$router.push({name:'address',query:{id:this.id}});
 	 	}
  	}
 }
@@ -114,14 +121,23 @@ export default {
 			}
 		}
 		.head{
-			background-color:#eee;
-			justify-content:flex-start;
-			height:30px;
-			line-height:30px;
-			p{
-				margin:0 auto;
-				font-size:15px;
-			}
+			position: relative;
+	      	background-color:#eee;
+	      	height:44px;
+	      	line-height:44px;
+	      	display:inherit;
+	      	.back{
+	      		position:absolute;
+	      		left:20px;
+	      		height:44px;
+        		line-height:44px;
+        		font-size:20px;
+	      	}
+      	 	p{
+		        text-align:center;
+		        font-weight:bold;
+		        margin:0;
+      		}
 		}
 		.showleave{
 			width:100%;

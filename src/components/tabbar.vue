@@ -1,20 +1,38 @@
 <template>
 	<div class="tabbar" v-if="isShowTabbar">
-		<mu-container>
-  			<mu-bottom-nav>
-		    	<mu-bottom-nav-item title="首页" icon="home" to="/home"></mu-bottom-nav-item>
-		    	<mu-bottom-nav-item title="分类" icon="classify" to="/classify"></mu-bottom-nav-item>
-		    	<mu-bottom-nav-item title="购物车" icon="shopping_cart" to="/cart"></mu-bottom-nav-item>
-		    	<mu-bottom-nav-item title="个人中心" icon="person_center" to="/mine"></mu-bottom-nav-item>
-		  	</mu-bottom-nav>
-		</mu-container>
+		<el-menu 
+		background-color="white" 
+		active-text-color="#F4AF60" 
+		router 
+		:default-active='activeIndex'
+		class="el-menu-demo" 
+		mode="horizontal"
+		>
+			<el-menu-item index="home">
+				<i class="el-icon-s-home"></i>
+				<span slot="title">首页</span>
+			</el-menu-item>
+			<el-menu-item index="classify">
+				<i class="el-icon-menu"></i>
+				<span slot="title">分类</span>
+			</el-menu-item>
+			<el-menu-item index="cart">
+				<i class="el-icon-shopping-cart-2"></i>
+				<span slot="title">购物车</span>
+			</el-menu-item>
+			<el-menu-item index="logsuc">
+				<i class="el-icon-user"></i>
+				<span slot="title">个人中心</span>
+			</el-menu-item>
+		</el-menu> 
 	</div>
 </template>
 <script>
 export default{
 	data(){
 		return{
-			isShowTabbar:true
+			isShowTabbar:true,
+			activeIndex:'home',
 		}
 	},
 	watch:{
@@ -37,37 +55,15 @@ export default{
 </script>
 <style lang="less" scoped>
 	.tabbar{
-		z-index:2;
 		width:100%;
 		max-width:800px;
+		opacity: 0.9;
+		z-index: 2;
 		position:fixed;
 		bottom:0;
-		margin:0 auto;
-		.container{
-			padding:0;
-			width:inherit;
-			.mu-bottom-nav{
-				margin:0;
-				width:inherit;
-				.mu-bottom-nav-shift-wrapper{
-					width:inherit;
-					.mu-bottom-item-active{
-					    padding-top: 6px;
-					    padding-bottom: 0px;
-					    color: inherit;
-					    .mu-bottom-item-wrapper{
-					    	.mu-bottom-item-text{
-					    		font-size:12px;
-					    	}
-					    }
-					}
-					.active{
-					    padding-top: 6px;
-					    padding-bottom: 5px;
-					    color: #2196f3;
-					}
-				}
-			}
+		li{
+			width:25%;
+			text-align:center;
 		}
 	}
 </style>

@@ -4,18 +4,18 @@
 		<div class="head-box">
 			<!-- 返回图标 -->
 			<div class="back-box" @click="back">
-				<mu-icon class="back" value="keyboard_backspace" color="#9e9e9e"></mu-icon>
+				<i class="el-icon-back back" @click="back" color="#9e9e9e"></i>
 			</div>
 			<!-- 搜索框 -->
 			<div class="search-box">
 				<div class="box">
-					<mu-icon class="search-icon" value="search" color="#9e9e9e"></mu-icon>
+					<i class="el-icon-search search-icon" color="#9e9e9e"></i>
 					<input type="text" class="search" @focus="focus" @blur="blur" placeholder="华为手机">
 				</div>
 			</div>
 			<!-- 搜索按钮 -->
 			<div class="search-text" v-show="isFcous">
-				<mu-button color="error">搜索</mu-button>
+				<el-button type="danger">搜索</el-button>
 			</div>
 		</div>
 	</div>
@@ -64,10 +64,10 @@ export default{
 			.back-box{
 				width:10%;
 				position:absolute;
-				top:(@navHeight - @iconSize)/2;
+				top:(@navHeight - @iconSize)/2+6px;
 				left:@commonMargin;
 				.back{
-					font-size:@searchHeight;
+					font-size:@iconSize;
 				}
 			}
 			.search-box{
@@ -80,7 +80,7 @@ export default{
 				}
 				.search-icon{
 					position:absolute;
-					top:(@navHeight - @iconSize)/2-8px;
+					top:(@navHeight - @iconSize)/2-3px;
 					left:@commonMargin;
 				}
 				.search{
@@ -105,7 +105,7 @@ export default{
 				position:absolute;
 				top:(@navHeight - @iconSize)/2;
 				left:73%;
-				.mu-button{
+				.el-button{
 					min-width:60px;
 					width:100%;
 					height:@searchHeight;

@@ -32,10 +32,11 @@ export default {
       replaceCollectNum:"replaceCollectNum",
       replaceFootprintArr:"replaceFootprintArr",
       replaceFootprinttNum:"replaceFootprinttNum",
+      calculate:"calculateAllMoney"
     }),
     beforeLoad(e){
       var userinfo = localStorage.getItem('userinfo');
-      if (userinfo != '' && userinfo != undefined) {
+      if (userinfo != '' && userinfo != undefined && userinfo != null) {
         userinfo = JSON.parse(userinfo)
         var user_id = userinfo.user_id;
         this.$homehttp({
@@ -65,7 +66,7 @@ export default {
     },
     getData(){
       var userinfo = localStorage.getItem('userinfo');
-      if (userinfo != '' && userinfo != undefined) {
+      if (userinfo != '' && userinfo != undefined && userinfo != null) {
         userinfo = JSON.parse(userinfo)
         var user_id = userinfo.user_id;
         this.$homehttp({
@@ -74,6 +75,7 @@ export default {
           const {code,msg,data} = result.data;
           if (code == 200) {
             this.replaceCartArr(data);
+            this.calculate();
           }else{
             this.$message({message:'服务器异常',type:'warning'});
           }

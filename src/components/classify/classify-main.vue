@@ -1,27 +1,39 @@
 <template>
 	<!-- 分类页面的内容 -->
-	<div class="classify-main" v-show="isShow">
+	<div class="classify-main" v-if="isShow">
 		<!-- 左侧内容 -->
 		<div class="left-content">
 			<ul class="content">
 				<li 
-				v-for="(item,index) in list"
+				v-for="(item,index) in category_one"
 				:key="index"
-				@click="lsitClick(index)"
+				@click="categoryOneClick(item.id,index)"
 				:class="index === active?'active':''"
 				>
-					{{item.bigList}}
+					{{item.cate_name}}
 				</li>
 			</ul>
 		</div>
 		<!-- 右侧详情 -->
-		<div class="detail-content" v-for="(item,index) in list" v-show="index === active" :key="index">
-			 <div v-for="(item,index) in item.detail" class="content-classify"">
-			 	<h4>{{item.list}}</h4>
+		<div class="detail-content" v-if="isShowRight">
+			 <div  
+			 v-for="(item1,index1) in category_two"  
+			 :key="index1" 
+			 class="content-classify""
+			 >
+			 	<h4>{{item1.cate_name}}</h4>
 			 	<ul class="content-detail">
-			 		<li v-for="(item1,index1) in item.li" class="content-li"  @click="toClassifyDetail(item1.shopDetail)">
-			 			<img :src="item1.imgSrc" alt="">
-			 			<p>{{item1.text}}</p>
+			 		<li 
+			 		v-for="(item2,index2) in category_three[index1]" 
+			 		:key="index2" 
+			 		class="content-li"  
+			 		@click="toClassifyDetail(item2.id)"
+			 		>
+			 			<img 
+			 			:src="'http://adminapi.lgj.com'+item2.image_url" 
+			 			alt="正在加载"
+			 			>
+			 			<p>{{item2.cate_name}}</p>
 			 		</li>
 			 	</ul>
 			 </div>
@@ -30,35 +42,72 @@
 </template>
 
 <script>
-import axios from "axios";
-import {mapActions} from "vuex";
 export default{
 	data(){
 		return{
-			list:[],
-			active:0
+			category_one:[],
+			category_two:[],
+			category_three:[],
+			active:0,
+			isShowRight:false,
 		}
 	},
 	created(){
-		this.getClassifyContent();
+		this.getCategoryOne();
+		this.getCategoryTwo(1);
 	},
 	methods:{
-		...mapActions({
-			enterClassiyDetail:"classifyDetailData"
-		}),
-		getClassifyContent(){
-			// 通过axios获取分类页面的数据
-			axios.get("https://person-use.oss-cn-shenzhen.aliyuncs.com/json/classify-content2.json").then(response=>{
- 				this.list = response.data;
- 			})
+		getCategoryOne(){
+			this.$homehttp({
+				url:'category/0'
+			}).then(result=>{
+				const {code,msg,data} = result.data;
+				if (code == 200) {
+					this.category_one = data;
+				}else{
+					this.$message({message:msg,type:'warning'})
+				}
+			})
 		},
-		lsitClick(index){
+		getCategoryTwo(id){
+			this.$homehttp({
+				url:'category/'+id
+			}).then(result=>{
+				const {code,msg,data} = result.data;
+				if (code == 200) {
+					this.category_two = data;
+					for(var i = 0;i < data.length;i ++ ){
+						((i)=>{
+							//获取三级分类
+							this.$homehttp({
+								url:'category/'+data[i].id
+							}).then(result1=>{
+								const {code,msg,data} = result1.data;
+								if (code == 200) {
+									this.category_three[i] = new Array();
+									this.category_three[i] = data;
+									this.isShowRight = true;
+								}else{
+									this.$message({message:msg,type:'warning'});
+								}
+							})
+						})(i)
+					}
+				}else{
+					this.$message({message:msg,type:'warning'});
+				}
+			})
+		},
+		categoryOneClick(id,index){
 			//将active值修改为左侧点击的具体index
 			this.active = index;
+			//获取二级分类
+			this.category_two = [];
+			this.category_three = [];
+			this.getCategoryTwo(id);
 		},
-		toClassifyDetail(arr){
-			this.enterClassiyDetail(arr);
-			this.$router.push("/classify-detail");
+		toClassifyDetail(id){
+			this.$router.push({name:'classify-detail',query:{id:id}});
 		}
 	},
 	props:["isShow"]
@@ -78,22 +127,25 @@ export default{
 	height:100%;
 	.left-content{
 		background-color:#eee;
-		flex:2;
+		flex:1;
 		.content{
 			height:100%;
 			li{
-				height:40px;
+				height:60px;
 				.titleStyle(#000,@textSize,center);
-				line-height:40px;
+				line-height:60px;
+				cursor: pointer;
+				-webkit-tap-highlight-color: transparent;
 			}
 			.active{
-				background-color:#fff;
+				background-color:white;
 				color:#e93b3d;
 			}
 		}
 	}
 	.detail-content{
-		background-color:#eee;
+		background-color:white;
+		margin-left:5px;
 		flex:6;
 		.content-classify{
 			h4{
@@ -109,7 +161,7 @@ export default{
 				li{
 					margin-right:2%;
 					width:30%;
-					background-color:#fff;
+					background-color:white;
 					border-radius:8px;
 					margin-bottom:5px;
 					img{
