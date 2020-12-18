@@ -1,7 +1,7 @@
 <template>
   <div class="shop_detail">
   	<div class="shop_header">
-  		<div class="shop_message">
+  		<div class="header_left">
   			<div class="img">
   				<img :src="'http://adminapi.lgj.com'+shopDetail.shop_logo" alt="">
   			</div>
@@ -10,33 +10,54 @@
   				<div class="star">
   					<span>店铺星级</span>
   					<div class="scope">
-  						<i class="el-icon-star-on"></i>
-  						<i class="el-icon-star-on"></i>
-  						<i class="el-icon-star-on"></i>
-  						<i class="el-icon-star-on"></i>
-  						<i class="el-icon-star-on"></i>
+  						<el-rate
+					  	v-model="value"
+				 	 	disabled
+					  	show-score
+					  	text-color="#ff9900"
+					  	score-template="{value}"
+					  	>
+						</el-rate>
   					</div>
   				</div>	
   			</div>
   		</div>
   		<div class="header_right">
   			<div class="collect">
-  				<div class="collect-button">
-			 		<el-button type="danger" icon="el-icon-star-on" round>收藏</el-button>
+  				<div class="collect-button" v-if="isCollect">
+			 		<el-button 
+			 		type="danger" 
+			 		icon="el-icon-star-on" 
+			 		round
+			 		@click="collectShop(shopDetail.id)"
+			 		>
+			 			收藏
+			 		</el-button>
+			 		
+  				</div>
+  				<div class="collect-button" v-else>
+  					<el-button 
+			 		type="danger" 
+			 		icon="el-icon-star-on" 
+			 		round
+			 		@click="cancelCollectShop(shopDetail.id)"
+			 		>
+			 			已收藏
+			 		</el-button>
   				</div>
 	  			<div class="collect-allnumer">
-	  				xxx名用户已收藏
+	  				{{shopDetail.collect}}名用户已收藏
 	  			</div>
   			</div>
   			<div class="more">
-  				<el-dropdown trigger="click">
+  				<el-dropdown trigger="click" @command="handleCommand">
 					<i class="el-icon-more"></i>
 			      	<el-dropdown-menu slot="dropdown">
-			        	<el-dropdown-item icon="el-icon-s-home">首页</el-dropdown-item>
-			        	<el-dropdown-item icon="el-icon-search">分类搜索</el-dropdown-item>
-			        	<el-dropdown-item icon="el-icon-shopping-cart-2">购物车</el-dropdown-item>
-			        	<el-dropdown-item icon="el-icon-user">个人中心</el-dropdown-item>
-			        	<el-dropdown-item icon="el-icon-s-data">足迹</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-s-home" command="home">首页</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-search" command="classify">分类搜索</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-shopping-cart-2" command="cart">购物车</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-user" command="mine">个人中心</el-dropdown-item>
+			        	<el-dropdown-item icon="el-icon-s-data" command="foot">足迹</el-dropdown-item>
 			      	</el-dropdown-menu>
 			    </el-dropdown>
   			</div>
@@ -54,6 +75,7 @@
 </template>
 
 <script>
+	var userinfo = JSON.parse(localStorage.getItem('userinfo'));
 	import myHead from "../common/head.vue";
 	export default {
 		data(){
@@ -64,17 +86,41 @@
 					shop_name:"",
 					goods:[
 
-					]
-				}
+					],
+				},
+				value:4.5,
+				//该用户下已收藏的店铺
+				shopCollectArr:[],
+				isCollect:true
 			}
 		},
 		created(){
 			this.id = this.$route.query.id;
-		},
-		mounted(){
 			this.getShopDetail();
+			this.getCollectShopArr();
+			
 		},
 		methods:{
+			//点击···更多时的跳转
+			handleCommand(command){
+				switch(command){
+					case 'foot':
+						this.$router.push('/foot')
+						break;
+					case 'classify':
+						this.$router.push('/classify')
+						break;
+					case 'cart':
+						this.$router.push('/cart')
+						break;
+					case 'mine':
+						this.$router.push('/mine')
+						break;
+					default:
+						this.$router.push('/home')
+				}
+			},
+			//获取该店铺的详情
 			getShopDetail(){
 				this.$homehttp({
 					url:'shopdetail/'+this.id
@@ -82,17 +128,90 @@
 					const {code,msg,data} = result.data;
 					if (code == 200) {
 						this.shopDetail = data;
+						this.value = parseFloat((data.score/data.score_people).toFixed(1));
 					}else{
 						this.$message({message:msg,type:'warning'});
 					}
 				})
 			},
+			//返回上一个界面
 			back(){
 				this.$router.go(-1);
 			},
+			//进入商品详情界面
 			enterDetail(id){
 	 			// 进入商品详情界面
 	 			this.$router.push({name:"detail",query:{id:id}});
+ 			},
+ 			//获取该用户已收藏的店铺列表
+ 			getCollectShopArr(){
+ 				if (userinfo != '' && userinfo != undefined && userinfo != null) {
+					var user_id = userinfo.user_id;
+	 				this.$homehttp({
+	 					url:'collect-shop?user_id='+user_id
+	 				}).then(result=>{
+	 					const {code,msg,data} = result.data;
+	 					if (code == 200) {
+	 						this.shopCollectArr = data.shop_ids;
+	 						if(this.shopCollectArr.includes(this.id.toString())){
+								this.isCollect = false;
+							}
+	 					}else{
+
+	 					}
+	 				})
+ 				}
+ 			},
+ 			//收藏店铺
+ 			collectShop(id){
+ 				if (userinfo == '' || userinfo ==undefined || userinfo == null) {
+ 					this.$message({message:'请先登录',type:'warning'});
+ 				}else{
+ 					var user_id = userinfo.user_id;
+	 				this.shopDetail.collect += 1;
+	 				this.shopDetail.user_id = user_id;
+	 				this.shopCollectArr.push(id.toString());
+	 				this.shopDetail.shop_ids = this.shopCollectArr;
+	 				this.$homehttp({
+	 					url:'collect-shop/'+id,
+	 					method:'put',
+	 					data:this.shopDetail
+	 				}).then(result=>{
+	 					const {code,msg,data} = result.data;
+	 					if (code == 200) {
+	 						this.$message({message:'收藏成功',type:'success'});
+	 						this.isCollect = false;
+	 					}
+	 				})
+ 				}
+ 				console.log(this.shopDetail);
+ 			},
+ 			//取消收藏
+ 			cancelCollectShop(id){
+ 				if (userinfo == '' || userinfo ==undefined || userinfo == null) {
+ 					this.$message({message:'请先登录',type:'warning'});
+ 				}else{
+ 					var user_id = userinfo.user_id;
+	 				this.shopDetail.collect -= 1;
+	 				this.shopDetail.user_id = user_id;
+	 				for(var i = 0;i < this.shopCollectArr.length;i ++ ){
+	 					if (this.shopCollectArr[i] == id.toString()) {
+	 						this.shopCollectArr.splice(i,1)
+	 					}
+	 				}
+	 				this.shopDetail.shop_ids = this.shopCollectArr;
+	 				this.$homehttp({
+	 					url:'collect-shop/'+id,
+	 					method:'put',
+	 					data:this.shopDetail
+	 				}).then(result=>{
+	 					const {code,msg,data} = result.data;
+	 					if (code == 200) {
+	 						this.$message({message:'取消收藏成功',type:'success'});
+	 						this.isCollect = true;
+	 					}
+	 				})
+ 				}
  			},
 		}
 	}
@@ -102,21 +221,23 @@
 	.shop_detail{
 		margin-bottom:60px;
 		background-color:#eee;
+		font-size:14px;
 		.shop_header{
 			background-color:#400553;
 			display:flex;
 			flex-direction:row;
-			.shop_message{
+			justify-content:space-between;
+			.header_left{
 				margin:10px;
 				display:flex;
 				flex-direction:row;
+				align-items:center;
 				img{
-					width:85px;
+					width:60px;
 				}
 				.shop_name{
 					margin-left:10px;
 					p{
-						font-size:16px;
 						color:white;
 					}
 					p:after{
@@ -135,6 +256,27 @@
 					.star{
 						display:flex;
 						flex-direction:row;
+						color:white;
+					}
+				}
+			}
+			.header_right{
+				display:flex;
+				flex-direction:row;
+				align-items:center;
+				margin-right:10px;
+				.collect{
+					display:flex;
+					flex-direction:column;
+					align-items:center;
+					margin-right:10px;
+					.collect-allnumer{
+						margin-top:10px;
+						color:white;
+					}
+				}
+				.more{
+					.el-dropdown{
 						color:white;
 					}
 				}

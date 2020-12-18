@@ -4,13 +4,17 @@
   		<h1>分类详情</h1>
   		<i class="el-icon-back back" @click="back"></i>
   	</my-head>
-  	<div v-for="(item,index) in arr" class="shop-classify" @click="toDetail(item.imgSrc,item.title,item.price,item.addDes,item.shopName)">
-  		<img :src="item.imgSrc" alt="">
+  	<div 
+  	v-for="(item,index) in categoryDetailArr"
+  	:key="index"
+  	class="shop-classify" 
+  	@click="toDetail(item.id)"
+  	>
+  		<img :src="'http://adminapi.lgj.com'+item.goods_logo" alt="">
   		<div class="shop-text">
-  			<p class="shop-title">{{item.title}}</p>
-  			<p class="shop-des">{{item.addDes}}</p>
-  			<p class="shop-price">￥{{item.price}}</p>
-  			<p class="shop-name">{{item.shopName}}</p>
+  			<p class="shop-title">{{item.goods_name}}</p>
+  			<p class="shop-price">￥{{item.goods_price}}</p>
+  			<p class="shop-name">{{item.shop.shop_name}}</p>
   		</div>
   	</div>
   </div>
@@ -18,19 +22,16 @@
 
 <script>
 import myHead from "../common/head.vue";
-import {mapState} from "vuex";
 export default {
 	data(){
 		return {
+			categoryDetailArr:[],
+			id:0,
 		}
 	},
  	created(){
-	 	
- 	},
- 	computed:{
- 		...mapState({
- 			arr:state => state.cart.classifyData
- 		})
+ 		this.id = this.$route.query.id;
+	 	this.getCategoryDetailArr();
  	},
  	components:{
  		"my-head":myHead
@@ -40,8 +41,20 @@ export default {
 			// 返回实现
 			this.$router.go(-1);
 		},
-		toDetail(src,title,price,des,shopName){
-			this.$router.push({name:"detail",query:{src:src,title:title,price:price,des:des,shopName:shopName}});
+		toDetail(id){
+			this.$router.push({name:"detail",query:{id:id}});
+		},
+		getCategoryDetailArr(){
+			this.$homehttp({
+				url:'category-detail/'+this.id
+			}).then(result=>{
+				const {code,msg,data} = result.data;
+				if (code == 200) {
+					this.categoryDetailArr = data;
+				}else{
+
+				}
+			})
 		}
  	}
 }
@@ -51,6 +64,7 @@ export default {
 @import url("../less/common.less");
 	.classify-detail{
 		background-color:#eee;
+		padding-bottom:10px;
 		.shop-classify{
 			width:95%;
 			margin:0 auto;
@@ -75,11 +89,6 @@ export default {
 					height:30px;
 					line-height:15px;
 					overflow:hidden;
-				}
-				.shop-des{
-					font-size:8px;
-					background-color:#f7f7f7;
-					color:gray;
 				}
 				.shop-price{
 					color:#E93B75;

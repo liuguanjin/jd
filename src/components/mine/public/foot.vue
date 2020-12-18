@@ -13,7 +13,7 @@
     	<div class="content-detail" v-for="(item,index) in footDetail">
     		<p class="date">{{item.date}}</p>
     		<div class="detail">
-	    		<div class="goods" v-for="(item1,index1) in item.detail" @click="toDetail(item1.id)">
+	    		<div class="goods" v-for="(item1,index1) in item.detail" @click="enterGoods(item1.id)">
 	    			<img :src="'http://adminapi.lgj.com'+item1.goods_logo" alt="">
 	    			<p class="price">¥{{item1.goods_price}}</p>
 	    		</div>
@@ -25,6 +25,7 @@
 
 <script>
 import {mapState} from "vuex";
+var userinfo = JSON.parse(localStorage.getItem('userinfo'));
 export default {
 	data () {
 	    return {
@@ -51,24 +52,29 @@ export default {
 			d = d < 10 ? "0" + d : d;
 			this.value3 = y + "-" + m + "-" + d; 
 		},
-		toDetail(id){
+		enterGoods(id){
 			this.$router.push({name:"detail",query:{id:id}});
 		}
 	},
 	created(){
-		this.getDate();
-		this.$homehttp({
-			url:'footprint',
-			method:'post',
-			data:this.footArr
-		}).then(result=>{
-			const {code,msg,data} = result.data;
-			if (code == 200) {
-				this.footDetail = data;
-			}else{
-				this.$message({message:msg,type:'warning'});
-			}
-		})
+		if (userinfo == '' || userinfo==null || userinfo == undefined) {
+			this.$message({message:'尚未登录,请先登录',type:'warning'});
+			this.$router.push('/mine');
+		}else{
+			this.getDate();
+			this.$homehttp({
+				url:'footprint',
+				method:'post',
+				data:this.footArr
+			}).then(result=>{
+				const {code,msg,data} = result.data;
+				if (code == 200) {
+					this.footDetail = data;
+				}else{
+					this.$message({message:msg,type:'warning'});
+				}
+			})
+		}
 	}
 }
 </script>
@@ -80,8 +86,8 @@ export default {
 			.flexRowCenter();
 			background-color:#eee;
 			justify-content:flex-start;
-			height:30px;
-			line-height:30px;
+			height:44px;
+			line-height:44px;
 			p{
 				margin:0 auto;
 				font-size:15px;

@@ -137,19 +137,19 @@
 			</div>
 		</div>
 		<!-- 加入购物车成功 -->
-		<div class="addToCartSuccess" v-show="isShowSuccess">
+		<div class="addToCartSuccess common success" v-show="isShowSuccess">
 			<i class="el-icon-check"></i>
 			<p>添加至购物车成功</p>
 		</div>
-		<div class="addToColSuccess" v-show="isShowCollectSuccess">
+		<div class="addToColSuccess common success" v-show="isShowCollectSuccess">
 			<i class="el-icon-check"></i>
 			<p>添加至收藏夹成功</p>
 		</div>
-		<div class="addToColFailed" v-show="isShowCollectFailed">
+		<div class="addToColFailed common failed" v-show="isShowCollectFailed">
 			<i class="el-icon-close"></i>
 			<p>此商品已在收藏夹</p>
 		</div>
-		<div class="loginOrNot" v-show="noLogin">
+		<div class="loginOrNot common failed" v-show="noLogin">
 			<i class="el-icon-close"></i>
 			<p>请先登录</p>
 		</div>
@@ -394,7 +394,7 @@ export default {
 	ul{
 		list-style:none;
 	}
-	.addToCartSuccess{
+	.common{
 		width:120px;
 		height:100px;
 		background-color:rgba(0,0,0,0.7);
@@ -404,95 +404,44 @@ export default {
 		left:50%;
 		margin-left:-50px;
 		margin-top:-50px;
-		z-index: 101;
 		.flexColumnCenter();
+		z-index:101;
 		justify-content:center;
 		p{
 			margin:0 auto;
 			padding:0;
+		}
+		i{
+			padding:10px;
+			border-radius:50%;
+			font-size:16px;
+		}
+	}
+	.success{
+		p{
 			color:white;
 		}
 		.el-icon-check{
 			color:white;
-			padding:10px;
-			border-radius:50%;
 			border:1px solid #fff;
-			font-size:16px;
 		}
 	}
-	.addToColSuccess{
-		width:120px;
-		height:100px;
-		background-color:rgba(0,0,0,0.7);
-		border:1px solid rgba(255,255,255,0.7);
-		position:absolute;
-		top:70%;
-		left:50%;
-		margin-left:-50px;
-		margin-top:-50px;
-		.flexColumnCenter();
-		justify-content:center;
+	.failed{
 		p{
-			margin:0 auto;
-			padding:0;
-			color:white;
-		}
-		.el-icon-check{
-			color:white;
-			padding:10px;
-			border-radius:50%;
-			border:1px solid white;
-			font-size:16px;
-		}
-	}
-	.addToColFailed{
-		width:120px;
-		height:100px;
-		background-color:rgba(0,0,0,0.7);
-		border:1px solid rgba(255,255,255,0.7);
-		position:absolute;
-		top:70%;
-		left:50%;
-		margin-left:-50px;
-		margin-top:-50px;
-		.flexColumnCenter();
-		justify-content:center;
-		p{
-			margin:0 auto;
-			padding:0;
 			color:red;
 		}
-		.el-icon-check{
+		.el-icon-close{
 			color:red;
-			padding:10px;
-			border-radius:50%;
 			border:1px solid red;
-			font-size:16px;
 		}
 	}
 	.loginOrNot{
-		width:120px;
-		height:100px;
-		background-color:rgba(0,0,0,0.7);
-		border:1px solid rgba(255,255,255,0.7);
-		position:absolute;
-		top:70%;
-		left:50%;
-		margin-left:-50px;
-		margin-top:-50px;
-		.flexColumnCenter();
-		justify-content:center;
 		p{
-			margin:0 auto;
-			padding:0;
 			color:red;
 		}
-		.el-icon-check{
+		.el-icon-close{
 			color:red;
-			padding:10px;
-			border-radius:50%;
 			border:1px solid red;
-			font-size:16px;
 		}
 	}
 	.map{

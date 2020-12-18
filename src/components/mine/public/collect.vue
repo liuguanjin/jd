@@ -83,8 +83,8 @@ export default {
 				border-radius:10px;
 				.flexRowCenter();
 				img{
-					width:200px;
-					height:200px;
+					width:100px;
+					height:100px;
 					align-self:flex-start;
 				}
 				div{

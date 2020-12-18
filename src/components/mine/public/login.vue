@@ -25,7 +25,7 @@
 	<div class="button">
 		<el-button type="primary" @click="login">登录</el-button>
 	    <el-button type="success" @click="regist">注册</el-button>
-	    <el-button type="warning" @click="admin">管理员/商家</el-button>
+	    <el-button type="warning" @click="admin">管理员</el-button>
 	</div>
   </div>
 </template>
@@ -57,7 +57,11 @@ export default {
  	},
  	methods:{
  		...mapActions({
- 			replaceCartArr:"replaceCartArr"
+ 			replaceCartArr:"replaceCartArr",
+		 	replaceCollectArr:"replaceCollectArr",
+	      	replaceCollectNum:"replaceCollectNum",
+	      	replaceFootprintArr:"replaceFootprintArr",
+	      	replaceFootprinttNum:"replaceFootprinttNum",
  		}),
  		leaveInput(){
  			//输入框的判断
@@ -104,6 +108,34 @@ export default {
 	 							this.replaceCartArr([]);
 	 						}
 	 					})
+	 					this.$homehttp({
+				          	url:'collect/'+data.user_id
+				        }).then(result=>{
+				          	const {code,msg,data} = result.data;
+				          	if (code == 200) {
+				            	this.replaceCollectArr(data);
+				            	this.replaceCollectNum(data.length);
+				          	}else{
+
+				          	}
+				        })
+				        this.$homehttp({
+				          	url:'footprint/'+data.user_id
+				        }).then(result=>{
+				          	const {code,msg,data} = result.data;
+				          	if (code == 200) {
+				            	this.replaceFootprintArr(data);
+				            	var num = 0;
+				            	for(var i = 0;i < data.length;i ++ ){
+				              		for(var j = 0;j < data[i].detail.length; j ++){
+				              		}
+				              		num += j;
+				            	}
+				            	this.replaceFootprinttNum(num);
+				          	}else{
+
+				          	}
+				        })
 	 					this.$message({message:'登录成功',type:'success'});
 	 					this.$router.push({name:'logsuc',query:{id:data.user_id}});
 	 				}else{
@@ -194,7 +226,7 @@ export default {
 		.button{
 			width:70%;
 			.el-button{
-				width:30%;
+				width:26%;
 			}
 		}
 	}

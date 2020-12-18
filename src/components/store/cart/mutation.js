@@ -14,6 +14,7 @@ export default{
 	changeShopSelect(state,obj){
 		state.cartDetail[obj].shop_is_selected = ! state.cartDetail[obj].shop_is_selected;
 		state.cartArr[obj].shop_is_selected = state.cartDetail[obj].shop_is_selected;
+		state.cartArr[obj].goods_is_selected = state.cartDetail[obj].shop_is_selected;
 		state.cartDetail[obj].goods_is_selected = state.cartDetail[obj].shop_is_selected;
 		state.cartDetail[obj].goods.goods_is_selected = state.cartDetail[obj].shop_is_selected;
 	},
@@ -76,7 +77,7 @@ export default{
 			state.cartDetail[i].goods.goods_is_selected = obj;
 		}
 	},
-	//商品+1的计算
+	//商品-1的计算
 	delNum(state,obj){
 		var num = state.cartDetail[obj].number;
 		if(num > 1){
@@ -86,11 +87,13 @@ export default{
 			num = 1;
 		}
 		state.cartDetail[obj].number = num;
+		state.cartArr[obj].number = num;
 	},
-	//商品-1的计算
+	//商品+1的计算
 	addNum(state,obj){
 		state.total += state.cartDetail[obj].spec_goods.price;
 		state.cartDetail[obj].number += 1;
+		state.cartArr[obj].number += 1;
 	},
 	//删除商品的操作
 	moveShop(state){

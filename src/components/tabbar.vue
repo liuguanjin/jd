@@ -61,9 +61,8 @@ export default{
 		z-index: 2;
 		position:fixed;
 		bottom:0;
-		li{
+		.el-menu-item{
 			width:25%;
-			text-align:center;
 		}
 	}
 </style>

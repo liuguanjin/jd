@@ -16,7 +16,7 @@
   					<p>{{collectNum}}</p>
   					<p>收藏夹</p>
   				</div>
-  				<div>
+  				<div @click="toFollowShop">
   					<p>{{followNum}}</p>
   					<p>关注店铺</p>
   				</div>
@@ -36,23 +36,28 @@
   				<p class="gray">查看全部订单 > </p>
   			</div>
   			<div class="order-detail">
-  				<div class="nopay">
+  				<div class="nopay" @click="toNopay">
+            <span>{{nopayNumber}}</span>
             <i class="el-icon-jddaifukuan icon"></i>
   					<p>待付款</p>
   				</div>
-  				<div class="nosend">
+  				<div class="nosend" @click="toNosend">
+            <span>{{nosendNumber}}</span>
             <i class="el-icon-jddaifahuo icon"></i>
   					<p>待发货</p>
   				</div>
-  				<div class="noaccept">
+  				<div class="noaccept" @click="toNoaccept">
+            <span>{{noacceptNumber}}</span>
             <i class="el-icon-jddaishouhuo icon"></i>
   					<p>待收货</p>
   				</div>
-  				<div class="noevaluate">
+  				<div class="noevaluate" @click="toNoevaluate">
+            <span>{{noevaluateNumber}}</span>
             <i class="el-icon-jdweibiaoti527 icon"></i>
   					<p>评价</p>
   				</div>
-  				<div class="refund">
+  				<div class="refund" @click="toRefund">
+            <span>{{refundNumber}}</span>
             <i class="el-icon-jdshouhou icon"></i>
   					<p>退款/售后</p>
   				</div>
@@ -87,7 +92,11 @@
 				  <div class="cainiao">
             <i class="el-icon-jdlogo icon"></i>
 				    <p>菜鸟驿站</p>
-				  </div>
+				  </div> 
+          <div class="shop" @click="toShop">
+            <i class="el-icon-s-shop icon"></i>
+            <p>我是商家</p>
+          </div>
 				  <div class="more">
             <i class="el-icon-jdgengduo icon"></i>
 				    <p>更多</p>
@@ -111,7 +120,19 @@ export default {
         nickname:"请先设置昵称",
         followNum:0,
         couponNum:0,
-        id:0
+        id:0,
+        shopCollectArr:[],
+        orderList:[],
+        nopayList:[],
+        nosendList:[],
+        noacceptList:[],
+        noevaluateList:[],
+        refundList:[],
+        nopayNumber:0,
+        nosendNumber:0,
+        noacceptNumber:0,
+        noevaluateNumber:0,
+        refundNumber:0,
     }
   },
   computed:{
@@ -128,8 +149,10 @@ export default {
     }else{
       this.id = JSON.parse(userinfo).user_id;
     }
+    this.getShopCollectArr();
     this.carculate(true);
     this.shopNumTotal();
+    this.getOrderList();
   },
   methods:{
     ...mapActions({
@@ -144,6 +167,100 @@ export default {
     },
     toMyfoot(){
       this.$router.push("/foot");
+    },
+    toFollowShop(){
+       this.$router.push({name:'followShop',query:{shopCollectArr:this.shopCollectArr}});
+    },
+    toNopay(){
+      this.$router.push({name:'nopay',query:{nopayList:this.nopayList}});
+    },
+    toNosend(){
+      this.$router.push({name:'nosend',query:{nosendList:this.nosendList}});
+    },
+    toNoaccept(){
+      this.$router.push({name:'noaccept',query:{noacceptList:this.noacceptList}});
+    },
+    toNoevaluate(){
+      this.$router.push({name:'noevaluate',query:{noevaluateList:this.noevaluateList}});
+    },
+    toRefund(){
+      this.$router.push({name:'refund',query:{refundList:this.refundList}});
+    },
+    getShopCollectArr(){
+      this.$homehttp({
+        url:'collect-shop?user_id='+this.id
+      }).then(result=>{
+        const {code,msg,data} = result.data;
+        if (code == 200) {
+          this.shopCollectArr = data.shop_ids;
+          this.followNum = data.shop_ids.length;
+        }else{
+
+        }
+      })
+    },
+    getOrderList(){
+      this.$homehttp({
+        url:'order?user_id='+this.id
+      }).then(result=>{
+        const {code,msg,data} = result.data;
+        if (code == 200) {
+          this.orderList = data;
+          this.nopayList = data.filter(item=>item.order_status == 0);
+          for(var i = 0;i < this.nopayList.length;i ++ ){
+            for(var j = 0;j <this.nopayList[i].order_goods.length;j ++ ){
+            }
+            this.nopayNumber += j;
+          }
+          this.nosendList = data.filter(item=>item.order_status == 1);
+          for(var i = 0;i < this.nosendList.length;i ++ ){
+            for(var j = 0;j <this.nosendList[i].order_goods.length;j ++ ){
+            }
+            this.nosendNumber += j;
+          }
+          this.noacceptList = data.filter(item=>item.order_status == 2);
+          for(var i = 0;i < this.noacceptList.length;i ++ ){
+            for(var j = 0;j <this.noacceptList[i].order_goods.length;j ++ ){
+            }
+            this.noacceptNumber += j;
+          }
+          this.noevaluateList = data.filter(item=>item.order_status == 3);
+          for(var i = 0;i < this.noevaluateList.length;i ++ ){
+            for(var j = 0;j <this.noevaluateList[i].order_goods.length;j ++ ){
+            }
+            this.noevaluateNumber += j;
+          }
+          this.refundList = data.filter(item=>item.order_status == 7);
+          for(var i = 0;i < this.refundList.length;i ++ ){
+            for(var j = 0;j <this.refundList[i].order_goods.length;j ++ ){
+            }
+            this.refundNumber += j;
+          }
+        }else{
+
+        }
+      })
+    },
+    toShop(){
+      this.$confirm('将跳转至商家登录界面,并清除登录信息,是否继续?','提示',{
+        confirmButtonText:'确定',
+        cancelButtonText:'取消',
+        type:'warning'
+      }).then(()=>{
+        this.$message({
+          type:'success',
+          message:'即将跳转!'
+        });
+        setTimeout(()=>{
+          localStorage.removeItem('userinfo');
+          this.$router.push('adminLogin');
+        },1500)
+      }).catch(()=>{
+        this.$message({
+          type:'warning',
+          message:'已取消跳转'
+        })
+      })
     }
   }
 }
@@ -222,6 +339,19 @@ export default {
               div{
                   width:25%;
                   .flexColumnCenter();
+                  position:relative;
+                  span{
+                    position:absolute;
+                    top:-10px;
+                    right:10px;
+                    color:red;
+                    width:20px;
+                    height:20px;
+                    line-height:20px;
+                    text-align:center;
+                    border:1px solid red;
+                    border-radius:50%;
+                  }
                   .icon{
                       font-size:30px;
                       color:#FF5C00;
@@ -259,39 +389,44 @@ export default {
                   }
               }
               .cash{
-                  .icon{
-                    color:#FC2B26;
-                  }
+                .icon{
+                  color:#FC2B26;
+                }
               }
               .ticket{
-                 .icon{
-                      color:#FFA009;
-                  }
+                .icon{
+                    color:#FFA009;
+                }
               }
               .change{
-                  .icon{
-                      color:#F61C24;
-                  }
+                .icon{
+                    color:#F61C24;
+                }
               }
               .service{
-                  .icon{
-                      color:#FEB623;
-                  }
+                .icon{
+                    color:#FEB623;
+                }
               }
               .huabei{
-                  .icon{
-                      color:#38ABFA;
-                  }
+                .icon{
+                    color:#38ABFA;
+                }
               }
               .cainiao{
-                  .icon{
-                      color:#039EFC;
-                  }
+                .icon{
+                    color:#039EFC;
+                }
               }
               .more{
-                  .icon{
-                      color:gray;
-                  }
+                .icon{
+                  color:gray;
+                }
+              }
+              .shop{
+                .icon{
+                  color:skyblue;
+                }
               }
           }
       }

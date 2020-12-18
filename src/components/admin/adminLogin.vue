@@ -175,16 +175,14 @@ export default {
 			}
 		}
 		.el-form{
-			margin:30px 0;
-			width:65%;
+			width:100%;
 			/deep/ .el-form-item{
 				.flexRowCenter();
 				.el-input{
-					width:280px;
 					margin:20px 0;
 				}
 				span{
-					margin-left:20px;
+					margin-left:10px;
 					height:40px;
 					img{
 						height:40px;
@@ -196,7 +194,7 @@ export default {
 					p{
 						paddding:0;
 						margin:0;
-						margin-left:20px;
+						margin-left:15px;
 						color:red;
 					}
 				}
@@ -205,7 +203,7 @@ export default {
 		.button{
 			width:65%;
 			.el-button{
-				width:48%;
+				width:45%;
 			}
 		}
 	}

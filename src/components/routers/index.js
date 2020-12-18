@@ -111,8 +111,23 @@ import Address from '@/components/mine/public/address.vue';
 import AddAddress from '@/components/mine/public/addAddress.vue';
 //个人中心编辑收货地址界面
 import EditAddress from '@/components/mine/public/editAddress.vue';
+//前台提交订单成功界面
+import OrderSuccess from '@/components/cart/cart-content/orderSuccess.vue';
+//前台个人中心关注店铺界面
+import FollowShop from '@/components/mine/public/followShop.vue';
+//前台个人中心待付款界面
+import Nopay from '@/components/mine/public/nopay.vue';
+//前台个人中心待发货界面
+import Nosend from '@/components/mine/public/nosend.vue';
+//前台个人中心待收货界面
+import Noaccept from '@/components/mine/public/noaccept.vue';
+//前台个人中心待评价界面
+import Noevaluate from '@/components/mine/public/noevaluate.vue';
+//前台个人中心退款界面
+import Refund from '@/components/mine/public/refund.vue';
 //配置routes
 var routes = [
+	{path:"/",redirect:"/home"},
 	{path:"/home",component:Home,meta:{title:"商城首页",keepAlive:true}},
 	{path:"/classify",component:Classify,meta:{title:"商城分类",keepAlive:true}},
 	{path:"/cart",component:Cart,meta:{title:"购物车",keepAlive:false}},
@@ -137,6 +152,13 @@ var routes = [
 	{path:"/address",component:Address,name:"address",meta:{title:"我的收货地址",keepAlive:false}},
 	{path:"/addaddress",component:AddAddress,name:"addAddress",meta:{title:"添加收货地址",keepAlive:false}},
 	{path:"/editaddress",component:EditAddress,name:"editAddress",meta:{title:"编辑收货地址",keepAlive:false}},
+	{path:"/followShop",component:FollowShop,name:"followShop",meta:{title:"关注店铺",keepAlive:false}},
+	{path:"/nopay",component:Nopay,name:"nopay",meta:{title:"待付款",keepAlive:false}},
+	{path:"/nosend",component:Nosend,name:"nosend",meta:{title:"待发货",keepAlive:false}},
+	{path:"/noaccept",component:Noaccept,name:"noaccept",meta:{title:"待收货",keepAlive:false}},
+	{path:"/noevaluate",component:Noevaluate,name:"noevaluate",meta:{title:"待评价",keepAlive:false}},
+	{path:"/refund",component:Refund,name:"refund",meta:{title:"退款/售后",keepAlive:false}},
+	{path:"/ordersuccess",component:OrderSuccess,name:"ordersuccess",meta:{title:"订单提交成功",keepAlive:true}},
 	{path:"/collect",component:Collect,meta:{title:"收藏夹",keepAlive:false}},
 	{path:"/adminLogin",component:AdminLogin,meta:{title:"登录后台",keepAlive:false}},
 	{path:"/admin",component:Admin,meta:{title:"后台管理",keepAlive:false},
@@ -185,7 +207,6 @@ var routes = [
 	},
 	{path:"/foot",component:Foot,meta:{title:"足迹",keepAlive:false}},
 	{path:"/classify-detail",name:'classify-detail',component:classifyDetail,meta:{title:"分类详情",keepAlive:false}},
-	{path:"/",redirect:"/home"}
 ];
 // router对象实例化
 var router = new VueRouter({

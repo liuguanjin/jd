@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 //引入elementUI部分组件
-import {Menu,DatePicker,Switch,Select,Option,Carousel,CarouselItem,Submenu,Upload,MenuItem,Dialog,Message,MessageBox,Pagination,Form,FormItem,Input,Cascader,Radio,Table,TableColumn,Container,Button,BreadcrumbItem,Breadcrumb,Header,Aside,Main,Footer,Row,Col,Icon,Dropdown,DropdownMenu,DropdownItem,} from 'element-ui';
+import {Menu,DatePicker,Switch,Rate,Tabs,TabPane,Select,Option,Carousel,CarouselItem,Submenu,Upload,MenuItem,Dialog,Message,MessageBox,Pagination,Form,FormItem,Input,Cascader,Radio,Table,TableColumn,Container,Button,BreadcrumbItem,Breadcrumb,Header,Aside,Main,Footer,Row,Col,Icon,Dropdown,DropdownMenu,DropdownItem,} from 'element-ui';
 //引入element-ui样式
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入router路由
@@ -22,6 +22,9 @@ Vue.use(homeaxios);
 Vue.use(Menu);
 Vue.use(DatePicker);
 Vue.use(Switch);
+Vue.use(Rate);
+Vue.use(Tabs);
+Vue.use(TabPane);
 Vue.use(Carousel);
 Vue.use(CarouselItem);
 Vue.use(Pagination);

@@ -89,15 +89,13 @@ export default {
 				justify-content:space-between;
 				.price-number{
 					.price{
-						font-size:@bigTextSize;
-						line-height:@bigTextSize;
+						font-size:14px;
 						align-self:flex-start;
 						color:@mallColor;
 						margin:5px;
 					}
 					.number{
-						font-size:@bigTextSize;
-						line-height:@bigTextSize;
+						font-size:14px;
 						align-self:flex-start;
 						color:@mallColor;
 						margin:5px;
@@ -106,6 +104,7 @@ export default {
 				.shop_name{
 					margin:0;
 					padding:0;
+					font-size:14px;
 					align-self:flex-end;
 					margin-bottom:5px;
 					margin-right:10px;

@@ -14,7 +14,7 @@
   				<div class="li-span">
 	  				<span class="sign">{{item.sign}}</span>
   				</div>
-  				<div class="address-message">
+  				<div class="address-message" @click="chooseAddress(index)">
   					<div class="message-header">
   						<span class="consignee">{{item.consignee}}</span>
   						<span class="phone">{{item.phone}}</span>
@@ -36,16 +36,40 @@
 <script>
 	export default {
 		created(){
-			this.user_id = this.$route.query.id;
+			if (this.$route.query.id) {
+				this.user_id = this.$route.query.id;
+			}
+			if (this.$route.query.goods_ids) {
+				this.goods_ids = this.$route.query.goods_ids;
+			}
 			this.getAddress();
+		},
+		beforeRouteEnter(to,from,next){
+			if (from.path == '/balance') {
+				next(vm=>{
+					vm.fromBalance = true;
+				})
+			}else{
+				next(vm=>{
+					vm.fromBalance = false;
+				})
+			}
 		},
 		data(){
 			return {
 				user_id:0,
 				addressList:[],
+				fromBalance:false,
+				goods_ids:[],
 			}
 		},
 		methods:{
+			chooseAddress(index){
+				console.log(this.addressList[index]);
+				if (this.fromBalance) {
+					this.$router.push({name:'balance',query:{address:this.addressList[index],goods_ids:this.goods_ids}})
+				}
+			},
 			back(){
 				this.$router.go(-1);
 			},

@@ -72,6 +72,7 @@
 <script>
 import {mapState,mapActions} from "vuex";
 import eventBus from "../../eventbus/eventbus.js";
+var userinfo = JSON.parse(localStorage.getItem('userinfo'));
 export default {
 	data(){
 		return{
@@ -104,11 +105,11 @@ export default {
  					}
  				}
  				this.replaceCartDetail(data);
+ 				this.calculate();
  			}else{
  				this.$message({message:msg,type:'warning'});
  			}
  		})
- 		this.calculate();
  		eventBus.$on("calOrDel",()=>{
  			this.isCal = ! this.isCal;
  		});
@@ -154,8 +155,17 @@ export default {
  			this.cartAddNum(index);
  		},
  		balance(){
- 			var goods_ids = this.cartArr.filter(item => item.goods_is_selected===1);
- 			this.$router.push({name:'balance',query:{goods_ids:goods_ids}});
+ 			var goods_ids = this.cartArr.filter(item => item.goods_is_selected== 1);
+ 			if (userinfo == '' || userinfo == undefined || userinfo == null) {
+ 				this.noLogin = true;
+				setTimeout(()=>{
+					this.noLogin = false;
+				},2000)
+ 			}else if(goods_ids.length == 0){
+ 				this.$message({message:'请先选中商品再结算',type:'warning'});
+ 			}else{
+	 			this.$router.push({name:'balance',query:{goods_ids:goods_ids}});
+ 			}
  		},
  		addToCol(){
  			function unique(arr){
@@ -163,8 +173,7 @@ export default {
 			}
  			var collectArr = this.collectArr;
  			var cartDetail = this.cartDetail;
-			var userinfo = JSON.parse(localStorage.getItem('userinfo'));
-			if (userinfo == '' || userinfo == undefined) {
+			if (userinfo == '' || userinfo == undefined || userinfo == null) {
 				this.noLogin = true;
 				setTimeout(()=>{
 					this.noLogin = false;
@@ -241,7 +250,9 @@ export default {
 			p{
 				color:red;
 			}
-			.el-icon-check{
+			.el-icon-close{
+				padding:10px;
+				border-radius:50%;
 				border:1px solid red;
 				color:red;
 			}

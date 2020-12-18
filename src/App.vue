@@ -77,7 +77,6 @@ export default {
             this.replaceCartArr(data);
             this.calculate();
           }else{
-            this.$message({message:'服务器异常',type:'warning'});
           }
         })
         this.$homehttp({
@@ -88,7 +87,6 @@ export default {
             this.replaceCollectArr(data);
             this.replaceCollectNum(data.length);
           }else{
-            this.$message({message:'服务器异常',type:'warning'});
           }
         })
         this.$homehttp({
@@ -101,11 +99,10 @@ export default {
             for(var i = 0;i < data.length;i ++ ){
               for(var j = 0;j < data[i].detail.length; j ++){
               }
-              num = (i+1)*j;
+              num += j;
             }
             this.replaceFootprinttNum(num);
           }else{
-            this.$message({message:'服务器异常',type:'warning'});
           }
         })
       }else{
