@@ -103,6 +103,14 @@ import Crowdfundingmanager from '@/components/admin/shop/crowdfunding_manager.vu
 import Paymanager from '@/components/admin/shop/pay_manager.vue';
 //后台商城店铺管理界面
 import StoreList from '@/components/admin/shop/store_list.vue';
+//后台已售出宝贝界面
+import SoldGoods from '@/components/admin/shop/sold-goods.vue';
+//后台发布宝贝界面
+import ReleaseGoods from '@/components/admin/shop/release-goods.vue';
+//后台发货界面
+import SendGoods from '@/components/admin/shop/send-goods.vue';
+//后台评价管理界面
+import EvaluateManager from '@/components/admin/shop/evaluate-manager.vue';
 //后台管理界面
 import Operator from '@/components/admin/operator.vue';
 //个人中心收货地址界面
@@ -115,16 +123,10 @@ import EditAddress from '@/components/mine/public/editAddress.vue';
 import OrderSuccess from '@/components/cart/cart-content/orderSuccess.vue';
 //前台个人中心关注店铺界面
 import FollowShop from '@/components/mine/public/followShop.vue';
-//前台个人中心待付款界面
-import Nopay from '@/components/mine/public/nopay.vue';
-//前台个人中心待发货界面
-import Nosend from '@/components/mine/public/nosend.vue';
-//前台个人中心待收货界面
-import Noaccept from '@/components/mine/public/noaccept.vue';
-//前台个人中心待评价界面
-import Noevaluate from '@/components/mine/public/noevaluate.vue';
-//前台个人中心退款界面
-import Refund from '@/components/mine/public/refund.vue';
+//前台个人中心待付款等订单界面
+import Order from '@/components/mine/public/order.vue';
+//前台评价界面
+import Evaluate from '@/components/mine/public/evaluate.vue'
 //配置routes
 var routes = [
 	{path:"/",redirect:"/home"},
@@ -153,11 +155,8 @@ var routes = [
 	{path:"/addaddress",component:AddAddress,name:"addAddress",meta:{title:"添加收货地址",keepAlive:false}},
 	{path:"/editaddress",component:EditAddress,name:"editAddress",meta:{title:"编辑收货地址",keepAlive:false}},
 	{path:"/followShop",component:FollowShop,name:"followShop",meta:{title:"关注店铺",keepAlive:false}},
-	{path:"/nopay",component:Nopay,name:"nopay",meta:{title:"待付款",keepAlive:false}},
-	{path:"/nosend",component:Nosend,name:"nosend",meta:{title:"待发货",keepAlive:false}},
-	{path:"/noaccept",component:Noaccept,name:"noaccept",meta:{title:"待收货",keepAlive:false}},
-	{path:"/noevaluate",component:Noevaluate,name:"noevaluate",meta:{title:"待评价",keepAlive:false}},
-	{path:"/refund",component:Refund,name:"refund",meta:{title:"退款/售后",keepAlive:false}},
+	{path:"/order",component:Order,name:"order",meta:{title:"我的订单",keepAlive:false}},
+	{path:"/evaluate",component:Evaluate,name:"evaluate",meta:{title:"发表评价",keepAlive:false}},
 	{path:"/ordersuccess",component:OrderSuccess,name:"ordersuccess",meta:{title:"订单提交成功",keepAlive:true}},
 	{path:"/collect",component:Collect,meta:{title:"收藏夹",keepAlive:false}},
 	{path:"/adminLogin",component:AdminLogin,meta:{title:"登录后台",keepAlive:false}},
@@ -200,6 +199,10 @@ var routes = [
 					{path:'/crowdfundingmanager',component:Crowdfundingmanager,meta:{title:"后台商城支付管理界面",keepAlive:false}},
 					{path:'/paymanager',component:Paymanager,meta:{title:"后台商城众筹管理界面",keepAlive:false}},
 					{path:'/storelist',component:StoreList,meta:{title:"后台商城店铺管理界面",keepAlive:false}},
+					{path:'/soldgoods',component:SoldGoods,meta:{title:"后台商城已售出宝贝界面",keepAlive:false}},
+					{path:'/releasegoods',component:ReleaseGoods,meta:{title:"后台商城发布宝贝界面",keepAlive:false}},
+					{path:'/sendgoods',component:SendGoods,meta:{title:"后台商城发货界面",keepAlive:false}},
+					{path:'/evaluatemanager',component:EvaluateManager,meta:{title:"后台评价管理界面",keepAlive:false}},
 				]
 			},
 			{path:'/operator',component:Operator,meta:{title:"后台运营",keepAlive:false}}

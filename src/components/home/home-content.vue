@@ -59,6 +59,7 @@ export default {
 	.home-content{
 		background-color:#eee;
 		.flexRowCenter();
+		justify-content:center;
 		flex-wrap:wrap;
 		margin-bottom:60px;
 		.content-item{

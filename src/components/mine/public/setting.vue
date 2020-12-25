@@ -112,6 +112,7 @@ export default {
 			.flexRowCenter();
 			justify-content:space-between;
 			margin-bottom:1px;
+			padding:0 10px;
 		}
 		.avatar{
 			img{

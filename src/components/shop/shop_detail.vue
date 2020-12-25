@@ -75,7 +75,6 @@
 </template>
 
 <script>
-	var userinfo = JSON.parse(localStorage.getItem('userinfo'));
 	import myHead from "../common/head.vue";
 	export default {
 		data(){
@@ -145,6 +144,7 @@
  			},
  			//获取该用户已收藏的店铺列表
  			getCollectShopArr(){
+				var userinfo = JSON.parse(localStorage.getItem('userinfo'));
  				if (userinfo != '' && userinfo != undefined && userinfo != null) {
 					var user_id = userinfo.user_id;
 	 				this.$homehttp({
@@ -164,6 +164,7 @@
  			},
  			//收藏店铺
  			collectShop(id){
+				var userinfo = JSON.parse(localStorage.getItem('userinfo'));
  				if (userinfo == '' || userinfo ==undefined || userinfo == null) {
  					this.$message({message:'请先登录',type:'warning'});
  				}else{
@@ -188,6 +189,7 @@
  			},
  			//取消收藏
  			cancelCollectShop(id){
+ 				var userinfo = JSON.parse(localStorage.getItem('userinfo'));
  				if (userinfo == '' || userinfo ==undefined || userinfo == null) {
  					this.$message({message:'请先登录',type:'warning'});
  				}else{

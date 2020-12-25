@@ -33,7 +33,7 @@
   		<div class="order">
   			<div class="myorder">
   				<p class="weight">我的订单</p>
-  				<p class="gray">查看全部订单 > </p>
+  				<p class="gray" @click="toAllorder">查看全部订单 > </p>
   			</div>
   			<div class="order-detail">
   				<div class="nopay" @click="toNopay">
@@ -123,11 +123,6 @@ export default {
         id:0,
         shopCollectArr:[],
         orderList:[],
-        nopayList:[],
-        nosendList:[],
-        noacceptList:[],
-        noevaluateList:[],
-        refundList:[],
         nopayNumber:0,
         nosendNumber:0,
         noacceptNumber:0,
@@ -159,6 +154,9 @@ export default {
       carculate:"calculateAllMoney",
       shopNumTotal:"totalShopNum"
     }),
+    toAllorder(){
+      this.$router.push({name:'order',query:{name:'quanbu'}});
+    },
     toSetting(){
       this.$router.push({name:'setting',query:{id:this.id}});
     },
@@ -172,19 +170,19 @@ export default {
        this.$router.push({name:'followShop',query:{shopCollectArr:this.shopCollectArr}});
     },
     toNopay(){
-      this.$router.push({name:'nopay',query:{nopayList:this.nopayList}});
+      this.$router.push({name:'order',query:{name:'daifukuan'}});
     },
     toNosend(){
-      this.$router.push({name:'nosend',query:{nosendList:this.nosendList}});
+      this.$router.push({name:'order',query:{name:'daifahuo'}});
     },
     toNoaccept(){
-      this.$router.push({name:'noaccept',query:{noacceptList:this.noacceptList}});
+      this.$router.push({name:'order',query:{name:'daishouhuo'}});
     },
     toNoevaluate(){
-      this.$router.push({name:'noevaluate',query:{noevaluateList:this.noevaluateList}});
+      this.$router.push({name:'order',query:{name:'daipingjia'}});
     },
     toRefund(){
-      this.$router.push({name:'refund',query:{refundList:this.refundList}});
+      this.$router.push({name:'order',query:{name:'tuikuan'}});
     },
     getShopCollectArr(){
       this.$homehttp({
@@ -206,35 +204,29 @@ export default {
         const {code,msg,data} = result.data;
         if (code == 200) {
           this.orderList = data;
-          this.nopayList = data.filter(item=>item.order_status == 0);
-          for(var i = 0;i < this.nopayList.length;i ++ ){
-            for(var j = 0;j <this.nopayList[i].order_goods.length;j ++ ){
+          for(var i = 0;i < data.length;i ++ ){
+            for(var j = 0;j < data[i].order_goods.length;j ++ ){
+              switch(data[i].order_goods[j].status){
+                case 0:
+                  this.nopayNumber += 1;
+                  break;
+                case 1:
+                  this.nosendNumber += 1;
+                  break;
+                case 2:
+                  this.noacceptNumber += 1;
+                  break;
+                case 3:
+                  this.noevaluateNumber += 1;
+                  break;
+                case 6:
+                  this.refundNumber += 1;
+                  break;
+                case 7:
+                  this.refundNumber += 1;
+                  break;
+              }
             }
-            this.nopayNumber += j;
-          }
-          this.nosendList = data.filter(item=>item.order_status == 1);
-          for(var i = 0;i < this.nosendList.length;i ++ ){
-            for(var j = 0;j <this.nosendList[i].order_goods.length;j ++ ){
-            }
-            this.nosendNumber += j;
-          }
-          this.noacceptList = data.filter(item=>item.order_status == 2);
-          for(var i = 0;i < this.noacceptList.length;i ++ ){
-            for(var j = 0;j <this.noacceptList[i].order_goods.length;j ++ ){
-            }
-            this.noacceptNumber += j;
-          }
-          this.noevaluateList = data.filter(item=>item.order_status == 3);
-          for(var i = 0;i < this.noevaluateList.length;i ++ ){
-            for(var j = 0;j <this.noevaluateList[i].order_goods.length;j ++ ){
-            }
-            this.noevaluateNumber += j;
-          }
-          this.refundList = data.filter(item=>item.order_status == 7);
-          for(var i = 0;i < this.refundList.length;i ++ ){
-            for(var j = 0;j <this.refundList[i].order_goods.length;j ++ ){
-            }
-            this.refundNumber += j;
           }
         }else{
 
@@ -274,6 +266,7 @@ export default {
           font-weight:bold;
       }
       .gray{
+          cursor:pointer;
           color:gray;
       }
       height:1024px;
@@ -309,6 +302,7 @@ export default {
               width:100%;
               .flexRowCenter();
               div{
+                  cursor:pointer;
                   width:25%;
                   .flexColumnCenter();
                   p{
@@ -337,6 +331,7 @@ export default {
               .flexRowCenter();
               margin-top:15px;
               div{
+                  cursor:pointer;
                   width:25%;
                   .flexColumnCenter();
                   position:relative;

@@ -62,6 +62,18 @@
 				        </template>
 				          	<el-menu-item index="/storelist">店铺列表</el-menu-item>
 			      	</el-submenu>
+			      	<el-submenu index="7">
+			      		<template slot="title">
+				          	<i class="el-icon-s-shop"></i>
+				          	<span slot="title">我的店铺</span>
+				        </template>
+				          	<el-menu-item index="/soldgoods">已卖出的宝贝</el-menu-item>
+				          	<el-menu-item index="/evaluatemanager">评价管理</el-menu-item>
+				          	<el-menu-item index="/sendgoods">发货</el-menu-item>
+				          	<el-menu-item index="/releasegoods">发布宝贝</el-menu-item>
+				          	<el-menu-item index="/sellgoods">出售中的宝贝</el-menu-item>
+				          	<el-menu-item index="/warehousegoods">仓库中的宝贝</el-menu-item>
+			      	</el-submenu>
 			    </el-menu>
 			</el-aside>
 			<el-main>

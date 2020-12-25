@@ -8,7 +8,7 @@
 			<div class="left-location">
 				<i class="el-icon-location-outline"></i>
 			</div>
-			<div class="right-message">
+			<div class="right-message" v-if="haveAddress">
 				<div class="message-top">
 					<span>{{address.consignee}}</span>
 					<span>{{address.phone}}</span>
@@ -16,6 +16,9 @@
 				<div class="message-bottom">
 					<span>{{address.area+address.address}}</span>
 				</div>
+			</div>
+			<div class="right-message" v-else>
+				暂无收货地址，请先添加
 			</div>
 		</div>
 		<div class="goods" v-for="(item,index) in goods">
@@ -85,6 +88,7 @@
 				},
 				totalNumber:0,
 				totalPrice:0,
+				haveAddress:true
 			}
 		},
 		computed:{
@@ -95,13 +99,18 @@
 		created(){
 			this.goods_ids = this.$route.query.goods_ids;
 			for(var i = 0;i < this.goods_ids.length;i ++ ){
-				this.totalNumber += this.goods_ids[i].number;
+				if (this.goods_ids[i].number) {
+					this.totalNumber += this.goods_ids[i].number;
+				}
 			}
 			this.getGoods();
 			if (this.$route.query.address) {
 				this.address = this.$route.query.address;
 			}else{
 				this.getAddress();
+			}
+			if (this.address.length == 0) {
+				this.haveAddress = false;
 			}
 		},
 		methods:{

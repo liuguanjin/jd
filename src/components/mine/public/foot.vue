@@ -25,7 +25,6 @@
 
 <script>
 import {mapState} from "vuex";
-var userinfo = JSON.parse(localStorage.getItem('userinfo'));
 export default {
 	data () {
 	    return {
@@ -57,6 +56,7 @@ export default {
 		}
 	},
 	created(){
+		var userinfo = JSON.parse(localStorage.getItem('userinfo'));
 		if (userinfo == '' || userinfo==null || userinfo == undefined) {
 			this.$message({message:'尚未登录,请先登录',type:'warning'});
 			this.$router.push('/mine');

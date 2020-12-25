@@ -1,10 +1,10 @@
 <template>
-	<div class="shop_list">
+	<div class="release-goods">
 		<!-- 商品列表界面头部显示 -->
 		<el-breadcrumb separator-class="el-icon-arrow-right">
 			<el-breadcrumb-item :to="{ path: '/shop' }">商城</el-breadcrumb-item>
-			<el-breadcrumb-item>商品管理</el-breadcrumb-item>
-			<el-breadcrumb-item>商品列表</el-breadcrumb-item>
+			<el-breadcrumb-item>我的店铺</el-breadcrumb-item>
+			<el-breadcrumb-item>发布宝贝</el-breadcrumb-item>
 		</el-breadcrumb>
 		<!-- 搜索框 -->
 		<div class="search">
@@ -14,29 +14,24 @@
 	      	placeholder="搜索商品"
 	      	>
 	      	</el-input>
-	      	<el-button type="primary" @click="getGoodsList(keyword)">搜索</el-button>
+	      	<el-button type="primary" @click="getMyGoodsList(keyword)">搜索</el-button>
 		</div>
 		<!-- 进入添加商品会话按钮 -->
 		<el-row>
 			<el-col :span="24">
-				<div class="addGoods">
-					<el-button type="primary" @click="showAddGoods">添加商品</el-button>
+				<div class="addMyGoods">
+					<el-button type="primary" @click="showAddGood">发布宝贝</el-button>
 				</div>
 			</el-col>
 		</el-row>
+	  	<span>我的所有宝贝:</span>
 		<!-- 全部商品列表表格 -->
 		<el-table
-	    :data="goodsList"
+	    :data="myGoodsList"
 	    border
 	    style="width: 100%"
 	    row-key="id"
 	    >
-		    <el-table-column
-		    prop="id"
-		    label="ID"
-		    align="center"
-		    >
-		    </el-table-column>
 		    <el-table-column
 	    	prop="goods_name"
 	    	label="商品名称"
@@ -100,12 +95,6 @@
 	    	align="center"
 	    	>
 		    </el-table-column>
-		    <el-table-column
-	    	prop="shop_name"
-	    	label="所属店铺"
-	    	align="center"
-	    	>
-		    </el-table-column>
 	    	<el-table-column
 	    	label="操作"
 	    	align="center"
@@ -124,9 +113,9 @@
 	    @current-change="currentChange"
 	    >
 	  	</el-pagination>
-	  	<!-- 添加商品会话 -->
+	  	<!-- 发布宝贝会话 -->
 	  	<el-dialog 
-	  	title="添加商品" 
+	  	title="发布宝贝" 
 	  	:visible.sync="isShowAddGoods"
 	  	destroy-on-close
 	  	>
@@ -221,24 +210,6 @@
 			      		:key="item.id"
 			      		:value="item.id"
 			      		:label="item.type_name"
-			    		>
-			    		</el-option>
-		      		</el-select>
-			    </el-form-item>
-			    <el-form-item 
-			    label="所属店铺" 
-			    >
-			    	<el-select
-		      		v-model="add_shop_name" 
-		      		placeholder="请选择店铺"
-		    		clearable
-		    		@change="addShopChange"
-		      		>
-			      		<el-option
-			      		v-for="item in shopList"
-			      		:key="item.id"
-			      		:value="item.id"
-			      		:label="item.shop_name"
 			    		>
 			    		</el-option>
 		      		</el-select>
@@ -504,24 +475,6 @@
 		      		</el-select>
 			    </el-form-item>
 			    <el-form-item 
-			    label="所属店铺" 
-			    >
-			    	<el-select
-		      		v-model="update_shop_name" 
-		      		placeholder="请选择店铺"
-		    		clearable
-		    		@change="updateShopChange"
-		      		>
-			      		<el-option
-			      		v-for="item in shopList"
-			      		:key="item.id"
-			      		:value="item.id"
-			      		:label="item.shop_name"
-			    		>
-			    		</el-option>
-		      		</el-select>
-			    </el-form-item>
-			    <el-form-item 
 			    label="商品logo" 
 			    >
 			    	<img :src="'http://adminapi.lgj.com/'+updateGoodsData.goods_logo" alt="">
@@ -691,13 +644,13 @@
 	export default {
 		data(){
 			return {
-				isShowAddGoods:false,
-				isShowEditGoods:false,
-				goodsList:[],
+				myGoodsList:[],
 				total:0,
 				perPage:10,
 				currentPage:1,
 				keyword:"",
+				isShowAddGoods:false,
+				isShowEditGoods:false,
 				addGoodsData:{
 					goods_name:"",
 					goods_price:"",
@@ -708,6 +661,7 @@
 					cate_id:"",
 					brand_id:"",
 					type_id:"",
+					shop_id:"",
 					item:[
 						{price:"",cost_price:"",store_count:"",value_ids:"",value_names:""}
 					],
@@ -726,6 +680,7 @@
 					cate_id:"",
 					brand_id:"",
 					type_id:"",
+					shop_id:"",
 					item:[
 						{price:"",cost_price:"",store_count:"",value_ids:"",value_names:""}
 					],
@@ -734,34 +689,31 @@
 						
 					]
 				},
-				attr:[],
-				fileList:[],
-				updateFileList:[],
-				imagesList:[],
-				updateImagesList:[],
+				cateList:[],
+				brandList:[],
+				typeList:[],
+				add_cate_name:'',
+				update_cate_name:'',
+				add_brand_name:'',
+				update_brand_name:'',
+				add_type_name:'',
+				update_type_name:'',
 				myHeader:{
 					Authorization:token
 				},
 				myData:{
 					type:'goods'
 				},
-				add_cate_name:'',
-				update_cate_name:[],
-				add_shop_name:'',
-				update_shop_name:'',
-				add_brand_name:'',
-				update_brand_name:'',
-				add_type_name:'',
-				update_type_name:'',
+				attr:[],
+				fileList:[],
+				updateFileList:[],
+				imagesList:[],
+				updateImagesList:[],
+				attrList:[],
+				specList:[],
+				specvalueList:[],
 				spec_value:[],
 				attrvalue:[],
-				cateList:[],
-				brandList:[],
-				typeList:[],
-				specList:[],
-				attrList:[],
-				shopList:[],
-				specvalueList:[],
 				cateProp:{ 
 					lazy:true,
 					value:'id',
@@ -786,25 +738,33 @@
 						}
 					}
 				},
-				spec_goods:{},
-
 			}
 		},
+		created(){
+			this.getMyGoodsList();
+		},
 		methods:{
-			//获取商品列表 keywo 搜索关键字
-			getGoodsList(keyword=""){
+			getMyGoodsList(keyword=""){
+				var admininfo = JSON.parse(localStorage.getItem('admininfo'));
+				if (admininfo != '' && admininfo != null && admininfo != undefined) {
+					var admin_id = admininfo.admin_id
+				}
 				this.$http({
-					url:'goods?keyword='+this.keyword+'&page='+this.currentPage
+					url:'mygoods?admin_id='+admin_id
 				}).then(result=>{
 					const {code,msg,data} = result.data;
 					if (code == 200) {
-						this.goodsList = data.data;
-						this.total = data.total;
-						this.perPage = data.per_page;
+						this.myGoodsList = data.data;
+						this.total = data.total; 
+						this.perPage = data.perPage; 
 					}else{
 						this.$message({message:msg,type:'warning'});
 					}
 				})
+			},
+			currentChange(c){
+				this.currentPage = c;
+				this.getMyGoodsList();
 			},
 			//获取分类列表 用于选择商品所属分类
 			getCateList(){
@@ -832,19 +792,6 @@
 					}
 				})
 			},
-			//获取店铺列表 用于选择商品所属店铺
-			getShopList(keyword=""){
-				this.$http({
-					url:'store?keyword='+keyword
-				}).then(result=>{
-					const {code,data,msg} = result.data;
-					if (code == 200) {
-						this.shopList = data;
-					}else{
-						this.$message({message:msg,type:'warning'});
-					}
-				})
-			},
 			//获取模型列表 用于选择商品所属模型 keyword 搜索关键字
 			getTypeList(keyword=""){
 				this.$http({
@@ -858,7 +805,45 @@
 					}
 				})
 			},
-			//获取规格列表 用于选择商品所属规格 type_id 所属模型id
+			showAddGood(){
+				this.isShowAddGoods = true;
+				this.getTypeList();
+				this.getCateList();
+				this.getBrandList();
+			},
+			//添加商品时改变选中分类的逻辑 将选中的分类id添加至数据中
+			addCateChange(e){
+	      		this.addGoodsData.cate_id = e[2];
+	      	},
+	      	//添加商品时改变选中分类的逻辑 将选中的分类id添加至数据中
+			updateCateChange(e){
+	      		this.updateGoodsData.cate_id = e[2];
+	      	},
+	      	//添加商品时改变选中品牌的逻辑 将选中的品牌id添加至数据中
+	      	addBrandChange(e){
+	      		this.addGoodsData.brand_id = e;
+	      	},
+	      	//添加商品时改变选中品牌的逻辑 将选中的品牌id添加至数据中
+	      	updateBrandChange(e){
+	      		this.updateGoodsData.brand_id = e;
+	      	},
+	      	//添加商品时改变选中模型的逻辑 将选中的模型id添加至数据中 并重新请求该模型下的规格
+	      	addTypeChange(e){
+	      		this.addGoodsData.type_id = e;
+	      		this.addGoodsData.item = [];
+	      		this.addGoodsData.attr = [];
+	      		this.getSpecList(e);
+	      		this.getAttrList(e);
+	      	},
+	      	//添加商品时改变选中模型的逻辑 将选中的模型id添加至数据中 并重新请求该模型下的规格
+	      	updateTypeChange(e){
+	      		this.updateGoodsData.type_id = e;
+	      		this.updateGoodsData.item = [];
+	      		this.updateGoodsData.attr = [];
+	      		this.getSpecList(e);
+	      		this.getAttrList(e);
+	      	},
+	      	//获取规格列表 用于选择商品所属规格 type_id 所属模型id
 			getSpecList(id){
 				this.$http({
 					url:'specs?type_id='+id
@@ -884,84 +869,6 @@
 					}
 				})
 			},
-			//是否展示添加商品会话
-			showAddGoods(){
-				this.isShowAddGoods = true;
-			},
-			//添加商品逻辑 发送请求
-			addGoods(){
-				this.$http({
-					url:'goods',
-					method:'post',
-					data:this.addGoodsData
-				}).then(result=>{
-					const {code,data,msg} = result.data;
-					if (code == 200) {
-						this.$message({message:'添加商品成功',type:'success'});
-					}else{
-						this.$message({message:msg,type:'warning'});
-					}
-				})
-			},
-			//是否展示修改商品会话 id 商品id
-			editGoods(id){
-				this.isShowEditGoods = true;
-				this.$http({
-					url:'goods/' + id
-				}).then(result=>{
-					const {code,msg,data} = result.data;
-					if (code == 200) {
-						this.updateGoodsData = data;
-						this.updateGoodsData.item = data.spec_goods;
-						this.updateGoodsData.attr = JSON.parse(data.goods_attr);
-						this.update_type_name = data.type.type_name;
-						this.update_shop_name = data.shop_name;
-						this.update_brand_name = data.brand.name;
-						var id_arr = data.category.pid_path.split('_');
-						id_arr.push(data.category.id.toString());
-						id_arr = id_arr.splice(1,id_arr.length-1);
-						this.update_cate_name = id_arr;
-			      		this.getSpecList(data.type_id);
-			      		this.getAttrList(data.type_id);
-						console.log(this.update_cate_name);
-					}else{
-						this.$message({message:msg,type:'warning'});
-					}
-				})
-			},
-			updateGoods(){
-				this.$http({
-					url:'goods/'+this.updateGoodsData.id,
-					method:'put',
-					data:this.updateGoodsData
-				}).then(result=>{
-					const {code,msg,data} = result.data;
-					if (code == 200) {
-						this.$message({message:'修改商品成功',type:'success'});
-					}else{
-						this.$message({message:msg,type:'warning'});
-					}
-				})
-			},
-			//删除商品逻辑 发送请求 id 商品id
-			deleteGoods(id){
-				this.$http({
-					url:'goods/' + id,
-					method:'delete'
-				}).then(result=>{
-					const {code,msg,data} = result.data;
-					if (code == 200) {
-						this.$message({message:'删除商品成功',type:'success'});
-					}else{
-						this.$message({message:msg,type:'warning'});
-					}
-				})
-			},
-			//改变分页页数 使当前页为点击页 重新渲染界面
-			currentChange(c){
-				this.currentPage = c;
-				this.getGoodsList();
-			},
 			//在上传logo时判断 格式大小是否为指定格式大小
 			beforeAvatarUpload(file) {
 		        var isRightImage = false;
@@ -982,7 +889,7 @@
 		        }
 		        return isRightImage && isLt10M;
 	      	},
-	      	//移除已上传的logo 显示移除提示
+			//移除已上传的logo 显示移除提示
 	      	handleRemove(file, fileList) {
         		this.$message({message:`移除 ${ file.name } 成功`,type:'success'});
       		},
@@ -995,19 +902,25 @@
 	      		this.$message({message:`${file.name}上传成功`,type:'success'});
 	      		this.addGoodsData.goods_logo = response.data;
 			},
-			//修改商品上传logo成功 提示信息 将上传成功的地址添加到数据中
+			//添加商品上传logo成功 提示信息 将上传成功的地址添加到数据中
       		updateUploadSuccess(response,file,fileList){
 	      		this.$message({message:`${file.name}上传成功`,type:'success'});
 	      		this.updateGoodsData.goods_logo = response.data;
-			},
-			//上传iamges成功 提示信息 将上传成功的地址添加到数据中
-      		addImagesSuccess(response,file,fileList){
-	      		this.$message({message:`${file.name}上传成功`,type:'success'});
 			},
 			//上传logo失败的逻辑 提示上传失败
 			uploadError(){
 	      		this.$message({message:'上传失败，请检查上传地址',type:'warning'});
 	      	},
+	      	handleUpload(row){
+				this.imagesList.push(row);
+			},
+			handleUpdateUpload(row){
+				this.updateImagesList.push(row);
+			},
+	      	//上传iamges成功 提示信息 将上传成功的地址添加到数据中
+      		addImagesSuccess(response,file,fileList){
+	      		this.$message({message:`${file.name}上传成功`,type:'success'});
+			},
 			submitUpload(){
 				this.$refs.upload.submit();
 				var fd = new window.FormData();
@@ -1052,57 +965,10 @@
 					}
 				})
 			},
-			handleUpload(row){
-				this.imagesList.push(row);
-			},
-			handleUpdateUpload(row){
-				this.updateImagesList.push(row);
-			},
-			//添加商品时改变选中分类的逻辑 将选中的分类id添加至数据中
-			addCateChange(e){
-	      		this.addGoodsData.cate_id = e[2];
-	      	},
-	      	//添加商品时改变选中品牌的逻辑 将选中的品牌id添加至数据中
-	      	addBrandChange(e){
-	      		this.addGoodsData.brand_id = e;
-	      	},
-	      	//添加商品时改变选中店铺的逻辑 将选中的店铺id添加至数据中
-	      	addShopChange(e){
-	      		this.addGoodsData.shop_id = e;
-	      	},
-	      	//添加商品时改变选中模型的逻辑 将选中的模型id添加至数据中 并重新请求该模型下的规格
-	      	addTypeChange(e){
-	      		this.addGoodsData.type_id = e;
-	      		this.addGoodsData.item = [];
-	      		this.addGoodsData.attr = [];
-	      		this.getSpecList(e);
-	      		this.getAttrList(e);
-	      	},
-	      	//修改商品时改变选中分类的逻辑 将选中的分类id添加至数据中
-			updateCateChange(e){
-	      		this.updateGoodsData.cate_id = e[2];
-	      	},
-	      	//修改商品时改变选中品牌的逻辑 将选中的品牌id添加至数据中
-	      	updateBrandChange(e){
-	      		this.updateGoodsData.brand_id = e;
-	      	},	
-	      	//修改商品时改变选中店铺的逻辑 将选中的店铺id添加至数据中
-	      	updateShopChange(e){
-	      		this.updateGoodsData.shop_id = e;
-	      	},
-	      	//修改商品时改变选中模型的逻辑 将选中的模型id添加至数据中 并重新请求该模型下的规格
-	      	updateTypeChange(e){
-	      		this.updateGoodsData.type_id = e;
-	      		this.updateGoodsData.item = [];
-	      		this.updateGoodsData.attr = [];
-	      		this.getSpecList(e);
-	      		this.getAttrList(e);
-	      	},
-	      	//点击添加规格商品按钮后的逻辑 push方法使数据中的item添加一项空的值
+			//点击添加规格商品按钮后的逻辑 push方法使数据中的item添加一项空的值
 	      	addSpecInAdd(){
 	      		this.addGoodsData.item.push({price:"",cost_price:"",store_count:"",value_ids:"",value_names:""});
 	      	},
-	      	//点击修改规格商品按钮后的逻辑 push方法使数据中的item添加一项空的值
 	      	addSpecInUpdate(){
 	      		this.updateGoodsData.item.push({price:"",cost_price:"",store_count:"",value_ids:"",value_names:""});
 	      	},
@@ -1112,15 +978,21 @@
 	      			this.attr.push({id:"",attr_name:"",attr_value:""});
 	      		}
 	      	},
-	      	//点击规格商品中的删除图标后的逻辑 splice删除item中的该项
-	      	deleteSpecInAdd(index){
-	      		this.addGoodsData.item.splice(index,1);
+	      	//属性值下拉列表发生改变时的逻辑
+	      	attrvalueChange(e,index,id,name){
+	      		this.addGoodsData.attr.push({"id":"","attr_name":"","attr_value":""});
+	      		this.addGoodsData.attr[index].id=id;
+	      		this.addGoodsData.attr[index].attr_name=name;
+	      		this.addGoodsData.attr[index].attr_value=e;
+	      		//console.log(this.addGoodsData.attr);
 	      	},
-	      	//点击规格商品中的删除图标后的逻辑 splice删除item中的该项
-	      	deleteSpecInUpdate(index){
-	      		this.updateGoodsData.item.splice(index,1);
+	      	updateAttrvalueChange(e,index,id,name){
+	      		this.updateGoodsData.attr.push({"id":"","attr_name":"","attr_value":""});
+	      		this.updateGoodsData.attr[index].id=id;
+	      		this.updateGoodsData.attr[index].attr_name=name;
+	      		this.updateGoodsData.attr[index].attr_value=e;
+	      		//console.log(this.updateGoodsData.attr);
 	      	},
-	      	//当规格值下拉列表展开时 如果specvalueList为空则发送获取specvalue的请求
 	      	//当规格值下拉列表收起时清空specvalue
 	      	isGetSpecvalue(flag,id){
 	      		if (flag) {
@@ -1282,28 +1154,83 @@
 		      		// console.log(this.updateGoodsData);
 	      		}
 	      	},
-	      	//属性值下拉列表发生改变时的逻辑
-	      	attrvalueChange(e,index,id,name){
-	      		this.addGoodsData.attr.push({"id":"","attr_name":"","attr_value":""});
-	      		this.addGoodsData.attr[index].id=id;
-	      		this.addGoodsData.attr[index].attr_name=name;
-	      		this.addGoodsData.attr[index].attr_value=e;
-	      		//console.log(this.addGoodsData.attr);
+	      	//点击规格商品中的删除图标后的逻辑 splice删除item中的该项
+	      	deleteSpecInAdd(index){
+	      		this.addGoodsData.item.splice(index,1);
 	      	},
-	      	updateAttrvalueChange(e,index,id,name){
-	      		this.updateGoodsData.attr.push({"id":"","attr_name":"","attr_value":""});
-	      		this.updateGoodsData.attr[index].id=id;
-	      		this.updateGoodsData.attr[index].attr_name=name;
-	      		this.updateGoodsData.attr[index].attr_value=e;
-	      		//console.log(this.updateGoodsData.attr);
+	      	deleteSpecInUpdate(index){
+	      		this.updateGoodsData.item.splice(index,1);
 	      	},
-		},
-		mounted(){
-			this.getGoodsList();
-			this.getCateList();
-			this.getBrandList();
-			this.getTypeList();
-			this.getShopList();
+	      	//添加商品逻辑 发送请求
+			addGoods(){
+				this.addGoodsData.shop_id = this.myGoodsList[0].shop_id;
+				this.$http({
+					url:'goods',
+					method:'post',
+					data:this.addGoodsData
+				}).then(result=>{
+					const {code,data,msg} = result.data;
+					if (code == 200) {
+						this.$message({message:'添加商品成功',type:'success'});
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
+			},
+			updateGoods(){
+				this.$http({
+					url:'goods/'+this.updateGoodsData.id,
+					method:'put',
+					data:this.updateGoodsData
+				}).then(result=>{
+					const {code,msg,data} = result.data;
+					if (code == 200) {
+						this.$message({message:'修改商品成功',type:'success'});
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
+			},
+			//删除商品逻辑 发送请求 id 商品id
+			deleteGoods(id){
+				this.$http({
+					url:'goods/' + id,
+					method:'delete'
+				}).then(result=>{
+					const {code,msg,data} = result.data;
+					if (code == 200) {
+						this.$message({message:'删除商品成功',type:'success'});
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
+			},
+			//是否展示修改商品会话 id 商品id
+			editGoods(id){
+				this.isShowEditGoods = true;
+				this.$http({
+					url:'goods/' + id
+				}).then(result=>{
+					const {code,msg,data} = result.data;
+					if (code == 200) {
+						this.updateGoodsData = data;
+						this.updateGoodsData.item = data.spec_goods;
+						this.updateGoodsData.attr = JSON.parse(data.goods_attr);
+						this.update_type_name = data.type.type_name;
+						this.update_shop_name = data.shop_name;
+						this.update_brand_name = data.brand.name;
+						var id_arr = data.category.pid_path.split('_');
+						id_arr.push(data.category.id.toString());
+						id_arr = id_arr.splice(1,id_arr.length-1);
+						this.update_cate_name = id_arr;
+			      		this.getSpecList(data.type_id);
+			      		this.getAttrList(data.type_id);
+						console.log(this.update_cate_name);
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
+			},
 		}
 	}
 </script>
@@ -1317,6 +1244,9 @@
 		margin-top:10px;
 		display:flex;
 		flex-direction:row;
+	}
+	.el-table{
+		margin-top:10px;
 	}
 	.el-dialog{
 		.el-button{

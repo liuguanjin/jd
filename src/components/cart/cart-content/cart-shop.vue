@@ -72,7 +72,6 @@
 <script>
 import {mapState,mapActions} from "vuex";
 import eventBus from "../../eventbus/eventbus.js";
-var userinfo = JSON.parse(localStorage.getItem('userinfo'));
 export default {
 	data(){
 		return{
@@ -155,12 +154,15 @@ export default {
  			this.cartAddNum(index);
  		},
  		balance(){
+			var userinfo = JSON.parse(localStorage.getItem('userinfo'));
  			var goods_ids = this.cartArr.filter(item => item.goods_is_selected== 1);
  			if (userinfo == '' || userinfo == undefined || userinfo == null) {
  				this.noLogin = true;
 				setTimeout(()=>{
 					this.noLogin = false;
 				},2000)
+ 			}else if(this.cartArr.length == 0){
+ 				this.$message({message:'购物车暂无商品',type:'warning'});
  			}else if(goods_ids.length == 0){
  				this.$message({message:'请先选中商品再结算',type:'warning'});
  			}else{
@@ -173,12 +175,18 @@ export default {
 			}
  			var collectArr = this.collectArr;
  			var cartDetail = this.cartDetail;
+ 			var userinfo = JSON.parse(localStorage.getItem('userinfo'));
+ 			var goods = this.cartArr.filter(item => item.goods_is_selected== 1);
 			if (userinfo == '' || userinfo == undefined || userinfo == null) {
 				this.noLogin = true;
 				setTimeout(()=>{
 					this.noLogin = false;
 				},2000)
-			}else{
+			}else if(this.cartArr.length == 0){
+ 				this.$message({message:'购物车暂无商品',type:'warning'});
+ 			}else if(goods.length == 0){
+ 				this.$message({message:'请先选中商品再收藏',type:'warning'});
+ 			}else{
 				var goodsNotInCollect = true;
 				var goods_ids = [];
 				for(var j = 0;j < cartDetail.length;j ++ ){

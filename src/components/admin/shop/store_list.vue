@@ -52,6 +52,18 @@
 		    		<img :src="'http://adminapi.lgj.com'+scope.row.shop_logo" alt="正在加载">
 		      	</template>
 	    	</el-table-column> 
+    	 	<el-table-column
+	    	prop="collect"
+	    	label="收藏人数"
+	    	align="center"
+	    	>
+		    </el-table-column>
+		    <el-table-column
+	    	prop="admin_name"
+	    	label="所属管理员"
+	    	align="center"
+	    	>
+		    </el-table-column>
 		    <el-table-column
 	    	label="操作"
 	    	align="center"
@@ -86,6 +98,24 @@
 			      	autocomplete="off"
 			      	>
 			      	</el-input>
+			    </el-form-item>
+			    <el-form-item 
+			    label="所属管理员" 
+			    >
+			      	<el-select
+			      	v-model="admin"
+			      	clearable
+			      	placeholder="请选择管理员"
+			      	@change="addAdminChange"
+			      	>
+				      	<el-option
+				      	v-for="item in adminList"
+				      	:key="item.id"
+				      	:label="item.username"
+				      	:value="item.id"
+				      	>
+				      	</el-option>
+		      		</el-select>
 			    </el-form-item>
 			    <el-form-item 
 			    label="店铺图片" 
@@ -150,6 +180,24 @@
 			      	</el-input>
 			    </el-form-item>
 			    <el-form-item 
+			    label="所属管理员" 
+			    >
+			      	<el-select
+			      	v-model="admin"
+			      	clearable
+			      	placeholder="请选择管理员"
+			      	@change="editAdminChange"
+			      	>
+				      	<el-option
+				      	v-for="item in adminList"
+				      	:key="item.id"
+				      	:label="item.username"
+				      	:value="item.id"
+				      	>
+				      	</el-option>
+		      		</el-select>
+			    </el-form-item>
+			    <el-form-item 
 			    label="店铺图片" 
 			    >
 			    	<img :src="'http://adminapi.lgj.com'+updateStoreData.shop_logo" alt="正在加载">
@@ -202,7 +250,8 @@ export default {
 			addStoreData:{
 				shop_name:"",
 				sort:"",
-				shop_logo:""
+				shop_logo:"",
+				admin_id:"",
 			},
 			updateStoreData:{
 				shop_name:"",
@@ -217,10 +266,13 @@ export default {
 			myData:{
 				type:'shop'
 			},
+			admin:"",
+			adminList:[],
 		}
 	},
 	mounted(){
 		this.getStoresList();
+		this.getAdminList();
 	},
 	methods:{
 		getStoresList(keyword=""){
@@ -234,6 +286,22 @@ export default {
 					this.$message({message:msg,type:'warning'});
 				}
 			})
+		},
+		getAdminList(){
+			this.$http({
+				url:'alladmin'
+			}).then(result=>{
+				const {code,msg,data} = result.data;
+				if (code == 200) {
+					this.adminList = data;
+				}
+			})
+		},
+		addAdminChange(row){
+			this.addAdminData.admin_id = row;
+		},
+		editAdminChange(row){
+			this.updateStoreData.admin_id = row;
 		},
 		showAddStore(){
 			this.isShowAddStore = true;

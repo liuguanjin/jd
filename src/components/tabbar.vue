@@ -63,6 +63,10 @@ export default{
 		bottom:0;
 		.el-menu-item{
 			width:25%;
+			display:flex;
+			flex-direction:row;
+			justify-content:center;
+			align-items:center;
 		}
 	}
 </style>
