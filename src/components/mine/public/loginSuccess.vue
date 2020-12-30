@@ -3,8 +3,8 @@
   		<div class="logsuc-header">
   			<div class="head-top">
           <div class="head-img">
-  	  			<img :src="avatar" alt="">
-    				<p>{{nickname}}</p>
+  	  			<img :src="'http://www.lgj.com'+userDetail.avatar" alt="">
+    				<p>{{userDetail.nickname}}</p>
           </div>
 	  			<div class="iconbox">
             <i class="el-icon-user"></i>
@@ -116,8 +116,6 @@ export default {
   },
   data(){
     return{
-        avatar:"https://person-use.oss-cn-shenzhen.aliyuncs.com/images/mine-head/1.jpg",
-        nickname:"请先设置昵称",
         followNum:0,
         couponNum:0,
         id:0,
@@ -128,6 +126,9 @@ export default {
         noacceptNumber:0,
         noevaluateNumber:0,
         refundNumber:0,
+        userDetail:{
+
+        },
     }
   },
   computed:{
@@ -144,6 +145,7 @@ export default {
     }else{
       this.id = JSON.parse(userinfo).user_id;
     }
+    this.getUserDetail();
     this.getShopCollectArr();
     this.carculate(true);
     this.shopNumTotal();
@@ -154,6 +156,19 @@ export default {
       carculate:"calculateAllMoney",
       shopNumTotal:"totalShopNum"
     }),
+    getUserDetail(){
+      this.$homehttp({
+        url:'user/'+this.id
+      }).then(result=>{
+        const {code,msg,data} = result.data;
+        if (code == 200) {
+          this.userDetail = data;
+          console.log(this.userDetail);
+        }else{
+
+        }
+      })
+    },
     toAllorder(){
       this.$router.push({name:'order',query:{name:'quanbu'}});
     },

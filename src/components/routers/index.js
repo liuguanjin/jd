@@ -127,6 +127,10 @@ import FollowShop from '@/components/mine/public/followShop.vue';
 import Order from '@/components/mine/public/order.vue';
 //前台评价界面
 import Evaluate from '@/components/mine/public/evaluate.vue'
+//前台我的账户界面
+import MyAccount from '@/components/mine/public/myAccount.vue';
+//前天个人信息界面
+import MyMessage from '@/components/mine/public/myMessage.vue';
 //配置routes
 var routes = [
 	{path:"/",redirect:"/home"},
@@ -157,6 +161,8 @@ var routes = [
 	{path:"/followShop",component:FollowShop,name:"followShop",meta:{title:"关注店铺",keepAlive:false}},
 	{path:"/order",component:Order,name:"order",meta:{title:"我的订单",keepAlive:false}},
 	{path:"/evaluate",component:Evaluate,name:"evaluate",meta:{title:"发表评价",keepAlive:false}},
+	{path:"/myaccount",component:MyAccount,name:"myaccount",meta:{title:"我的账户",keepAlive:false}},
+	{path:"/mymessage",component:MyMessage,name:"mymessage",meta:{title:"个人信息",keepAlive:false}},
 	{path:"/ordersuccess",component:OrderSuccess,name:"ordersuccess",meta:{title:"订单提交成功",keepAlive:true}},
 	{path:"/collect",component:Collect,meta:{title:"收藏夹",keepAlive:false}},
 	{path:"/adminLogin",component:AdminLogin,meta:{title:"登录后台",keepAlive:false}},

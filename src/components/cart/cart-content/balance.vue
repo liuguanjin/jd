@@ -57,7 +57,7 @@
 			</div>
 			<div class="order-remarks other">
 				<span>订单备注</span>
-				<input type="text" placeholder="选填,请先和商家协商一致">
+				<input type="text" placeholder="选填,请先和商家协商一致" v-model="user_note">
 			</div>
 			<div class="cost">
 				<span>共{{goods_ids[index].number}}件,小计:¥{{item.spec_goods.price*goods_ids[index].number}}</span>
@@ -71,16 +71,11 @@
 </template>
 
 <script>
-	var userinfo = JSON.parse(localStorage.getItem('userinfo'));
-	if (userinfo != undefined && userinfo != '' && userinfo != null) {
-		var user_id = userinfo.user_id;
-	}else{
-		var user_id = 0;
-	}
 	import {mapActions,mapState} from "vuex";
 	export default {
 		data(){
 			return {
+				user_id:0,
 				goods_ids:[],
 				goods:[],
 				address:{
@@ -88,7 +83,8 @@
 				},
 				totalNumber:0,
 				totalPrice:0,
-				haveAddress:true
+				haveAddress:true,
+				user_note:"",
 			}
 		},
 		computed:{
@@ -97,6 +93,10 @@
 		 	})
 		 },
 		created(){
+			var userinfo = JSON.parse(localStorage.getItem('userinfo'));
+			if (userinfo != undefined && userinfo != '' && userinfo != null) {
+				this.user_id = userinfo.user_id;
+			}
 			this.goods_ids = this.$route.query.goods_ids;
 			for(var i = 0;i < this.goods_ids.length;i ++ ){
 				if (this.goods_ids[i].number) {
@@ -118,7 +118,7 @@
       			replaceCartArr:"replaceCartArr",
   			}),
 			chooseAddress(){
-				this.$router.push({name:'address',query:{id:user_id,goods_ids:this.goods_ids}});
+				this.$router.push({name:'address',query:{id:this.user_id,goods_ids:this.goods_ids}});
 			},
 			commitOrder(){
 				var order_date = new Date();
@@ -130,9 +130,8 @@
 				sNow += order_date.getMinutes();
 				sNow += order_date.getSeconds();
 				sNow += order_date.getMilliseconds();
-				sNow += (Math.round(Math.random()*999));
 				var order_sn = sNow;
-				var order_data = {order_sn:order_sn,user_id:user_id,order_status:0,consignee:this.address.consignee,address:this.address.area+this.address.address,phone:this.address.phone,goods_price:this.totalPrice,order_amount:this.totalPrice,total_amount:this.totalPrice,goods_ids:this.goods_ids,}
+				var order_data = {order_sn:order_sn,user_id:this.user_id,order_status:0,consignee:this.address.consignee,address:this.address.area+this.address.address,phone:this.address.phone,goods_price:this.totalPrice,order_amount:this.totalPrice,total_amount:this.totalPrice,goods_ids:this.goods_ids,user_note:this.user_note}
 				this.$homehttp({
 					url:'order',
 					method:'post',
@@ -179,7 +178,7 @@
 			},
 			getAddress(){
 				this.$homehttp({
-					url:'address?page=balance&user_id='+user_id
+					url:'address?page=balance&user_id='+this.user_id
 				}).then(result=>{
 					const {code,msg,data} = result.data;
 					if (code == 200) {

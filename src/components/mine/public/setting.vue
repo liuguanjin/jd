@@ -4,10 +4,10 @@
   			<i class="el-icon-back back" @click="back"></i>
       		<p>设置</p>
   		</div>
-  		<div class="avatar">
+  		<div class="avatar" @click="toMyMessage">
   			<div>
-	  			<img :src="avatar" alt="我的头像">
-	  			<p>{{nickname}}</p>
+	  			<img :src="'http://www.lgj.com'+userDetail.avatar" alt="我的头像">
+	  			<p>{{userDetail.nickname}}</p>
   			</div>
 			<p class="enter">></p>
   		</div>
@@ -15,7 +15,7 @@
   			<p>我的收货地址</p>
 			<p class="enter">></p>
   		</div>
-  		<div class="user">
+  		<div class="user" @click="toMyAccount">
   			<p>账户与安全</p>
   			<p class="enter">></p>
   		</div>
@@ -64,16 +64,30 @@ export default {
 	},
  	data(){
 	 	return{
-	 		avatar:"https://person-use.oss-cn-shenzhen.aliyuncs.com/images/mine-head/1.jpg",
-	 		nickname:"请先设置昵称",
 	 		show:false,
 	 		id:0,
+	 		userDetail:{
+
+	 		},
 	 	}
  	},
  	created(){
  		this.id = this.$route.query.id;
+ 		this.getUserDetail();
  	},
  	methods:{
+ 		getUserDetail(){
+      		this.$homehttp({
+        		url:'user/'+this.id
+      		}).then(result=>{
+        		const {code,msg,data} = result.data;
+        		if (code == 200) {
+          			this.userDetail = data;
+        		}else{
+
+        		}
+      		})
+   	 	},
 	 	back(){
 	 		this.$router.go(-1);
 	 	},
@@ -97,7 +111,13 @@ export default {
 	 	},
 	 	toAddress(){
 	 		this.$router.push({name:'address',query:{id:this.id}});
-	 	}
+	 	},
+	 	toMyAccount(){
+	 		this.$router.push({name:'myaccount',query:{id:this.id}});
+	 	},
+	 	toMyMessage(){
+	 		this.$router.push({name:'mymessage',query:{id:this.id}});
+	 	},
  	}
 }
 </script>

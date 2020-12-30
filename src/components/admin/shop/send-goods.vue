@@ -41,14 +41,24 @@
 	    	>
 		    </el-table-column>
 		    <el-table-column
+	    	prop="is_remind"
+	    	label="用户是否提醒"
+	    	align="center"
+	    	>
+	    		<template slot-scope="scope">
+		    		<span class="common" v-if="scope.row.is_remind === 0">暂未催单</span>
+		    		<span class="remind" v-else-if="scope.row.is_remind === 1">用户已催单!</span>
+	    		</template>
+		    </el-table-column>
+		    <el-table-column
 	    	prop="status"
 	    	label="状态"
 	    	align="center"
 	    	>
 	    		<template slot-scope="scope">
-		    		<span v-if="scope.row.status === 0">未发货</span>
-		    		<span v-else-if="scope.row.status === 1">已发货</span>
-		    		<span v-else-if="scope.row.status === 2">已换货</span>
+		    		<span v-if="scope.row.status === 1">未发货</span>
+		    		<span v-else-if="scope.row.status === 2">已发货</span>
+		    		<span v-else-if="scope.row.status === 8">已换货</span>
 		    		<span v-else>已退货</span>
 		      	</template>
 		    </el-table-column>
@@ -185,5 +195,8 @@
 		span{
 			cursor:pointer;
 		}
+	}
+	.remind{
+		color:red;
 	}
 </style>

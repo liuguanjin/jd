@@ -29,8 +29,8 @@
 		    				</div>
 		    			</div>
 		    			<div class="goods-price">
-		    				<span>总价¥{{item1.spec_price*item1.number}}</span>
-		    				<span>实付款¥{{item1.spec_price*item1.number}}</span>
+		    				<span>总价¥{{(item1.spec_price*item1.number).toFixed(2)}}</span>
+		    				<span>实付款¥{{(item1.spec_price*item1.number).toFixed(2)}}</span>
 		    			</div>
 		    			<div class="goods-foot">
 		    				<span 
@@ -85,7 +85,8 @@
 		    				</span>
 		    				<span 
 		    				v-if="item1.status === 1"
-		    				class="last" 
+		    				class="last"
+		    				@click="remind(item1.id)"
 		    				>
 		    					提醒发货
 		    				</span>
@@ -125,8 +126,8 @@
 		    				</div>
 		    			</div>
 		    			<div class="goods-price">
-		    				<span>总价¥{{item.spec_price*item.number}}</span>
-		    				<span>实付款¥{{item.spec_price*item.number}}</span>
+		    				<span>总价¥{{(item.spec_price*item.number).toFixed(2)}}</span>
+		    				<span>实付款¥{{(item.spec_price*item.number).toFixed(2)}}</span>
 		    			</div>
 		    			<div class="goods-foot">
 		    				<span class="last" @click="pay(item.order_id,item.spec_price,item.number)">去付款</span>
@@ -153,11 +154,11 @@
 		    				</div>
 		    			</div>
 		    			<div class="goods-price">
-		    				<span>总价¥{{item.spec_price*item.number}}</span>
-		    				<span>实付款¥{{item.spec_price*item.number}}</span>
+		    				<span>总价¥{{(item.spec_price*item.number).toFixed(2)}}</span>
+		    				<span>实付款¥{{(item.spec_price*item.number).toFixed(2)}}</span>
 		    			</div>
 		    			<div class="goods-foot">
-		    				<span class="last">提醒发货</span>
+		    				<span class="last" @click="remind(item.id)">提醒发货</span>
 		    			</div>
 			    	</div>
 		    	</div>
@@ -181,14 +182,14 @@
 		    				</div>
 		    			</div>
 		    			<div class="goods-price">
-		    				<span>总价¥{{item.spec_price*item.number}}</span>
-		    				<span>实付款¥{{item.spec_price*item.number}}</span>
+		    				<span>总价¥{{(item.spec_price*item.number).toFixed(2)}}</span>
+		    				<span>实付款¥{{(item.spec_price*item.number).toFixed(2)}}</span>
 		    			</div>
 		    			<div class="goods-foot">
 		    				<span class="more">更多</span>
 		    				<span class="common">挑选服务</span>
 		    				<span class="common">查看物流</span>
-		    				<span class="last">确认收货</span>
+		    				<span class="last" @click="accept(item.id)">确认收货</span>
 		    			</div>
 			    	</div>
     			</div>		
@@ -212,8 +213,8 @@
 		    				</div>
 		    			</div>
 		    			<div class="goods-price">
-		    				<span>总价¥{{item.spec_price*item.number}}</span>
-		    				<span>实付款¥{{item.spec_price*item.number}}</span>
+		    				<span>总价¥{{(item.spec_price*item.number).toFixed(2)}}</span>
+		    				<span>实付款¥{{(item.spec_price*item.number).toFixed(2)}}</span>
 		    			</div>
 		    			<div class="goods-foot">
 		    				<span class="common">加入购物车</span>
@@ -242,8 +243,8 @@
 		    				</div>
 		    			</div>
 		    			<div class="goods-price">
-		    				<span>总价¥{{item.spec_price*item.number}}</span>
-		    				<span>实付款¥{{item.spec_price*item.number}}</span>
+		    				<span>总价¥{{(item.spec_price*item.number).toFixed(2)}}</span>
+		    				<span>实付款¥{{(item.spec_price*item.number).toFixed(2)}}</span>
 		    			</div>
 		    			<div class="goods-foot">
 		    				<span class="last">申请退款</span>
@@ -256,7 +257,6 @@
 </template>
 
 <script>
-	var userinfo = localStorage.getItem('userinfo');
 	export default {
 		data(){
 			return {
@@ -277,18 +277,38 @@
 		methods:{
 			pay(id,price,number){
 				var pay = this.orderList.filter(item=>item.id == id);
-				var payData = {
-					WIDTQout_trade_no:pay[0].order_sn,
-					WIDtotal_amount:price*number
-				}
-				this.$homehttp({
-					url:'plugins/apply',
-					method:'post',
-					data:payData
-				}).then(result=>{
-					console.log(result);
-				})
+				var WIDTQout_trade_no = pay[0].order_sn;
+				var	WIDtotal_amount = price*number;
+				WIDtotal_amount = WIDtotal_amount.toFixed(2);
+				var newwindow = window.open('_blank');
+				newwindow.location = "http://www.lgj.com/plugins/apply?WIDTQout_trade_no="+WIDTQout_trade_no+"&WIDtotal_amount="+WIDtotal_amount;
+				//window.location.href = "http://www.lgj.com/plugins/apply?WIDTQout_trade_no="+WIDTQout_trade_no+"&WIDtotal_amount="+WIDtotal_amount;
 				
+			},
+			accept(id){
+				this.$homehttp({
+					url:'accept-goods/'+id
+				}).then(result=>{
+					const {code,msg,data} = result.data;
+					if (code == 200) {
+						this.$message({message:'收货成功',type:'success'});
+						this.getOrderList();
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
+			},
+			remind(id){
+				this.$homehttp({
+					url:'remind-goods/'+id
+				}).then(result=>{
+					const {code,msg,data} = result.data;
+					if (code == 200) {
+						this.$message({message:'提醒商家成功',type:'success'});
+					}else{
+						this.$message({message:msg,type:'warning'});
+					}
+				})
 			},
 			enterShop(id){
 				this.$router.push({name:"shopDetail",query:{id:id}});
@@ -304,6 +324,7 @@
 				this.$router.push({name:'evaluate',query:{id:id}});
 			},
 			getOrderList(){
+				var userinfo = localStorage.getItem('userinfo');
 				if (userinfo != null && userinfo != '' && userinfo != undefined) {
 					var user_id = JSON.parse(userinfo).user_id;
 					this.$homehttp({
