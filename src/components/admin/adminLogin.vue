@@ -111,7 +111,7 @@ export default {
  		},
  		regist(){
  			//注册按钮点击跳转到注册界面
- 			this.$router.push({path:"/regist"});
+ 			this.$router.push({path:"/adminRegist"});
  		},
  		generateVerify(){
  			/*//随机验证码的生成

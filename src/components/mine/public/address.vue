@@ -65,7 +65,6 @@
 		},
 		methods:{
 			chooseAddress(index){
-				console.log(this.addressList[index]);
 				if (this.fromBalance) {
 					this.$router.push({name:'balance',query:{address:this.addressList[index],goods_ids:this.goods_ids}})
 				}

@@ -25,7 +25,7 @@
 							<span>
 								<el-row>
 									<el-col :span="18">
-										{{adminInfo.nickname}}
+										{{adminInfo.nickname||'暂未设置昵称'}}
 									</el-col>
 									<el-col :span="6">
 										<i class="el-icon-arrow-down el-icon--right"></i>

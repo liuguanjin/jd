@@ -1,5 +1,5 @@
 <template>
-  <div id="regist-main">
+  <div id="admin-regist">
   	<!-- 注册界面头部 -->
   	<div class="regist-title">
   		<i class="el-icon-back back" @click="back"></i>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import myHead from "../../common/head.vue";
+import myHead from "../common/head.vue";
 export default {
 	components:{
  		"my-head":myHead,
@@ -120,8 +120,6 @@ export default {
  				this.show = true;
  				this.isAllowRegist = false;
  				return;
- 			}else{
- 				this.isAllowRegist = true;
  			}
  			var Reg = /^[a-zA-Z]\w{5,17}$/;
  			var result = Reg.test(upwd);
@@ -153,16 +151,19 @@ export default {
  			this.leaveUname();
  			this.leaveUpwd();
  			this.leaveReUpwd();
+			console.log(this.registerForm,this.reUpwd,this.isAllowRegist);
  			if(this.registerForm.code==''){
  				this.show = true;
  				this.uanmePrompt = "验证码不能为空";
  				this.isAllowRegist = false;
  				this.generateVerify();
+ 			}else{
+ 				this.isAllowRegist = true;
  			}
  			if (this.isAllowRegist) {
  				this.registerForm.uniqid = this.verify.uniqid;
  				this.$http({
- 					url:'homeregister',
+ 					url:'adminregister',
  					method:'post',
  					data:this.registerForm
  				}).then(result=>{
@@ -170,7 +171,7 @@ export default {
  					if (code == 200) {
  						this.$message({message:'注册成功,请用此账号登录',type:'success'});
  						setTimeout(()=>{
-	 						this.$router.push('/mine');
+	 						this.$router.push('/adminLogin');
  						},2000)
  					}else{
  						this.$message({message:msg,type:'warning'});
@@ -209,8 +210,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-	@import url("../../less/common.less");
-	#regist-main{
+	@import url("../less/common.less");
+	#admin-regist{
 		display:flex;
 		flex-direction:column;
 		justify-content:center;

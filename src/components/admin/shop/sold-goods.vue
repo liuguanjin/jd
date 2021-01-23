@@ -58,7 +58,7 @@
 		    </el-table-column>
 		    <el-table-column
 	    	prop="is_remind"
-	    	label="用户是否提醒"
+	    	label="用户是否提醒发货"
 	    	align="center"
 	    	>
 	    		<template slot-scope="scope">

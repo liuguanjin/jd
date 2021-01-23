@@ -202,6 +202,7 @@ export default {
  	...mapState({
  		arr:state => state.cart.cartArr,
  		collectArr:state => state.collect.collectArr,
+ 		footprintArr:state => state.footprint.foorprintArr
  	})
  },
  created(){
@@ -215,6 +216,18 @@ export default {
 	d = d < 10 ? "0" + d : d;
 	date = y + "-" + m + "-" + d;
  	this.addToFootprint({date:date,detail:[{id:this.id}]})
+ 	var userinfo = localStorage.getItem('userinfo');
+  	if (userinfo != '' && userinfo != undefined && userinfo != null) {
+    	userinfo = JSON.parse(userinfo)
+   	 	var user_id = userinfo.user_id;
+    	this.$homehttp({
+      		url:'footprint/'+user_id,
+      		method:'put',
+      		data:this.footprintArr
+    	}).then(result=>{
+
+    	})
+  	}
  },
  mounted(){
  	this.getGoodsDetail();

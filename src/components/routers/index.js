@@ -18,8 +18,6 @@ import Detail from "@/components/home/detail/detail.vue";
 import ShopDetail from "@/components/shop/shop_detail.vue";
 //前台注册界面
 import Regist from "@/components/mine/public/regist.vue";
-//前台注册成功界面
-import Registsuccess from "@/components/mine/public/registSuccess.vue";
 //前台登录成功界面
 import LoginSuccess from "@/components/mine/public/loginSuccess.vue";
 //前台分类详情界面
@@ -39,6 +37,8 @@ import Zhuangqian from "@/components/home/zhuangqian/zhuangqian.vue";
 import Vip from "@/components/home/vip/vip.vue";
 import Collect from "@/components/mine/public/collect.vue";
 import Foot from "@/components/mine/public/foot.vue";
+//后台管理员注册界面 默认为商家角色
+import AdminRegist from '@/components/admin/adminRegist.vue';
 //后台登录界面
 import AdminLogin from '@/components/admin/adminLogin.vue';
 //后台界面
@@ -129,20 +129,23 @@ import Order from '@/components/mine/public/order.vue';
 import Evaluate from '@/components/mine/public/evaluate.vue'
 //前台我的账户界面
 import MyAccount from '@/components/mine/public/myAccount.vue';
-//前天个人信息界面
+//前台个人信息界面
 import MyMessage from '@/components/mine/public/myMessage.vue';
+//前台修改昵称界面
+import Nickname from '@/components/mine/public/nickname.vue';
+//前天修改个性签名界面
+import PersonStatus from '@/components/mine/public/personStatus.vue'
 //配置routes
 var routes = [
 	{path:"/",redirect:"/home"},
-	{path:"/home",component:Home,meta:{title:"商城首页",keepAlive:true}},
-	{path:"/classify",component:Classify,meta:{title:"商城分类",keepAlive:true}},
+	{path:"/home",component:Home,meta:{title:"首页",keepAlive:true}},
+	{path:"/classify",component:Classify,meta:{title:"分类",keepAlive:true}},
 	{path:"/cart",component:Cart,meta:{title:"购物车",keepAlive:false}},
 	{path:"/balance",component:Balance,name:'balance',meta:{title:"结算",keepAlive:false}},
 	{path:"/mine",component:Mine,meta:{title:"个人中心",keepAlive:false}},
 	{path:"/detail",component:Detail,name:"detail",meta:{title:"商品详情",keepAlive:false}},
 	{path:"/shopdetail",component:ShopDetail,name:"shopDetail",meta:{title:"店铺详情",keepAlive:false}},
 	{path:"/regist",component:Regist,meta:{title:"注册",keepAlive:false}},
-	{path:"/regses",component:Registsuccess,meta:{title:"注册成功",keepAlive:false}},
 	{path:"/logsuc",component:LoginSuccess,name:"logsuc",meta:{title:"个人中心",keepAlive:false}},
 	{path:"/supermarket",component:Supermarket,meta:{title:"京东超市",keepAlive:true}},
 	{path:"/digit",component:Digit,meta:{title:"数码电器",keepAlive:true}},
@@ -165,7 +168,10 @@ var routes = [
 	{path:"/mymessage",component:MyMessage,name:"mymessage",meta:{title:"个人信息",keepAlive:false}},
 	{path:"/ordersuccess",component:OrderSuccess,name:"ordersuccess",meta:{title:"订单提交成功",keepAlive:true}},
 	{path:"/collect",component:Collect,meta:{title:"收藏夹",keepAlive:false}},
+	{path:"/nickname",component:Nickname,name:"nickname",meta:{title:"昵称",keepAlive:false}},
+	{path:"/personstatus",component:PersonStatus,name:"personstatus",meta:{title:"个性签名",keepAlive:false}},
 	{path:"/adminLogin",component:AdminLogin,meta:{title:"登录后台",keepAlive:false}},
+	{path:"/adminRegist",component:AdminRegist,meta:{title:"管理员注册",keepAlive:false}},
 	{path:"/admin",component:Admin,meta:{title:"后台管理",keepAlive:false},
 		children:[
 			{path:'/adminindex',component:AdminIndex,meta:{title:"后台首页",keepAlive:false},
@@ -175,40 +181,40 @@ var routes = [
 			},
 			{path:'/platform',component:Platform,meta:{title:"后台平台",keepAlive:false},
 				children:[
-					{path:'/settingmanager',component:SettingManager,meta:{title:"后台平台配置管理",keepAlive:false}},
-					{path:'/websitemanager',component:WebsiteManager,meta:{title:"后台平台网站设置",keepAlive:false}},
-					{path:'/fujianmanager',component:FujianManager,meta:{title:"后台平台附件设置",keepAlive:false}},
-					{path:'/menumanager',component:Menumanager,meta:{title:"后台平台菜单管理",keepAlive:false}},
-					{path:'/adminmanager',component:AdminManager,meta:{title:"后台平台管理员管理",keepAlive:false}},
-					{path:'/rolemanager',component:RoleManager,meta:{title:"后台平台角色管理",keepAlive:false}},
-					{path:'/managerlog',component:ManagerLog,meta:{title:"后台平台管理日志",keepAlive:false}}
+					{path:'/settingmanager',component:SettingManager,meta:{title:"平台配置管理",keepAlive:false}},
+					{path:'/websitemanager',component:WebsiteManager,meta:{title:"平台网站设置",keepAlive:false}},
+					{path:'/fujianmanager',component:FujianManager,meta:{title:"平台附件设置",keepAlive:false}},
+					{path:'/menumanager',component:Menumanager,meta:{title:"平台菜单管理",keepAlive:false}},
+					{path:'/adminmanager',component:AdminManager,meta:{title:"平台管理员管理",keepAlive:false}},
+					{path:'/rolemanager',component:RoleManager,meta:{title:"平台角色管理",keepAlive:false}},
+					{path:'/managerlog',component:ManagerLog,meta:{title:"平台管理日志",keepAlive:false}}
 				]
 			},
 			{path:'/shop',component:Shop,meta:{title:"后台商城",keepAlive:false},
 				children:[
-					{path:'/ordermanager',component:Ordermanager,meta:{title:"后台商城订单管理界面",keepAlive:false}},
-					{path:'/ordercomplaint',component:Ordercomplaint,meta:{title:"后台商城投诉订单界面",keepAlive:false}},
-					{path:'/orderrefund',component:Orderrefund,meta:{title:"后台商城退款订单界面",keepAlive:false}},
-					{path:'/shopcategory',component:Shopcategory,meta:{title:"后台商城商品分类界面",keepAlive:false}},
-					{path:'/shopbrand',component:Shopbrand,meta:{title:"后台商城商品品牌界面",keepAlive:false}},
-					{path:'/shoptype',component:Shoptype,meta:{title:"后台商城商品模型界面",keepAlive:false}},
-					{path:'/shoplist',component:Shoplist,meta:{title:"后台商城商品列表界面",keepAlive:false}},
-					{path:'/shoprecycle',component:Shoprecycle,meta:{title:"后台商城回收站界面",keepAlive:false}},
-					{path:'/shopattribute',component:Shopattribute,meta:{title:"后台商城商品属性界面",keepAlive:false}},
-					{path:'/shopspec',component:Shopspec,meta:{title:"后台商城商品规格界面",keepAlive:false}},
-					{path:'/shopevaluate',component:Shopevaluate,meta:{title:"后台商城评价管理界面",keepAlive:false}},
-					{path:'/shopserver',component:Shopserver,meta:{title:"后台商城商品咨询界面",keepAlive:false}},
-					{path:'/vipgrade',component:Vipgrade,meta:{title:"后台商城会员等级界面",keepAlive:false}},
-					{path:'/vipmanager',component:Vipmanager,meta:{title:"后台商城会员管理界面",keepAlive:false}},
-					{path:'/advertisementmanager',component:Advertisementmanager,meta:{title:"后台商城广告管理界面",keepAlive:false}},
-					{path:'/bankmanager',component:Bankmanager,meta:{title:"后台商城银行管理界面",keepAlive:false}},
-					{path:'/crowdfundingmanager',component:Crowdfundingmanager,meta:{title:"后台商城支付管理界面",keepAlive:false}},
-					{path:'/paymanager',component:Paymanager,meta:{title:"后台商城众筹管理界面",keepAlive:false}},
-					{path:'/storelist',component:StoreList,meta:{title:"后台商城店铺管理界面",keepAlive:false}},
-					{path:'/soldgoods',component:SoldGoods,meta:{title:"后台商城已售出宝贝界面",keepAlive:false}},
-					{path:'/releasegoods',component:ReleaseGoods,meta:{title:"后台商城发布宝贝界面",keepAlive:false}},
-					{path:'/sendgoods',component:SendGoods,meta:{title:"后台商城发货界面",keepAlive:false}},
-					{path:'/evaluatemanager',component:EvaluateManager,meta:{title:"后台评价管理界面",keepAlive:false}},
+					{path:'/ordermanager',component:Ordermanager,meta:{title:"订单管理",keepAlive:false}},
+					{path:'/ordercomplaint',component:Ordercomplaint,meta:{title:"投诉订单",keepAlive:false}},
+					{path:'/orderrefund',component:Orderrefund,meta:{title:"退款订单",keepAlive:false}},
+					{path:'/shopcategory',component:Shopcategory,meta:{title:"商品分类",keepAlive:false}},
+					{path:'/shopbrand',component:Shopbrand,meta:{title:"商品品牌",keepAlive:false}},
+					{path:'/shoptype',component:Shoptype,meta:{title:"商品模型",keepAlive:false}},
+					{path:'/shoplist',component:Shoplist,meta:{title:"商品列表",keepAlive:false}},
+					{path:'/shoprecycle',component:Shoprecycle,meta:{title:"回收站",keepAlive:false}},
+					{path:'/shopattribute',component:Shopattribute,meta:{title:"商品属性",keepAlive:false}},
+					{path:'/shopspec',component:Shopspec,meta:{title:"商品规格",keepAlive:false}},
+					{path:'/shopevaluate',component:Shopevaluate,meta:{title:"评价管理",keepAlive:false}},
+					{path:'/shopserver',component:Shopserver,meta:{title:"商品咨询",keepAlive:false}},
+					{path:'/vipgrade',component:Vipgrade,meta:{title:"会员等级",keepAlive:false}},
+					{path:'/vipmanager',component:Vipmanager,meta:{title:"会员管理",keepAlive:false}},
+					{path:'/advertisementmanager',component:Advertisementmanager,meta:{title:"广告管理",keepAlive:false}},
+					{path:'/bankmanager',component:Bankmanager,meta:{title:"银行管理",keepAlive:false}},
+					{path:'/crowdfundingmanager',component:Crowdfundingmanager,meta:{title:"支付管理",keepAlive:false}},
+					{path:'/paymanager',component:Paymanager,meta:{title:"众筹管理",keepAlive:false}},
+					{path:'/storelist',component:StoreList,meta:{title:"店铺管理",keepAlive:false}},
+					{path:'/soldgoods',component:SoldGoods,meta:{title:"已售出宝贝",keepAlive:false}},
+					{path:'/releasegoods',component:ReleaseGoods,meta:{title:"发布宝贝",keepAlive:false}},
+					{path:'/sendgoods',component:SendGoods,meta:{title:"发货",keepAlive:false}},
+					{path:'/evaluatemanager',component:EvaluateManager,meta:{title:"评价管理",keepAlive:false}},
 				]
 			},
 			{path:'/operator',component:Operator,meta:{title:"后台运营",keepAlive:false}}

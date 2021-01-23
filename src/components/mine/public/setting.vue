@@ -6,7 +6,7 @@
   		</div>
   		<div class="avatar" @click="toMyMessage">
   			<div>
-	  			<img :src="'http://www.lgj.com'+userDetail.avatar" alt="我的头像">
+	  			<img :src="userDetail.avatar?'http://www.lgj.com'+userDetail.avatar:''" alt="我的头像">
 	  			<p>{{userDetail.nickname}}</p>
   			</div>
 			<p class="enter">></p>
@@ -48,7 +48,7 @@
   			</div>
   			<div class="leave-confim">
   				<p class="sure" @click="leave">确定</p>
-  				<p class="cansel">取消</p>
+  				<p class="cansel" @click="cansel">取消</p>
   			</div>
   		</div>
   	</div>
@@ -89,7 +89,7 @@ export default {
       		})
    	 	},
 	 	back(){
-	 		this.$router.go(-1);
+	 		this.$router.push({name:'logsuc',query:{id:this.id}});
 	 	},
 	 	showleave(){
 	 		this.show = true;
@@ -108,6 +108,9 @@ export default {
 					this.$message({message:result.data.msg,type:'warning'});
 				}
 			})
+	 	},
+	 	cansel(){
+	 		this.show = false;
 	 	},
 	 	toAddress(){
 	 		this.$router.push({name:'address',query:{id:this.id}});
@@ -178,14 +181,13 @@ export default {
 			margin-bottom:5px;
 		}
 		.leave{
-			padding:10px 0;
-			border-radius:10px;
 			margin:10px auto;
 			width:30%;
 			.flexColumnCenter();
 			.leave-text{
-				color:#d1d1d1;
 				width:100%;
+				padding:10px;
+				color:#d1d1d1;
 				border-bottom:1px solid #eee;
 				p{
 					margin:0 auto;
@@ -193,11 +195,14 @@ export default {
 			}
 			.leave-confim{
 				width:100%;
+				padding:10px;
 				.flexRowCenter();
 				justify-content:space-between;
 				p{
-					padding:5px 10px 0 10px;
+					padding:10px;
 					margin:0;
+					border:1px solid red;
+					border-radius:10px;
 				}
 				.sure{
 					color:red;

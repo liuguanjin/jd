@@ -24,6 +24,9 @@
 				</div>
 			</div>
 		</div>
+		<div class="tips" v-if="isShowTips">
+			您暂无关注店铺
+		</div>
 	</div>
 </template>
 
@@ -33,6 +36,7 @@
 			return {
 				shopCollectArr:[],
 				shopCollectDetail:[],
+				isShowTips:false,
 			}
 		},
 		methods:{
@@ -45,16 +49,22 @@
 					var id = parseInt(this.shopCollectArr[i]);
 					shop_collect_ids.push(id);
 				}
-				this.$homehttp({
-					url:'collect-shop-detail',
-					method:'post',
-					data:shop_collect_ids
-				}).then(result=>{
-					const {code,msg,data} = result.data;
-					if (code == 200 ) {
-						this.shopCollectDetail = data;
-					}
-				})
+				console.log(shop_collect_ids);
+				if (shop_collect_ids.length === 0) {
+					this.isShowTips = true;
+				}else{
+					this.$homehttp({
+						url:'collect-shop-detail',
+						method:'post',
+						data:shop_collect_ids
+					}).then(result=>{
+						const {code,msg,data} = result.data;
+						if (code == 200 ) {
+							this.shopCollectDetail = data;
+						}
+					})
+					this.isShowTips = false;
+				}
 			},
 			enterShop(id){
 				this.$router.push({name:"shopDetail",query:{id:id}});

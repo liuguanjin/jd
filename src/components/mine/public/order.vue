@@ -9,6 +9,7 @@
 		tab-position="top" 
 		type="border-card"
 		v-model="name"
+		@tab-click="handleClick"
 		>
 		    <el-tab-pane label="全部" name="quanbu">
 		    	<div class="quanbu tab-content" v-for="(item,index) in orderList">
@@ -320,8 +321,10 @@
 				this.$router.go(-1);
 			},
 			evaluate(id){
-				console.log(id);
 				this.$router.push({name:'evaluate',query:{id:id}});
+			},
+			handleClick(tabs,event){
+				this.getOrderList();
 			},
 			getOrderList(){
 				var userinfo = localStorage.getItem('userinfo');
@@ -333,6 +336,11 @@
 	        			const {code,msg,data} = result.data;
 	        			if (code == 200) {
 	          				this.orderList = data;
+	          				this.nopayList = [];
+	          				this.nosendList = [];
+	          				this.noacceptList = [];
+	          				this.noevaluateList = [];
+	          				this.refundList = [];
 	          				for(var i = 0;i < data.length;i ++ ){
 	          					for(var j = 0;j < data[i].order_goods.length;j ++ ){
 	            					switch(data[i].order_goods[j].status){

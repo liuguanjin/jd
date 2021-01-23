@@ -2,9 +2,29 @@
   <div id="app">
     <!-- 返回之后界面停留在返回之前的位置 keepalive -->
   	<keep-alive >
-    	<router-view v-if="$route.meta.keepAlive"></router-view>
+      <router-view v-if="$route.meta.keepAlive"></router-view>
   	</keep-alive>
-	<router-view v-if="!$route.meta.keepAlive"></router-view>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
+    <!-- 提示对话框 -->
+    <el-dialog title="提示信息" :visible.sync="dialogVisible" width="350px">
+      <p class="red margin">此网站只用做简历展示,不作为商业用途,如有引用,请标明出处</p>
+      <p class="red margin">此网站数据只做展示,绝无恶意,如有存在抄袭,请联系作者删除</p>
+      <p class="red margin">联系方式:QQ 554426438</p>
+      <p class="margin big">下表提供用于登录的用户名密码,您也可以自己注册</p>
+      <el-table :data="userTable">
+        <el-table-column property="user" label="用户名" width="150"></el-table-column>
+        <el-table-column property="password" label="密码" width="200"></el-table-column>
+      </el-table>
+      <p class="margin big">下表提供后台管理的管理员及密码,您也可以自己注册成为商家</p>
+      <el-table :data="adminTable">
+        <el-table-column property="admin" label="管理员" width="150"></el-table-column>
+        <el-table-column property="password" label="密码" width="200"></el-table-column>
+        <el-table-column property="role" label="角色" width="200"></el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
     <!-- 底部标签栏 -->
     <tabbar></tabbar>
   </div>
@@ -20,6 +40,29 @@ import {mapActions,mapState} from "vuex";
 export default {
   components:{
     "tabbar":tabbar
+  },
+  data(){
+    return {
+      dialogVisible:true,
+      userTable:[{
+        user:'lgj19812345678',password:'lgj123456'
+      },{
+        user:'测试1',password:'lgj123456'
+      },{
+        user:'lgj19712345678',password:'lgj123456'
+      },{
+        user:'lgj13312345678',password:'lgj123456'
+      }],
+      adminTable:[{
+        admin:'admin',password:'lgj123456',role:'超级管理员'
+      },{
+        admin:'千叶林',password:'lgj123456',role:'商家'
+      },{
+        admin:'回力',password:'lgj123456',role:'商家'
+      },{
+        admin:'龙辰语',password:'lgj123456',role:'商家'
+      }]
+    }
   },
   created(){
     this.getData();
@@ -127,5 +170,16 @@ export default {
   #app{
     max-width:800px;
     margin:0 auto;
+    .el-dialog{
+      .red{
+        color:red;
+      }
+      .margin{
+        margin:10px 0;
+      }
+      .big{
+        font-size:18px;
+      }
+    }
   }
 </style>

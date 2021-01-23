@@ -3,7 +3,7 @@
   		<div class="logsuc-header">
   			<div class="head-top">
           <div class="head-img">
-  	  			<img :src="'http://www.lgj.com'+userDetail.avatar" alt="">
+  	  			<img :src="userDetail.avatar?'http://www.lgj.com'+userDetail.avatar:''" alt="">
     				<p>{{userDetail.nickname}}</p>
           </div>
 	  			<div class="iconbox">
@@ -163,7 +163,6 @@ export default {
         const {code,msg,data} = result.data;
         if (code == 200) {
           this.userDetail = data;
-          console.log(this.userDetail);
         }else{
 
         }
@@ -205,10 +204,13 @@ export default {
       }).then(result=>{
         const {code,msg,data} = result.data;
         if (code == 200) {
-          this.shopCollectArr = data.shop_ids;
-          this.followNum = data.shop_ids.length;
-        }else{
-
+          if(data.shop_ids[0] === ""){
+            this.shopCollectArr = [];
+            this.followNum = 0;
+          }else{
+            this.shopCollectArr = data.shop_ids;
+            this.followNum = data.shop_ids.length;
+          }
         }
       })
     },

@@ -13,7 +13,10 @@ homeaxios.install = function(vue){
 
 	//使用axios拦截器，在请求前进行判断
 	axios_obj.interceptors.request.use(function(conf){
-		conf.headers.Authorization = localStorage.getItem('token');
+		var userinfo = localStorage.getItem('userinfo');
+		if (userinfo != '' && userinfo != undefined && userinfo != null){
+			conf.headers.Authorization = userinfo.token;
+		}
 		if (conf.url == 'login') {
 			delete conf.headers.Authorization
 		}else if(conf.url == 'captcha'){

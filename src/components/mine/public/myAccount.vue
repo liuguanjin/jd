@@ -5,9 +5,9 @@
       		<p class="title">账户安全</p>
       		<i class="el-icon-more more"></i>
   		</div>
-  		<div class="nickname after">
-  			<span>昵称</span>
-  			<span>{{userDetail.nickname}}</span>
+  		<div class="username">
+  			<span>用户名</span>
+  			<span>{{userDetail.username}}</span>
   		</div>
   		<div class="phone after">
   			<span>修改手机号码</span>
@@ -87,11 +87,24 @@
 				margin-right:10px;
 			}
 		}
+		.username{
+			display:flex;
+			flex-direction:row;
+			justify-content:space-between;
+			align-items:center;
+			width:90%;
+			margin:0 auto;
+			span:nth-child(2){
+				margin-right:50px;
+			}
+		}
 		.after{
 			display:flex;
 			flex-direction:row;
 			justify-content:space-between;
 			align-items:center;
+			width:90%;
+			margin:0 auto;
 		}
 		.after:after{
 			content:"";
