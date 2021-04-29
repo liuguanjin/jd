@@ -15,7 +15,7 @@
         <el-table-column property="user" label="用户名" width="150"></el-table-column>
         <el-table-column property="password" label="密码" width="200"></el-table-column>
       </el-table>
-      <p class="margin big">下表提供后台管理的管理员及密码,您也可以自己注册成为商家</p>
+      <p class="margin big">下表提供后台管理的管理员及密码,您也可以自己注册成为商家(<span class="red">请勿删除或修改其中数据,谢谢配合</span>)</p>
       <el-table :data="adminTable">
         <el-table-column property="admin" label="管理员" width="150"></el-table-column>
         <el-table-column property="password" label="密码" width="200"></el-table-column>
@@ -179,6 +179,9 @@ export default {
       }
       .big{
         font-size:18px;
+      }
+      .red{
+        color:red;
       }
     }
   }

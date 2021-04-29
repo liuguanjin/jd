@@ -27,11 +27,10 @@
 			getGoods(){
 				var userinfo = localStorage.getItem('userinfo');
 				userinfo = JSON.parse(userinfo)
-				var user_id = '';
+				var user_id = 0;
 				if (userinfo != null && userinfo != '' && userinfo != undefined) {
 					user_id = userinfo.user_id;
 				}
-				console.log(user_id);
 				this.$homehttp({
 					url:'recommend-goods/'+user_id
 				}).then(result=>{
@@ -39,6 +38,7 @@
 					if (code == 200) {
 						this.goods = data;
 					}
+					console.log(this.goods);
 				})
 			},
 			enterDetail(id,e){

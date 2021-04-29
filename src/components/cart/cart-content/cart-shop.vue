@@ -229,7 +229,6 @@ export default {
 <style lang="less" scoped>
 @import url("../../less/common.less");
 	.cart-shop{
-		height:1024px;
 		background-color:#eee;
 		margin-bottom:60px;
 		.addcommon{
